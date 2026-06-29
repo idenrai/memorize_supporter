@@ -1,0 +1,38 @@
+# Feature → Design Document Mapping
+#
+# PURPOSE
+# -------
+# 소스 코드 파일 패턴을 해당하는 설계 문서 파일에 매핑합니다.
+# 아래 패턴과 일치하는 파일을 수정한 경우, 커밋하기 전에 반드시 해당 doc 파일을 업데이트해야 합니다.
+#
+# DOC STRUCTURE (Template Defaults)
+# -------------
+#   doc/architecture.md     시스템 아키텍처, 프론트엔드/백엔드 설계
+#   doc/setup.md            설치 방법, 환경 변수, 실행 명령어
+
+mappings:
+
+  # ── Architecture ───────────────────────────────────────────────────────────
+  # 소스 코드 변경 시 아키텍처 문서 참고
+  - pattern: "src/**"
+    doc: "doc/architecture.md"
+  
+  - pattern: "app/**"
+    doc: "doc/architecture.md"
+
+  # ── Configuration & Setup ──────────────────────────────────────────────────
+  # 환경 및 의존성 설정 변경 시 셋업 문서 참고
+  - pattern: "package.json"
+    doc: "doc/setup.md"
+
+  - pattern: "go.mod"
+    doc: "doc/setup.md"
+
+  - pattern: "requirements.txt"
+    doc: "doc/setup.md"
+
+  - pattern: "docker-compose.yml"
+    doc: "doc/setup.md"
+
+  - pattern: ".env*"
+    doc: "doc/setup.md"
