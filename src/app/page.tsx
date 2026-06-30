@@ -69,7 +69,7 @@ export default async function Home() {
               </div>
               <h3 className="text-2xl font-bold text-white mb-3">Welcome to Memorize Supporter!</h3>
               <p className="text-gray-400 mb-8 max-w-lg mx-auto leading-relaxed">
-                You don't have any flashcards or quizzes yet. It's time to add your learning data!
+                You don&apos;t have any flashcards or quizzes yet. It&apos;s time to add your learning data!
               </p>
               
               <div className="bg-gray-800/50 rounded-xl p-6 text-left max-w-2xl mx-auto border border-gray-700/50">

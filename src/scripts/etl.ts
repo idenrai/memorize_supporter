@@ -10,7 +10,7 @@ interface ParsedDeck {
   title: string
   description: string | null
   type: string
-  cards: any[]
+  cards: unknown[]
 }
 
 async function processJson(filePath: string, deckId: string): Promise<ParsedDeck | null> {
@@ -18,7 +18,7 @@ async function processJson(filePath: string, deckId: string): Promise<ParsedDeck
   let data;
   try {
     data = JSON.parse(content)
-  } catch (e) {
+  } catch {
     console.error(`Invalid JSON in ${filePath}`)
     return null
   }
@@ -144,7 +144,7 @@ async function main() {
         // targeted deletion: delete cards that are no longer in the JSON
         const existingCards = await prisma.card.findMany({ where: { deck: deckId } })
         const existingCardIds = new Set(existingCards.map(c => c.id))
-        const newCardIds = new Set(parsed.cards.map((c: any) => c.id))
+        const newCardIds = new Set(parsed.cards.map((c: { id?: string }) => c.id).filter((id): id is string => id !== undefined))
 
         const cardsToDelete = [...existingCardIds].filter(id => !newCardIds.has(id))
         if (cardsToDelete.length > 0) {

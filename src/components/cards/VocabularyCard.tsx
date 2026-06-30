@@ -95,7 +95,7 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
             <h3 className="text-3xl md:text-4xl font-semibold text-gray-100 mb-4">{meaning}</h3>
             {example && (
               <p className="text-lg text-gray-400 italic text-center mt-2 border-t border-gray-800/50 pt-4 w-full">
-                "{example}"
+                &quot;{example}&quot;
               </p>
             )}
           </div>
