@@ -10,7 +10,12 @@ interface ParsedDeck {
   title: string
   description: string | null
   type: string
-  cards: unknown[]
+  cards: {
+    id: string
+    deck: string
+    type: string
+    content: string
+  }[]
 }
 
 async function processJson(filePath: string, deckId: string): Promise<ParsedDeck | null> {
