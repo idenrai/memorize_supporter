@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0f1115;
+  --color-foreground: #eceff4;
+  
+  --color-card: #1c1f26;
+  --color-card-hover: #232730;
+
+  --color-primary: #3b82f6;
+  --color-primary-focus: #60a5fa;
+
+  --color-success: #10b981;
+  --color-error: #ef4444;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Perspective for 3D flip */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Backface hidden */
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}

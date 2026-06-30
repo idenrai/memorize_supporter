@@ -1,0 +1,17 @@
+{
+  "name": "Memorize Supporter",
+  "short_name": "Memorize",
+  "description": "A focus-driven memorization app for spaced repetition and active recall.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

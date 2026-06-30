@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Deck {
+  id          String   @id
+  title       String
+  description String?
+  type        String
+  createdAt   DateTime @default(now())
+
+  cards       Card[]
+}
+
+model Card {
+  id        String   @id @default(uuid())
+  deck      String
+  deckRef   Deck     @relation(fields: [deck], references: [id], onDelete: Cascade)
+  type      String
+  content   String
+  createdAt DateTime @default(now())
+
+  progress  LearningProgress?
+}
+
+model LearningProgress {
+  id             String    @id @default(uuid())
+  cardId         String    @unique
+  card           Card      @relation(fields: [cardId], references: [id])
+  reviewCount    Int       @default(0)
+  lastReviewedAt DateTime?
+  nextReviewAt   DateTime?
+  successRate    Float?
+}

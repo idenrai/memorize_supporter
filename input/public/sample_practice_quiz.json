@@ -1,0 +1,287 @@
+{
+  "deckName": "JavaScript Fundamentals",
+  "description": "Test your core understanding of JavaScript syntax, types, and behaviors.",
+  "type": "practice_quiz",
+  "cards": [
+    {
+      "category": "Variables",
+      "question": "Which keyword is used to declare a block-scoped, block-reassignable variable in modern JavaScript?",
+      "options": [
+        "var",
+        "let",
+        "const",
+        "def"
+      ],
+      "explanation": "`let` is used for block-scoped variables that can be reassigned. `const` is for block-scoped variables that cannot be reassigned. `var` is function-scoped.",
+      "answers": [
+        1
+      ]
+    },
+    {
+      "category": "Types",
+      "question": "What is the result of `typeof null` in JavaScript?",
+      "options": [
+        "\"null\"",
+        "\"undefined\"",
+        "\"object\"",
+        "\"boolean\""
+      ],
+      "explanation": "Due to a historical bug in JavaScript, `typeof null` returns `\"object\"`.",
+      "answers": [
+        2
+      ]
+    },
+    {
+      "category": "Equality",
+      "question": "Which operator performs a strict equality comparison (checking both value and type)?",
+      "options": [
+        "==",
+        "===",
+        "=",
+        "!=="
+      ],
+      "explanation": "`===` (strict equality) checks both value and type without performing type coercion, whereas `==` performs type coercion.",
+      "answers": [
+        1
+      ]
+    },
+    {
+      "category": "Functions",
+      "question": "How do you correctly write an arrow function?",
+      "options": [
+        "function => {}",
+        "() => {}",
+        "=> () {}",
+        "function() => {}"
+      ],
+      "explanation": "Arrow functions were introduced in ES6 and are written using the `() => {}` syntax.",
+      "answers": [
+        1
+      ]
+    },
+    {
+      "category": "Arrays",
+      "question": "Which array method adds one or more elements to the end of an array and returns the new length?",
+      "options": [
+        "push()",
+        "pop()",
+        "shift()",
+        "unshift()"
+      ],
+      "explanation": "`push()` adds to the end, `unshift()` adds to the beginning. `pop()` removes from the end, and `shift()` removes from the beginning.",
+      "answers": [
+        0
+      ]
+    },
+    {
+      "category": "Arrays",
+      "question": "Which method creates a new array populated with the results of calling a provided function on every element?",
+      "options": [
+        "filter()",
+        "reduce()",
+        "forEach()",
+        "map()"
+      ],
+      "explanation": "`map()` transforms each element and returns a new array. `forEach()` iterates but does not return a new array.",
+      "answers": [
+        3
+      ]
+    },
+    {
+      "category": "Types",
+      "question": "What is the output of `\"2\" + 2` in JavaScript?",
+      "options": [
+        "4",
+        "\"22\"",
+        "NaN",
+        "undefined"
+      ],
+      "explanation": "When using the `+` operator, if one operand is a string, JavaScript coerces the other to a string and concatenates them.",
+      "answers": [
+        1
+      ]
+    },
+    {
+      "category": "Types",
+      "question": "What is the output of `\"2\" - 1` in JavaScript?",
+      "options": [
+        "1",
+        "\"1\"",
+        "\"21\"",
+        "NaN"
+      ],
+      "explanation": "The `-` operator triggers numeric coercion, so the string `\"2\"` is converted to the number `2` before subtracting `1`.",
+      "answers": [
+        0
+      ]
+    },
+    {
+      "category": "Objects",
+      "question": "How do you access the `name` property of an object `person`?",
+      "options": [
+        "person.name",
+        "person[name]",
+        "person->name",
+        "person(name)"
+      ],
+      "explanation": "You can access object properties using dot notation (`person.name`) or bracket notation (`person[\"name\"]`).",
+      "answers": [
+        0
+      ]
+    },
+    {
+      "category": "Asynchronous",
+      "question": "Which keyword is used to wait for a Promise to resolve?",
+      "options": [
+        "wait",
+        "yield",
+        "await",
+        "defer"
+      ],
+      "explanation": "`await` is used inside an `async` function to pause execution until the Promise is settled.",
+      "answers": [
+        2
+      ]
+    },
+    {
+      "category": "DOM",
+      "question": "Which method selects the first element that matches a specified CSS selector?",
+      "options": [
+        "getElementById()",
+        "querySelectorAll()",
+        "querySelector()",
+        "getElementsByClassName()"
+      ],
+      "explanation": "`querySelector()` returns the first matching element, while `querySelectorAll()` returns a NodeList of all matching elements.",
+      "answers": [
+        2
+      ]
+    },
+    {
+      "category": "Events",
+      "question": "How do you prevent the default behavior of an event (like a form submission)?",
+      "options": [
+        "event.stopPropagation()",
+        "event.preventDefault()",
+        "event.stopImmediatePropagation()",
+        "return false;"
+      ],
+      "explanation": "`event.preventDefault()` stops the default action associated with the event.",
+      "answers": [
+        1
+      ]
+    },
+    {
+      "category": "Variables",
+      "question": "What is 'Hoisting' in JavaScript?",
+      "options": [
+        "Lifting elements in the DOM",
+        "Moving declarations to the top of their scope",
+        "Executing functions asynchronously",
+        "Converting types automatically"
+      ],
+      "explanation": "Hoisting is JavaScript's default behavior of moving variable and function declarations to the top of their respective scopes before code execution.",
+      "answers": [
+        1
+      ]
+    },
+    {
+      "category": "Objects",
+      "question": "Which method converts a JavaScript object into a JSON string?",
+      "options": [
+        "JSON.parse()",
+        "JSON.stringify()",
+        "JSON.toString()",
+        "Object.toJSON()"
+      ],
+      "explanation": "`JSON.stringify()` converts an object to a JSON string, while `JSON.parse()` parses a JSON string back into an object.",
+      "answers": [
+        1
+      ]
+    },
+    {
+      "category": "Errors",
+      "question": "Which statement is used to handle exceptions (errors) in JavaScript?",
+      "options": [
+        "try...catch",
+        "if...else",
+        "switch...case",
+        "throw...error"
+      ],
+      "explanation": "The `try...catch` statement marks a block of statements to try and specifies a response if an exception is thrown.",
+      "answers": [
+        0
+      ]
+    },
+    {
+      "category": "Strings",
+      "question": "Which feature allows you to embed expressions inside string literals using backticks?",
+      "options": [
+        "String concatenation",
+        "Template literals",
+        "Regex expressions",
+        "Tag functions"
+      ],
+      "explanation": "Template literals (using backticks ` `) allow for string interpolation like `${expression}`.",
+      "answers": [
+        1
+      ]
+    },
+    {
+      "category": "Classes",
+      "question": "Which method is a special method for creating and initializing an object created with a class?",
+      "options": [
+        "init()",
+        "create()",
+        "constructor()",
+        "super()"
+      ],
+      "explanation": "The `constructor()` method is automatically called when a new instance of a class is created.",
+      "answers": [
+        2
+      ]
+    },
+    {
+      "category": "Functions",
+      "question": "What is `this` in a regular JavaScript function (in non-strict mode)?",
+      "options": [
+        "The function itself",
+        "The object that called the function",
+        "The global object (window)",
+        "Depends on how the function is called"
+      ],
+      "explanation": "In JavaScript, the value of `this` is determined by how a function is called (execution context).",
+      "answers": [
+        3
+      ]
+    },
+    {
+      "category": "Logic",
+      "question": "What does the `&&` operator do?",
+      "options": [
+        "Logical OR",
+        "Logical AND",
+        "Bitwise AND",
+        "Logical NOT"
+      ],
+      "explanation": "`&&` is the logical AND operator. It returns true if both operands are true.",
+      "answers": [
+        1
+      ]
+    },
+    {
+      "category": "Modules",
+      "question": "How do you export a function as the primary export of a file in ES modules?",
+      "options": [
+        "module.exports = function",
+        "export function",
+        "export default function",
+        "exports.default = function"
+      ],
+      "explanation": "`export default` is used to export a single default value/function from a module.",
+      "answers": [
+        2
+      ]
+    }
+  ]
+}

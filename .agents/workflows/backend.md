@@ -11,6 +11,10 @@ description: 백엔드 아키텍처 설계, API 개발 및 리팩토링
 ## 1. 기술 스택 및 아키텍처 확인 (필수)
 - 작업 시작 전 반드시 `.agents/rules/project-context.md`를 읽고 현재 프로젝트에 설정된 **백엔드 언어, 프레임워크, 데이터베이스, 배포 환경**을 확인합니다.
 - 특정 언어나 프레임워크(예: Node.js, Express)를 암묵적으로 가정하지 않으며, 지정된 스택에 최적화된 아키텍처 패턴을 따릅니다.
+- **Next.js & TypeScript 스킬 참조:**
+  - Next.js의 Server Actions나 API Routes(Route Handlers)를 작성/수정할 때는 반드시 `.agents/skills/nextjs-best-practices/SKILL.md`를 참고하여 최적의 패턴을 적용합니다.
+  - 백엔드 비즈니스 로직, 데이터베이스(Prisma) 타입 추론 및 복잡한 최적화 작업 시 `.agents/skills/typescript-expert/SKILL.md`를 활용합니다.
+  - API 동작 및 서버 로그 검증을 위해 개발 환경에서 `.agents/skills/next-dev-loop/SKILL.md`를 참고하여 테스트합니다.
 
 ## 2. Architecture & Design
 - 복잡해지는 비즈니스 로직은 단일 책임 원칙(SRP)에 따라 적절한 계층(예: Controller/Router, Service, Repository)으로 분리하여 관리합니다.

@@ -1,0 +1,22 @@
+{
+  "title": "Practice Quiz Template",
+  "description": "",
+  "type": "practice_quiz",
+  "cards": [
+    {
+      "question": "Which of the following are valid AWS compute services? (Select two)",
+      "options": [
+        "Amazon EC2",
+        "Amazon S3",
+        "AWS Lambda",
+        "Amazon RDS",
+        "Amazon DynamoDB"
+      ],
+      "answers": [
+        0,
+        2
+      ],
+      "explanation": "Amazon EC2 and AWS Lambda are compute services. S3 is storage, and RDS/DynamoDB are databases."
+    }
+  ]
+}
