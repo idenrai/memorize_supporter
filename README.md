@@ -23,21 +23,28 @@
 npm install
 ```
 
-### 2. 데이터베이스 초기화 및 ETL 실행
+### 2. 환경 변수 설정
+저장소를 클론한 직후, 데이터베이스 경로를 설정하기 위해 환경 변수 파일을 생성합니다.
+```bash
+cp .env.example .env
+```
+*(Windows 환경의 경우 `copy .env.example .env`를 사용하거나 직접 파일을 복사하세요.)*
+
+### 3. 데이터베이스 초기화 및 ETL 실행
 ```bash
 npx prisma db push
 npm run etl
 ```
-> **참고**: DB 파일(`.data/memorize.sqlite`)은 버전 관리(Git)에서 제외됩니다. 
+> **참고**: SQLite는 Prisma에 의해 자동으로 구성되므로 별도의 시스템 프로그램 설치가 필요하지 않습니다. DB 파일(`.data/memorize.sqlite`)은 버전 관리(Git)에서 제외됩니다. 
 > `npm run etl`은 카드를 추가하거나 정답을 수정한 뒤 여러 번 재실행해도, 기존에 유저가 학습한 망각 곡선 복습 기록(Learning Progress)을 안전하게 보존합니다.
 
-### 3. 개발 서버 실행
+### 4. 개발 서버 실행
 ```bash
 npm run dev
 ```
 브라우저에서 `http://localhost:3000`에 접속하여 확인할 수 있습니다.
 
-### 4. 데이터베이스 완전 초기화 (개발용)
+### 5. 데이터베이스 완전 초기화 (개발용)
 Prisma 스키마를 수정하거나 모든 학습 데이터를 깔끔하게 날리고 처음부터 다시 시작하고 싶을 경우, 아래 명령어를 통해 데이터베이스를 리셋할 수 있습니다.
 ```bash
 npx prisma db push --force-reset
