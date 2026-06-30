@@ -1,0 +1,107 @@
+{
+  "deckName": "Web Development Basics",
+  "description": "Essential concepts, acronyms, and principles every modern web developer should know.",
+  "type": "flashcard",
+  "cards": [
+    {
+      "category": "Frontend",
+      "front": "What does HTML stand for?",
+      "back": "**HyperText Markup Language**. It is the standard markup language used to create web pages."
+    },
+    {
+      "category": "Frontend",
+      "front": "What does CSS stand for?",
+      "back": "**Cascading Style Sheets**. It describes how HTML elements are to be displayed on screen, paper, or in other media."
+    },
+    {
+      "category": "Network",
+      "front": "What is HTTP?",
+      "back": "**Hypertext Transfer Protocol**. It is the foundation of data communication for the World Wide Web, allowing the fetching of resources like HTML documents."
+    },
+    {
+      "category": "Network",
+      "front": "Explain what CORS is.",
+      "back": "**Cross-Origin Resource Sharing**. It is an HTTP-header based mechanism that allows a server to indicate any origins (domain, scheme, or port) other than its own from which a browser should permit loading resources."
+    },
+    {
+      "category": "Backend",
+      "front": "What does API stand for?",
+      "back": "**Application Programming Interface**. It is a set of rules that allows different software entities to communicate with each other."
+    },
+    {
+      "category": "Architecture",
+      "front": "What is REST?",
+      "back": "**Representational State Transfer**. An architectural style that uses standard HTTP methods (GET, POST, PUT, DELETE) to manipulate resources, usually represented in JSON or XML."
+    },
+    {
+      "category": "Frontend",
+      "front": "What is the DOM?",
+      "back": "**Document Object Model**. A programming interface for web documents that represents the page so that programs can change the document structure, style, and content."
+    },
+    {
+      "category": "Storage",
+      "front": "What is LocalStorage?",
+      "back": "A web storage object that allows JavaScript sites and apps to store key/value pairs in a web browser with **no expiration date** (persists after the browser is closed)."
+    },
+    {
+      "category": "Storage",
+      "front": "What is SessionStorage?",
+      "back": "Similar to LocalStorage, but the data is **cleared when the page session ends** (i.e., when the browser tab is closed)."
+    },
+    {
+      "category": "JavaScript",
+      "front": "What is an IIFE?",
+      "back": "**Immediately Invoked Function Expression**. A JavaScript function that runs as soon as it is defined. Example: `(function() { /* code */ })();`"
+    },
+    {
+      "category": "JavaScript",
+      "front": "Explain Closure in JavaScript.",
+      "back": "A closure is the combination of a function and the lexical environment within which that function was declared, allowing the function to access variables from its outer scope even after the outer function has finished executing."
+    },
+    {
+      "category": "Backend",
+      "front": "What is Node.js?",
+      "back": "An open-source, cross-platform, back-end **JavaScript runtime environment** that runs on the V8 engine and executes JavaScript code outside a web browser."
+    },
+    {
+      "category": "Security",
+      "front": "What is XSS?",
+      "back": "**Cross-Site Scripting**. A vulnerability where an attacker injects malicious client-side executable scripts into viewed web pages."
+    },
+    {
+      "category": "Security",
+      "front": "What is CSRF?",
+      "back": "**Cross-Site Request Forgery**. An attack that forces an end user to execute unwanted actions on a web application in which they're currently authenticated."
+    },
+    {
+      "category": "Frontend",
+      "front": "What is a Single Page Application (SPA)?",
+      "back": "A web application that interacts with the user by dynamically rewriting the current web page with new data from the web server, instead of the default method of loading entire new pages."
+    },
+    {
+      "category": "Network",
+      "front": "What is the difference between TCP and UDP?",
+      "back": "**TCP** (Transmission Control Protocol) is connection-oriented and guarantees delivery (reliable). **UDP** (User Datagram Protocol) is connectionless and does not guarantee delivery, but is much faster (e.g., used for video streaming)."
+    },
+    {
+      "category": "Frontend",
+      "front": "What is Responsive Web Design?",
+      "back": "An approach to web design that makes web pages render well on a variety of devices and window or screen sizes, typically using fluid grids, flexible images, and CSS media queries."
+    },
+    {
+      "category": "DevOps",
+      "front": "What does CI/CD stand for?",
+      "back": "**Continuous Integration / Continuous Deployment (or Delivery)**. A method to frequently deliver apps to customers by introducing automation into the stages of app development."
+    },
+    {
+      "category": "Architecture",
+      "front": "What is a Microservices Architecture?",
+      "back": "An architectural style that structures an application as a collection of loosely coupled, independently deployable services organized around business capabilities."
+    },
+    {
+      "category": "Network",
+      "front": "What is a WebSocket?",
+      "back": "A computer communications protocol, providing **full-duplex communication channels** over a single TCP connection, allowing real-time data transfer between client and server."
+    }
+  ]
+}

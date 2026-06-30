@@ -11,6 +11,10 @@ description: 프론트엔드 UI/UX 컴포넌트 신규 생성, 수정 및 리팩
 ## 1. 기술 스택 확인 (필수)
 - 작업 시작 전 반드시 `.agents/rules/project-context.md`를 읽고 현재 프로젝트에 설정된 **프론트엔드 프레임워크, 스타일링 방식, 상태 관리 도구**를 확인합니다.
 - 어떠한 특정 기술(React, Vue, Tailwind 등)도 임의로 가정하지 않으며, 오직 `project-context.md`에 명시된 기술 스택과 아키텍처 원칙을 철저히 준수합니다.
+- **Next.js & TypeScript 스킬 참조:**
+  - 서버 컴포넌트(RSC)와 클라이언트 컴포넌트를 분리하거나 데이터를 패칭할 때 `.agents/skills/nextjs-best-practices/SKILL.md`를 숙지하여 렌더링 최적화를 달성합니다.
+  - 프론트엔드 상태, Props, 컴포저블 훅 등의 정밀한 타입 검증이 필요하면 `.agents/skills/typescript-expert/SKILL.md`를 참조합니다.
+  - 컴포넌트 수정 후 UI 및 런타임 동작을 최종 확인할 때는 `.agents/skills/next-dev-loop/SKILL.md`를 바탕으로 라이브 검증을 수행합니다.
 
 ## 2. Visual Design & UI/UX (공통 지침)
 - **컴포넌트 수정 및 생성 시:** 기존 프로젝트의 톤앤매너(색상, 여백, 타이포그래피 등) 일관성을 엄격히 유지합니다.

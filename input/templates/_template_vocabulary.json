@@ -1,0 +1,12 @@
+{
+  "title": "Vocabulary Template",
+  "description": "",
+  "type": "vocabulary",
+  "cards": [
+    {
+      "word": "accommodate",
+      "meaning": "수용하다, 편의를 도모하다",
+      "example": "The hotel can accommodate up to 500 guests."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Flashcards Template",
+  "description": "",
+  "type": "flashcard",
+  "cards": [
+    {
+      "category": "General",
+      "front": "What is the capital of France?",
+      "back": "Paris"
+    }
+  ]
+}
