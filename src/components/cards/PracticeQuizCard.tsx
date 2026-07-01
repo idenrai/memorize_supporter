@@ -85,8 +85,8 @@ export default function PracticeQuizCard({ content, onNext }: Props) {
         {/* FRONT SIDE (Question & Options) */}
         <div className="absolute w-full h-full backface-hidden flex flex-col bg-[#1c1f26] border border-gray-800 rounded-2xl p-6 sm:p-10 shadow-xl overflow-y-auto hover:bg-[#232730] transition-colors">
           <div className="text-xs font-semibold text-blue-500 mb-4 tracking-wider uppercase flex items-center justify-between">
-            <span>Multiple Choice</span>
-            <span className="text-gray-500">
+            <span className="truncate max-w-[180px] sm:max-w-[300px]">{content.category || 'Practice Quiz'}</span>
+            <span className="text-gray-500 shrink-0 ml-2">
               {content.answers.length > 1 ? `Select ${content.answers.length}` : 'Select 1'}
             </span>
           </div>

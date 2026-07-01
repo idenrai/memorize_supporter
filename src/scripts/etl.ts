@@ -70,6 +70,7 @@ async function processJson(filePath: string, deckId: string): Promise<ParsedDeck
         deck: deckId,
         type: 'practice_quiz',
         content: JSON.stringify({
+          category: typeof item.category === 'string' ? item.category.trim() : item.category,
           question: item.question,
           options: item.options,
           answers: item.answers || (item.answer !== undefined ? [item.answer] : []),
@@ -85,7 +86,7 @@ async function processJson(filePath: string, deckId: string): Promise<ParsedDeck
         content: JSON.stringify({
           front: item.front,
           back: item.back,
-          category: item.category
+          category: typeof item.category === 'string' ? item.category.trim() : item.category
         })
       })
     }

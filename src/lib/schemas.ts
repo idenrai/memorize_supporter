@@ -7,6 +7,7 @@ export const FlashcardContentSchema = z.object({
 })
 
 export const PracticeQuizContentSchema = z.object({
+  category: z.string().optional(),
   question: z.string(),
   options: z.array(z.string()),
   answers: z.array(z.number()),
