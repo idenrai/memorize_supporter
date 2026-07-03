@@ -145,7 +145,7 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
             <motion.div 
               className="h-full bg-blue-500"
               initial={{ width: 0 }}
-              animate={{ width: `${(currentIndex / playingCards.length) * 100}%` }}
+              animate={{ width: `${((currentIndex + 1) / playingCards.length) * 100}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
