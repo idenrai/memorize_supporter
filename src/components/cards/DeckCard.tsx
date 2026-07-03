@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { ChevronDown, Layers } from "lucide-react"
+import { useT } from "@/hooks/useT"
 
 interface DeckCardProps {
   deck: string
@@ -10,6 +11,7 @@ interface DeckCardProps {
   description?: string | null
   type?: string
   count: number
+  lang: string
 }
 
 const typeConfig: Record<string, { label: string, color: string, bg: string }> = {
@@ -18,8 +20,9 @@ const typeConfig: Record<string, { label: string, color: string, bg: string }> =
   vocabulary: { label: 'Vocabulary', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
 }
 
-export default function DeckCard({ deck, deckName, description, type = 'flashcard', count }: DeckCardProps) {
-  const [limit, setLimit] = useState(20)
+export default function DeckCard({ deck, deckName, description, type = 'flashcard', count, lang }: DeckCardProps) {
+  const t = useT()
+  const [limit, setLimit] = useState(10)
   const [showDropdown, setShowDropdown] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -41,7 +44,7 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
   }, [])
 
   return (
-    <div className="bg-[#1c1f26] border border-gray-800 rounded-2xl p-6 h-full flex flex-col hover:border-gray-700 hover:bg-[#232730] transition-all relative group">
+    <div className="bg-[#1c1f26] border border-gray-800 rounded-2xl p-6 h-full flex flex-col hover:border-gray-700 hover:bg-[#232730] transition-colors relative group">
       <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none z-0">
         <div className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full ${config.bg.split(' ')[0]}`}></div>
       </div>
@@ -49,17 +52,17 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
       <div className="flex-1 relative z-10">
         <div className="flex justify-between items-start mb-2">
           <div className={`text-xs font-semibold px-2 py-1 rounded-md border uppercase tracking-wider ${config.color} ${config.bg}`}>
-            {config.label}
+            {type === 'practice_quiz' ? t.quiz.practiceQuiz : type === 'vocabulary' ? t.quiz.vocabulary : t.quiz.flashcard}
           </div>
           
           <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 bg-[#1c1f26]/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-gray-800/50 shadow-sm">
-            <Layers size={14} className="text-gray-500" />
-            {count} <span className="font-normal text-gray-500 hidden sm:inline">Cards</span>
+            <Layers size={14} className="text-gray-500" aria-hidden="true" />
+            {count} <span className="font-normal text-gray-500 hidden sm:inline">{t.home.cards}</span>
           </div>
         </div>
-        <h3 className="text-2xl font-bold text-gray-100 mb-2 mt-4">{deckName}</h3>
+        <h3 className="text-2xl font-bold text-gray-100 mb-2 mt-4 line-clamp-2">{deckName}</h3>
         <p className="text-sm text-gray-400 line-clamp-2 mb-4">
-          {description || `A collection of ${count} flashcards ready for active recall.`}
+          {description || t.home.defaultDesc(count)}
         </p>
       </div>
 
@@ -68,9 +71,9 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
           <div className="relative" ref={dropdownRef}>
             <button 
               onClick={(e) => { e.preventDefault(); setShowDropdown(!showDropdown) }}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-gray-400 hover:text-gray-200 transition-colors text-xs font-medium focus:outline-none whitespace-nowrap rounded-full hover:bg-white/5"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-gray-400 hover:text-gray-200 transition-colors text-xs font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 whitespace-nowrap rounded-full hover:bg-white/5"
             >
-              {limit === count ? 'All' : limit} Cards <ChevronDown size={14} className={`transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} />
+              {limit === count ? t.home.allCards : `${limit} ${t.home.cards}`} <ChevronDown size={14} className={`transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} aria-hidden="true" />
             </button>
             
             {showDropdown && (
@@ -85,7 +88,7 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
                         : 'text-gray-300 hover:bg-white/5 hover:text-white'
                     }`}
                   >
-                    {l === count ? 'All' : l}
+                    {l === count ? t.home.allCards : l}
                   </button>
                 ))}
               </div>
@@ -95,10 +98,10 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
           <div className="w-px h-4 bg-gray-700 mx-1"></div>
 
           <Link 
-            href={`/deck/${deck}?limit=${limit}`}
+            href={`/${lang}/deck/${deck}?limit=${limit}`}
             className="flex items-center justify-center min-w-[70px] px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-colors text-xs font-bold uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-lg shadow-blue-900/30"
           >
-            Study
+            {t.common.study}
           </Link>
         </div>
       </div>

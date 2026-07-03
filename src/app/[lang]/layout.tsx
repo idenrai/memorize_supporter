@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
+import type { Lang } from "@/i18n/types";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -30,15 +32,21 @@ export const viewport = {
   themeColor: "#09090b",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ lang: string }>;
 }>) {
+  const { lang } = await params;
+  const initialLang = ["en", "ko", "ja"].includes(lang) ? (lang as Lang) : "en";
+
   return (
-    <html lang="en" className="dark">
+    <html lang={initialLang} className="dark">
       <body className={`${inter.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}>
         {children}
+        <Toaster theme="dark" position="bottom-right" />
       </body>
     </html>
   );

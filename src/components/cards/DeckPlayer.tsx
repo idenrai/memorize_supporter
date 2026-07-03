@@ -7,8 +7,11 @@ import VocabularyCard from "./VocabularyCard"
 import PracticeQuizCard from "./PracticeQuizCard"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { CardData } from "@/types/card"
-import { updateProgress } from "@/app/actions/progress"
+import { CardData, FlashcardContent } from "@/types/card"
+import { updateProgress } from "@/actions/progress"
+import { useT } from "@/hooks/useT"
+import { useParams } from "next/navigation"
+import { toast } from "sonner"
 
 interface DeckPlayerProps {
   deckId: string
@@ -16,6 +19,9 @@ interface DeckPlayerProps {
 }
 
 export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
+  const t = useT()
+  const params = useParams()
+  const lang = params.lang as string || 'en'
   const [playingCards, setPlayingCards] = useState<CardData[]>(cards)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [completed, setCompleted] = useState(false)
@@ -35,10 +41,11 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
       const result = await updateProgress(card.id, isCorrect, deckId)
       if (!result.success) {
         console.error("Failed to update progress:", result.error)
-        // Optionally show toast or notification here
+        toast.error(t.common?.error || "Failed to save progress")
       }
     } catch (e) {
       console.error("Server action failed:", e)
+      toast.error(t.common?.error || "Failed to save progress")
     }
 
     if (currentIndex < playingCards.length - 1) {
@@ -46,14 +53,14 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
     } else {
       setCompleted(true)
     }
-  }, [currentIndex, playingCards, deckId, completed])
+  }, [currentIndex, playingCards, deckId, completed, t.common])
 
   if (cards.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
-        <h2 className="text-xl text-gray-400">No cards found in this deck.</h2>
-        <Link href="/" className="mt-4 text-blue-500 hover:underline flex items-center gap-2">
-          <ArrowLeft size={16} /> Back to Home
+        <h2 className="text-xl text-gray-400 text-balance">{t.quiz.noCards}</h2>
+        <Link href={`/${lang}`} className="mt-4 text-blue-500 hover:underline flex items-center gap-2">
+          <ArrowLeft size={16} aria-hidden="true" /> {t.common.backToHome}
         </Link>
       </div>
     )
@@ -84,31 +91,31 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
         }`}>
           {accuracy >= 80 ? '🎉' : '🎯'}
         </div>
-        <h2 className="text-3xl font-bold text-white">Quiz Completed!</h2>
+        <h2 className="text-3xl font-bold text-white text-balance">{t.quiz.quizCompleted}</h2>
         <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 text-center space-y-2">
           <p className="text-4xl font-black text-white">{accuracy}%</p>
-          <p className="text-gray-400">You scored {correctCount} out of {playingCards.length}</p>
+          <p className="text-gray-400">{t.quiz.youScored(correctCount, playingCards.length)}</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 mt-6">
           {incorrectIds.length > 0 && (
             <button 
               onClick={handleRetryIncorrect}
-              className="px-8 py-3 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-white rounded-full font-medium transition-colors"
+              className="px-8 py-3 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-white rounded-full font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
-              Retry {incorrectIds.length} Incorrect
+              {t.quiz.retryIncorrect(incorrectIds.length)}
             </button>
           )}
           <button 
             onClick={() => window.location.reload()}
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium transition-colors"
+            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           >
-            Study New Session
+            {t.quiz.studyNewSession}
           </button>
         </div>
         
-        <Link href="/" className="text-gray-500 hover:text-gray-300 transition-colors mt-4">
-          Back to Dashboard
+        <Link href={`/${lang}`} className="text-gray-500 hover:text-gray-300 transition-colors mt-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 rounded px-2">
+          {t.quiz.backToDashboard}
         </Link>
       </motion.div>
     )
@@ -120,7 +127,7 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
   if (!currentCard) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
-        <h2 className="text-xl text-gray-400">Loading next card...</h2>
+        <h2 className="text-xl text-gray-400">{t.common.loading}</h2>
       </div>
     )
   }
@@ -129,9 +136,9 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
     <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto p-4 md:p-8">
       {/* Header / Progress */}
       <div className="flex items-center justify-between mb-12">
-        <Link href="/" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2">
-          <ArrowLeft size={20} />
-          <span className="hidden md:inline">Exit</span>
+        <Link href={`/${lang}`} aria-label={t.common.exit} className="text-gray-500 hover:text-white transition-colors flex items-center gap-2">
+          <ArrowLeft size={20} aria-hidden="true" />
+          <span className="hidden md:inline">{t.common.exit}</span>
         </Link>
         <div className="flex-1 max-w-md mx-8">
           <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
@@ -161,11 +168,9 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
           >
             {currentCard.type === 'flashcard' && (
               <Flashcard 
-                front={currentCard.content.front}
-                back={currentCard.content.back}
-                category={currentCard.content.category}
-                onNext={handleNext}
-              />
+              content={currentCard.content as FlashcardContent} 
+              onNext={handleNext} 
+            />
             )}
             {currentCard.type === 'vocabulary' && (
               <VocabularyCard 

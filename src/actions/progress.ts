@@ -13,7 +13,7 @@ export async function updateProgress(cardId: string, isCorrect: boolean, deckId:
       return { success: false, error: "Invalid parameters provided" }
     }
 
-    const { cardId: validCardId, isCorrect: validIsCorrect, deckId: validDeckId } = validated.data
+    const { cardId: validCardId, isCorrect: validIsCorrect } = validated.data
 
     // 2. Business Logic
     const existing = await prisma.learningProgress.findUnique({
@@ -68,8 +68,8 @@ export async function updateProgress(cardId: string, isCorrect: boolean, deckId:
     }
 
     // 3. Cache Revalidation
-    revalidatePath(`/deck/${validDeckId}`)
-    revalidatePath('/') // also update the home page stats if any
+    // Use layout to revalidate everything under the root (including all /[lang]/...)
+    revalidatePath('/', 'layout')
     
     return { success: true }
   } catch (error) {

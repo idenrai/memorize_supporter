@@ -11,12 +11,12 @@ This document defines the system architecture of the `memorize_supporter` projec
 **목적:** 사용자가 플래시카드(핀포인트 팁), 객관식 문제, 영단어 등을 효율적으로 암기할 수 있도록 돕는 범용 암기 애플리케이션입니다. 인지 과학적 원리(Active Recall, Spaced Repetition)와 포커스 모드 디자인을 채택하여 학습 효율을 극대화합니다.
 
 **Core Components:**
-- `DeckPlayer`: Frontend interactive card renderer (handling micro-animations and feedback).
+- `DeckPlayer`, `Flashcard`, `VocabularyCard`, `PracticeQuizCard`: Frontend interactive card renderer (handling micro-animations and feedback).
 - `SQLite & Prisma`: Lightweight data layer operating in an offline (local file) environment.
 - `ETL Script`: Data pipeline script that reads original documents (JSON), parses them, and pushes them (Upsert) into the DB.
 
 **핵심 컴포넌트:**
-- `DeckPlayer`: 프론트엔드 인터랙티브 카드 렌더러 (마이크로 애니메이션, 피드백 처리)
+- `DeckPlayer` 및 세부 카드 컴포넌트들: 프론트엔드 인터랙티브 카드 렌더러 (마이크로 애니메이션, 피드백 처리)
 - `SQLite & Prisma`: 오프라인(로컬 파일) 환경에서 동작하는 경량 데이터 레이어
 - `ETL Script`: 원본 문서(JSON)를 읽고 파싱하여 DB에 밀어넣는(Upsert) 데이터 파이프라인 스크립트
 
@@ -24,11 +24,15 @@ This document defines the system architecture of the `memorize_supporter` projec
 
 **Framework and Routing Strategy:**
 - Next.js (App Router) / React 19
-- Optimizes rendering performance by strictly separating Server Components (data fetching: `app/deck/[deckId]/page.tsx`) and Client Components (interactions: `TipCard.tsx`).
+- Optimizes rendering performance by strictly separating Server Components (data fetching: `app/[lang]/deck/[deckId]/page.tsx`) and Client Components (interactions: `Flashcard.tsx`).
 
 **프레임워크 및 라우팅 방식:**
 - Next.js (App Router) / React 19
-- Server Components(데이터 패칭: `app/deck/[deckId]/page.tsx`)와 Client Components(인터랙션: `TipCard.tsx`)를 명확히 분리하여 렌더링 성능을 최적화합니다.
+- Server Components(데이터 패칭: `app/[lang]/deck/[deckId]/page.tsx`)와 Client Components(인터랙션: `Flashcard.tsx`)를 명확히 분리하여 렌더링 성능을 최적화합니다.
+
+**i18n Strategy (다국어 처리 전략):**
+- **URL as Single Source of Truth (SSoT):** Uses dynamic routing (`app/[lang]/...`) to manage the current language state. This prevents hydration errors caused by resolving language through cookies or local storage during SSR.
+- **다국어 처리 전략:** URL 기반 동적 라우팅(`app/[lang]/...`)을 단일 진실 공급원(SSoT)으로 활용합니다. 전역 상태 관리자(Zustand 등)를 배제하여 SSR 렌더링 시점의 쿠키 분석에 의존하지 않고, Hydration 에러를 원천 차단하는 가장 우아한 아키텍처를 채택했습니다.
 
 **State Management Strategy:**
 - Manages the learning progress and flip state of the current deck using local state (`useState`). Avoids using complex global state managers (like Redux).
@@ -48,9 +52,11 @@ This document defines the system architecture of the `memorize_supporter` projec
 
 **API and Data Communication:**
 - Supplies data to the client through Next.js Server Actions or direct Prisma Client calls without a separate external REST API server.
+- **Security Isolation:** Server Actions are explicitly isolated in the `src/actions/` directory, outside of the Next.js `app/` routing directory. This prevents accidental exposure of backend business logic as public endpoints.
 
 **API 및 데이터 통신:**
 - 별도의 외부 REST API 서버 없이 Next.js의 Server Actions 또는 Prisma Client 직접 호출을 통해 데이터를 클라이언트에 공급합니다.
+- **보안 격리 정책:** 비즈니스 로직(Server Actions)은 라우터 공간인 `app/` 내부가 아닌, 완전히 분리된 `src/actions/` 디렉토리에 격리하여 보관합니다. 이를 통해 내부 함수가 외부의 퍼블릭 API 엔드포인트로 예기치 않게 노출되는 보안 위험(Security Risk)을 원천 차단합니다.
 
 **Database and ORM Integration:**
 - **SQLite:** Built locally at `.data/memorize.sqlite`. This file is excluded from Git tracking (`.gitignore`).
@@ -71,6 +77,23 @@ This document defines the system architecture of the `memorize_supporter` projec
 - 원본 JSON 데이터를 파싱하여 Prisma Client를 통해 DB에 적재합니다.
 - **데이터 무결성 보장 (Stable ID & Upsert):** `crypto` 모듈을 사용해 문항의 텍스트 콘텐츠(Question/Front)를 기반으로 고유한 MD5 해시 식별자를 생성합니다. 이를 통해 카드를 추가하거나 삭제하더라도, 기존 카드의 고유 ID가 유지되어 유저의 망각 곡선 복습 기록(`learningProgress`)이 파괴되지 않고 안전하게 보존(Upsert)됩니다.
 - 실행 명령어: `npm run etl` (tsx를 통한 TypeScript 스크립트 실행)
+
+```mermaid
+sequenceDiagram
+    participant J as JSON Files (input/)
+    participant E as ETL Script (etl.ts)
+    participant C as Crypto Module
+    participant DB as SQLite DB
+    
+    E->>J: 1. Read JSON Data
+    J-->>E: Return Cards Array
+    loop For each card
+        E->>C: 2. Generate MD5 Hash based on Text
+        C-->>E: Return Stable Hash ID
+        E->>DB: 3. Upsert Card with Hash ID
+        DB-->>E: Success (Preserves Learning Progress)
+    end
+```
 
 ## 5. Infrastructure & Deployment
 

@@ -1,26 +1,53 @@
 # Setup & Installation
 
-이 문서는 개발 환경 설정 및 설치 과정을 안내하기 위한 템플릿입니다.
-
-프로젝트 시작 시, AI 에이전트에게 이 문서를 프로젝트 환경에 맞게 갱신하도록 지시하세요.
+이 문서는 `memorize_supporter` 프로젝트의 개발 환경 설정 및 설치 과정을 안내합니다.
 
 ## 1. 사전 요구 사항 (Prerequisites)
-- 필요한 런타임 환경 (예: Node.js, Python, Go 등)
-- 데이터베이스 설치 및 설정 방법
-- 기타 필요한 로컬 도구
+- **Node.js**: v20.x 이상 권장 (최신 LTS, Next.js 14/15 호환성 보장)
+- **운영 체제**: Windows, macOS, Linux 무관 (SQLite 로컬 파일 DB 사용)
+- 별도의 외부 데이터베이스 소프트웨어(MySQL, PostgreSQL 등)를 설치할 필요가 없습니다.
 
 ## 2. 설치 (Installation)
-- 소스 코드 클론 방법
-- 의존성 패키지 설치 명령어
+저장소를 클론한 후, 프로젝트 디렉토리로 이동하여 의존성 패키지를 설치합니다.
+
+```bash
+git clone <repository-url>
+cd memorize_supporter
+npm install
+```
 
 ## 3. 환경 변수 (Environment Variables)
-- `.env.example` 파일 설명
-- 필요한 환경 변수 발급 및 설정 방법
+데이터베이스 파일의 경로가 정의된 환경 변수를 설정해야 합니다. 제공되는 예제 파일을 복사하여 사용하세요.
 
-## 4. 로컬 서버 실행 (Running Locally)
-- 개발 서버 실행 명령어
-- 서버 접속 주소 (예: http://localhost:3000)
+```bash
+cp .env.example .env
+```
+*(Windows 환경의 경우 `copy .env.example .env`를 사용하거나 직접 복사하세요.)*
 
-## 5. 테스트 및 린트 (Testing & Linting)
-- 테스트 실행 방법
-- 린트 검사 및 자동 수정 명령어
+## 4. 데이터베이스 및 데이터 초기화 (DB Setup & ETL)
+Prisma ORM을 사용하여 SQLite 데이터베이스를 생성하고, ETL 스크립트를 실행하여 `input/` 디렉토리의 데이터를 DB에 적재합니다.
+
+```bash
+# 데이터베이스 스키마 푸시 (최초 테이블 생성)
+npx prisma db push
+
+# 데이터 파싱 및 DB 적재 (Upsert 방식이므로 여러 번 실행해도 안전함)
+npm run etl
+```
+> **참고**: 데이터베이스 파일은 프로젝트 루트의 `.data/memorize.sqlite` 위치에 생성되며, Git의 추적을 받지 않습니다.
+
+## 5. 로컬 서버 실행 (Running Locally)
+설정이 완료되면 개발 서버를 실행합니다.
+
+```bash
+npm run dev
+```
+브라우저에서 `http://localhost:3000`에 접속하여 애플리케이션을 사용할 수 있습니다.
+
+## 6. 문제 해결 (Troubleshooting)
+데이터베이스 스키마를 직접 변경했거나 전체 학습 기록을 깔끔하게 초기화하고 싶은 경우 아래의 명령어를 사용하세요.
+
+```bash
+npx prisma db push --force-reset
+npm run etl
+```
