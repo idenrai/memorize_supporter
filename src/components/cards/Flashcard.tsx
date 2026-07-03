@@ -3,15 +3,17 @@
 import { useState, useEffect, useCallback } from "react"
 import { motion, useIsPresent } from "framer-motion"
 import { Check, X } from "lucide-react"
+import { FlashcardContent } from "@/types/card"
+import { useT } from "@/hooks/useT"
+import { formatText } from "@/lib/format"
 
 interface FlashcardProps {
-  front: string
-  back: string
-  category?: string
+  content: FlashcardContent
   onNext?: (isCorrect: boolean) => void
 }
 
-export default function Flashcard({ front, back, category, onNext }: FlashcardProps) {
+export default function Flashcard({ content: { front, back, category }, onNext }: FlashcardProps) {
+  const t = useT()
   const [isFlipped, setIsFlipped] = useState(false)
   const [isFeedback, setIsFeedback] = useState<"correct" | "incorrect" | null>(null)
   const isPresent = useIsPresent()
@@ -75,14 +77,14 @@ export default function Flashcard({ front, back, category, onNext }: FlashcardPr
         <div className="absolute w-full h-full backface-hidden bg-[#1c1f26] border border-gray-800 rounded-2xl shadow-xl flex flex-col p-8 items-center justify-center hover:bg-[#232730] transition-colors">
           {category && (
             <div className="absolute top-6 left-8 text-xs font-semibold text-blue-500 uppercase tracking-wider">
-              {category}
+              {t.quiz.flashcard}
             </div>
           )}
-          <h2 className="text-2xl md:text-3xl font-medium text-center text-gray-100 leading-relaxed">
-            {front}
+          <h2 className="text-2xl md:text-3xl font-medium text-center text-gray-100 leading-relaxed whitespace-pre-wrap text-balance">
+            {formatText(front)}
           </h2>
           <div className="absolute bottom-6 text-sm text-gray-500 animate-pulse">
-            Press any key to reveal
+            {t.quiz.clickToReveal}
           </div>
         </div>
 
@@ -93,8 +95,8 @@ export default function Flashcard({ front, back, category, onNext }: FlashcardPr
               isFeedback === 'incorrect' ? 'bg-red-900/30 border-red-500/50' : 'bg-[#1c1f26]'}`}
         >
           <div className="flex-1 flex items-center justify-center overflow-y-auto">
-            <p className="text-xl md:text-2xl font-light text-center text-gray-200 leading-relaxed">
-              {back}
+            <p className="text-xl md:text-2xl font-light text-center text-gray-200 leading-relaxed whitespace-pre-wrap text-balance">
+              {formatText(back)}
             </p>
           </div>
           
@@ -106,10 +108,10 @@ export default function Flashcard({ front, back, category, onNext }: FlashcardPr
                 e.stopPropagation()
                 handleFeedback("incorrect")
               }}
-              className="flex items-center gap-2 px-6 py-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+              className="flex items-center gap-2 px-6 py-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
             >
-              <X size={18} />
-              <span>Hard (←)</span>
+              <X size={18} aria-hidden="true" />
+              <span>{t.quiz.hard}</span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -118,10 +120,10 @@ export default function Flashcard({ front, back, category, onNext }: FlashcardPr
                 e.stopPropagation()
                 handleFeedback("correct")
               }}
-              className="flex items-center gap-2 px-6 py-2 rounded-full bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
+              className="flex items-center gap-2 px-6 py-2 rounded-full bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
             >
-              <Check size={18} />
-              <span>Easy (→)</span>
+              <Check size={18} aria-hidden="true" />
+              <span>{t.quiz.easy}</span>
             </motion.button>
           </div>
         </div>

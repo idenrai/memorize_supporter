@@ -13,25 +13,16 @@
 mappings:
 
   # ── Architecture ───────────────────────────────────────────────────────────
-  # 소스 코드 변경 시 아키텍처 문서 참고
+  # 소스 코드 또는 스키마 변경 시 아키텍처 문서 참고
   - pattern: "src/**"
     doc: "doc/architecture.md"
   
-  - pattern: "app/**"
+  - pattern: "prisma/**"
     doc: "doc/architecture.md"
 
   # ── Configuration & Setup ──────────────────────────────────────────────────
   # 환경 및 의존성 설정 변경 시 셋업 문서 참고
   - pattern: "package.json"
-    doc: "doc/setup.md"
-
-  - pattern: "go.mod"
-    doc: "doc/setup.md"
-
-  - pattern: "requirements.txt"
-    doc: "doc/setup.md"
-
-  - pattern: "docker-compose.yml"
     doc: "doc/setup.md"
 
   - pattern: ".env*"

@@ -24,7 +24,7 @@ export default function ErrorBoundary({
         className="max-w-md w-full bg-[#1c1f26] border border-red-900/50 rounded-2xl p-8 flex flex-col items-center text-center shadow-2xl"
       >
         <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
-          <AlertCircle className="w-8 h-8 text-red-500" />
+          <AlertCircle className="w-8 h-8 text-red-500" aria-hidden="true" />
         </div>
         
         <h2 className="text-2xl font-bold text-gray-100 mb-2">Something went wrong!</h2>
@@ -35,13 +35,13 @@ export default function ErrorBoundary({
         <div className="flex gap-4">
           <button
             onClick={() => window.location.href = '/'}
-            className="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded-lg transition-colors font-medium text-sm"
+            className="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded-lg transition-colors font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
           >
             Go Home
           </button>
           <button
             onClick={() => reset()}
-            className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium text-sm"
+            className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
           >
             Try Again
           </button>

@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react"
 import { motion, useIsPresent } from "framer-motion"
 import { Check, X } from "lucide-react"
+import { useT } from "@/hooks/useT"
+import { formatText } from "@/lib/format"
 
 interface VocabularyCardProps {
   word: string
@@ -12,6 +14,7 @@ interface VocabularyCardProps {
 }
 
 export default function VocabularyCard({ word, meaning, example, onNext }: VocabularyCardProps) {
+  const t = useT()
   const [isFlipped, setIsFlipped] = useState(false)
   const [isFeedback, setIsFeedback] = useState<"correct" | "incorrect" | null>(null)
   const isPresent = useIsPresent()
@@ -75,13 +78,13 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
         {/* Front of the card */}
         <div className="absolute w-full h-full backface-hidden bg-[#1c1f26] border border-gray-800 rounded-2xl shadow-xl flex flex-col p-8 items-center justify-center hover:bg-[#232730] transition-colors">
           <div className="absolute top-6 left-8 text-xs font-semibold text-purple-500 uppercase tracking-wider">
-            Vocabulary
+            {t.quiz.vocabulary}
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-center text-gray-100 leading-relaxed tracking-tight">
-            {word}
+          <h2 className="text-4xl md:text-5xl font-bold text-center text-gray-100 leading-relaxed tracking-tight text-balance whitespace-pre-wrap">
+            {formatText(word)}
           </h2>
           <div className="absolute bottom-6 text-sm text-gray-500 animate-pulse">
-            Press any key to reveal
+            {t.quiz.clickToReveal}
           </div>
         </div>
 
@@ -92,10 +95,10 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
               isFeedback === 'incorrect' ? 'bg-red-900/30 border-red-500/50' : 'bg-[#1c1f26]'}`}
         >
           <div className="flex-1 flex flex-col items-center justify-center overflow-y-auto px-4">
-            <h3 className="text-3xl md:text-4xl font-semibold text-gray-100 mb-4">{meaning}</h3>
+            <h3 className="text-3xl md:text-4xl font-semibold text-gray-100 mb-4 whitespace-pre-wrap text-balance text-center">{formatText(meaning)}</h3>
             {example && (
-              <p className="text-lg text-gray-400 italic text-center mt-2 border-t border-gray-800/50 pt-4 w-full">
-                &quot;{example}&quot;
+              <p className="text-lg text-gray-400 italic text-center mt-2 border-t border-gray-800/50 pt-4 w-full whitespace-pre-wrap text-balance">
+                &quot;{formatText(example)}&quot;
               </p>
             )}
           </div>
@@ -108,10 +111,10 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
                 e.stopPropagation()
                 handleFeedback("incorrect")
               }}
-              className="flex items-center gap-2 px-6 py-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+              className="flex items-center gap-2 px-6 py-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
             >
-              <X size={18} />
-              <span>Hard (←)</span>
+              <X size={18} aria-hidden="true" />
+              <span>{t.quiz.hard}</span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -120,10 +123,10 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
                 e.stopPropagation()
                 handleFeedback("correct")
               }}
-              className="flex items-center gap-2 px-6 py-2 rounded-full bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
+              className="flex items-center gap-2 px-6 py-2 rounded-full bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
             >
-              <Check size={18} />
-              <span>Easy (→)</span>
+              <Check size={18} aria-hidden="true" />
+              <span>{t.quiz.easy}</span>
             </motion.button>
           </div>
         </div>

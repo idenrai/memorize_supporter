@@ -68,8 +68,8 @@ export async function updateProgress(cardId: string, isCorrect: boolean, deckId:
     }
 
     // 3. Cache Revalidation
-    revalidatePath(`/deck/${validDeckId}`)
-    revalidatePath('/') // also update the home page stats if any
+    // Use layout to revalidate everything under the root (including all /[lang]/...)
+    revalidatePath('/', 'layout')
     
     return { success: true }
   } catch (error) {

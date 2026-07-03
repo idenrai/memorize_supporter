@@ -1,9 +1,11 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { PracticeQuizContent } from "@/types/card"
 import { CheckCircle2, XCircle } from "lucide-react"
 import { useIsPresent } from "framer-motion"
+import { useT } from "@/hooks/useT"
+import { formatText } from "@/lib/format"
 
 interface Props {
   content: PracticeQuizContent
@@ -11,6 +13,7 @@ interface Props {
 }
 
 export default function PracticeQuizCard({ content, onNext }: Props) {
+  const t = useT()
   const [selectedIndices, setSelectedIndices] = useState<number[]>([])
   const [isFlipped, setIsFlipped] = useState(false)
   
@@ -79,11 +82,11 @@ export default function PracticeQuizCard({ content, onNext }: Props) {
   }, [handleSubmit, handleNext, isFlipped, isPresent])
 
   return (
-    <div className="w-full max-w-4xl h-[550px] sm:h-[700px] perspective-1000 select-none">
-      <div className={`relative w-full h-full transition-transform duration-500 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
+    <div className="w-full max-w-4xl min-h-[550px] sm:min-h-[700px] perspective-1000 select-none">
+      <div className={`relative grid w-full h-full transition-transform duration-500 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
         
         {/* FRONT SIDE (Question & Options) */}
-        <div className="absolute w-full h-full backface-hidden flex flex-col bg-[#1c1f26] border border-gray-800 rounded-2xl p-6 sm:p-10 shadow-xl overflow-y-auto hover:bg-[#232730] transition-colors">
+        <div className="[grid-area:1/1] w-full h-full backface-hidden flex flex-col bg-[#1c1f26] border border-gray-800 rounded-2xl p-6 sm:p-10 shadow-xl hover:bg-[#232730] transition-colors">
           <div className="text-xs font-semibold text-blue-500 mb-4 tracking-wider uppercase flex items-center justify-between">
             <span className="truncate max-w-[180px] sm:max-w-[300px]">{content.category || 'Practice Quiz'}</span>
             <span className="text-gray-500 shrink-0 ml-2">
@@ -91,8 +94,8 @@ export default function PracticeQuizCard({ content, onNext }: Props) {
             </span>
           </div>
           
-          <h2 className={`${content.question.length > 150 ? 'text-base sm:text-lg' : 'text-xl sm:text-2xl'} font-bold text-gray-100 mb-6 flex-shrink-0 leading-relaxed`}>
-            {content.question}
+          <h2 className={`${content.question.length > 300 ? 'text-sm sm:text-base' : content.question.length > 150 ? 'text-base sm:text-lg' : 'text-xl sm:text-2xl'} font-bold text-gray-100 mb-6 flex-shrink-0 leading-relaxed whitespace-pre-wrap text-balance`}>
+            {formatText(content.question)}
           </h2>
 
           <div className="flex flex-col gap-3 flex-1">
@@ -100,7 +103,7 @@ export default function PracticeQuizCard({ content, onNext }: Props) {
               <button
                 key={i}
                 onClick={() => toggleSelection(i)}
-                className={`text-left px-4 py-3 rounded-xl border transition-all flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 text-sm sm:text-base ${
+                className={`text-left px-4 py-3 rounded-xl border transition-colors flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 text-sm sm:text-base ${
                   selectedIndices.includes(i) 
                     ? 'border-blue-500 bg-blue-500/10 text-blue-300' 
                     : 'border-gray-800 hover:border-gray-600 text-gray-300 bg-black/20'
@@ -111,9 +114,9 @@ export default function PracticeQuizCard({ content, onNext }: Props) {
                 } ${
                   selectedIndices.includes(i) ? 'border-blue-500 bg-blue-500 text-white' : 'border-gray-600'
                 }`}>
-                  {selectedIndices.includes(i) && <CheckCircle2 size={14} />}
+                  {selectedIndices.includes(i) && <CheckCircle2 size={14} aria-hidden="true" />}
                 </div>
-                {opt}
+                <span className="whitespace-pre-wrap">{formatText(opt)}</span>
               </button>
             ))}
           </div>
@@ -124,37 +127,37 @@ export default function PracticeQuizCard({ content, onNext }: Props) {
               disabled={selectedIndices.length === 0}
               className="px-6 py-2 bg-blue-600 text-white font-medium rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-500 transition-colors"
             >
-              Submit
+              {t.quiz.submit}
             </button>
           </div>
         </div>
 
         {/* BACK SIDE (Result & Explanation) */}
-        <div className={`absolute w-full h-full backface-hidden [transform:rotateY(180deg)] flex flex-col border border-gray-800 rounded-2xl p-6 sm:p-10 shadow-xl overflow-y-auto bg-[#1c1f26]
+        <div className={`[grid-area:1/1] w-full h-full backface-hidden [transform:rotateY(180deg)] flex flex-col border border-gray-800 rounded-2xl p-6 sm:p-10 shadow-xl bg-[#1c1f26]
             ${isCorrect ? 'border-green-500/50' : 'border-red-500/50'}`}>
           
           <div className="flex flex-col items-center justify-center mb-6">
             {isCorrect ? (
               <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mb-4 text-green-400">
-                <CheckCircle2 size={32} />
+                <CheckCircle2 size={32} aria-hidden="true" />
               </div>
             ) : (
               <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-4 text-red-400">
-                <XCircle size={32} />
+                <XCircle size={32} aria-hidden="true" />
               </div>
             )}
             <h2 className={`text-2xl font-bold ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
-              {isCorrect ? 'Correct!' : 'Incorrect'}
+              {isCorrect ? t.quiz.correct : t.quiz.incorrect}
             </h2>
           </div>
 
           <div className="bg-black/30 rounded-xl p-4 mb-4 border border-gray-800">
-            <h3 className="text-sm text-gray-500 uppercase font-semibold mb-2">Correct Answer(s)</h3>
+            <h3 className="text-sm text-gray-500 uppercase font-semibold mb-2">{t.quiz.correctAnswers}</h3>
             <ul className="flex flex-col gap-2">
               {content.answers.map(ansIdx => (
                 <li key={ansIdx} className="text-gray-200 flex items-start gap-2">
-                  <div className="mt-1 text-green-400"><CheckCircle2 size={16} /></div>
-                  <span>{content.options[ansIdx]}</span>
+                  <div className="mt-1 text-green-400"><CheckCircle2 size={16} aria-hidden="true" /></div>
+                  <span className="whitespace-pre-wrap">{formatText(content.options[ansIdx])}</span>
                 </li>
               ))}
             </ul>
@@ -162,9 +165,9 @@ export default function PracticeQuizCard({ content, onNext }: Props) {
 
           {content.explanation && (
             <div className="bg-blue-900/10 rounded-xl p-4 border border-blue-900/30 flex-1">
-              <h3 className="text-xs sm:text-sm text-blue-500 uppercase font-semibold mb-2">Explanation</h3>
+              <h3 className="text-xs sm:text-sm text-blue-500 uppercase font-semibold mb-2">{t.quiz.explanation}</h3>
               <p className="text-gray-300 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
-                {content.explanation}
+                {formatText(content.explanation)}
               </p>
             </div>
           )}
@@ -178,7 +181,7 @@ export default function PracticeQuizCard({ content, onNext }: Props) {
                 }}
                 className="px-8 py-3 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-500 transition-colors"
               >
-                Next
+                {t.quiz.next}
               </button>
             </div>
           </div>
