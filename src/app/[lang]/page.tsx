@@ -1,5 +1,4 @@
-import Link from "next/link"
-import { Brain, ArrowRight, Library, Settings } from "lucide-react"
+import { Brain, Library, Settings } from "lucide-react"
 import DeckCard from "@/components/cards/DeckCard"
 import prisma from "@/lib/prisma"
 import { getT } from "@/i18n"

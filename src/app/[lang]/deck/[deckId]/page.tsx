@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma"
 import DeckPlayer from "@/components/cards/DeckPlayer"
 import { notFound } from "next/navigation"
-import { CardData, FlashcardContent, PracticeQuizContent, VocabularyContent } from "@/types/card"
+import { CardData } from "@/types/card"
 import { Metadata } from "next"
 import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSchema } from "@/lib/schemas"
 

@@ -13,7 +13,7 @@ export async function updateProgress(cardId: string, isCorrect: boolean, deckId:
       return { success: false, error: "Invalid parameters provided" }
     }
 
-    const { cardId: validCardId, isCorrect: validIsCorrect, deckId: validDeckId } = validated.data
+    const { cardId: validCardId, isCorrect: validIsCorrect } = validated.data
 
     // 2. Business Logic
     const existing = await prisma.learningProgress.findUnique({

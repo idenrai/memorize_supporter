@@ -7,7 +7,7 @@ import VocabularyCard from "./VocabularyCard"
 import PracticeQuizCard from "./PracticeQuizCard"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { CardData } from "@/types/card"
+import { CardData, FlashcardContent } from "@/types/card"
 import { updateProgress } from "@/actions/progress"
 import { useT } from "@/hooks/useT"
 import { useParams } from "next/navigation"
@@ -53,7 +53,7 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
     } else {
       setCompleted(true)
     }
-  }, [currentIndex, playingCards, deckId, completed])
+  }, [currentIndex, playingCards, deckId, completed, t.common])
 
   if (cards.length === 0) {
     return (
@@ -168,7 +168,7 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
           >
             {currentCard.type === 'flashcard' && (
               <Flashcard 
-              content={currentCard.content as any} 
+              content={currentCard.content as FlashcardContent} 
               onNext={handleNext} 
             />
             )}
