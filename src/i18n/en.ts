@@ -5,7 +5,7 @@ export const en: Translations = {
     backToHome: "Back to Dashboard",
     exit: "Exit",
     settings: "Settings",
-    loading: "Loading...",
+    loading: "Loading…",
     study: "Study",
     error: "An error occurred",
   },

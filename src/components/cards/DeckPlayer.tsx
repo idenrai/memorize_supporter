@@ -58,8 +58,8 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
   if (cards.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
-        <h2 className="text-xl text-gray-400 text-balance">{t.quiz.noCards}</h2>
-        <Link href={`/${lang}`} className="mt-4 text-blue-500 hover:underline flex items-center gap-2">
+        <h2 className="text-xl text-zinc-400 text-balance">{t.quiz.noCards}</h2>
+        <Link href={`/${lang}`} className="mt-4 text-teal-500 hover:underline flex items-center gap-2">
           <ArrowLeft size={16} aria-hidden="true" /> {t.common.backToHome}
         </Link>
       </div>
@@ -92,29 +92,29 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
           {accuracy >= 80 ? '🎉' : '🎯'}
         </div>
         <h2 className="text-3xl font-bold text-white text-balance">{t.quiz.quizCompleted}</h2>
-        <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 text-center space-y-2">
+        <div className="bg-zinc-900/50 rounded-2xl p-8 border border-zinc-800 text-center space-y-2">
           <p className="text-4xl font-black text-white">{accuracy}%</p>
-          <p className="text-gray-400">{t.quiz.youScored(correctCount, playingCards.length)}</p>
+          <p className="text-zinc-400">{t.quiz.youScored(correctCount, playingCards.length)}</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 mt-6">
           {incorrectIds.length > 0 && (
             <button 
               onClick={handleRetryIncorrect}
-              className="px-8 py-3 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-white rounded-full font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="px-8 py-3 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
             >
               {t.quiz.retryIncorrect(incorrectIds.length)}
             </button>
           )}
           <button 
             onClick={() => window.location.reload()}
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
           >
             {t.quiz.studyNewSession}
           </button>
         </div>
         
-        <Link href={`/${lang}`} className="text-gray-500 hover:text-gray-300 transition-colors mt-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 rounded px-2">
+        <Link href={`/${lang}`} className="text-zinc-500 hover:text-zinc-300 transition-colors mt-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded px-2">
           {t.quiz.backToDashboard}
         </Link>
       </motion.div>
@@ -127,7 +127,7 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
   if (!currentCard) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
-        <h2 className="text-xl text-gray-400">{t.common.loading}</h2>
+        <h2 className="text-xl text-zinc-400">{t.common.loading}</h2>
       </div>
     )
   }
@@ -136,22 +136,22 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
     <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto p-4 md:p-8">
       {/* Header / Progress */}
       <div className="flex items-center justify-between mb-12">
-        <Link href={`/${lang}`} aria-label={t.common.exit} className="text-gray-500 hover:text-white transition-colors flex items-center gap-2">
+        <Link href={`/${lang}`} aria-label={t.common.exit} className="text-zinc-500 hover:text-white transition-colors flex items-center gap-2">
           <ArrowLeft size={20} aria-hidden="true" />
           <span className="hidden md:inline">{t.common.exit}</span>
         </Link>
         <div className="flex-1 max-w-md mx-8">
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
             <motion.div 
-              className="h-full bg-blue-500"
+              className="h-full bg-teal-500"
               initial={{ width: 0 }}
               animate={{ width: `${((currentIndex + 1) / playingCards.length) * 100}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
         </div>
-        <div className="text-gray-400 font-medium tabular-nums">
-          {currentIndex + 1} <span className="text-gray-600">/ {playingCards.length}</span>
+        <div className="text-zinc-400 font-medium tabular-nums">
+          {currentIndex + 1} <span className="text-zinc-600">/ {playingCards.length}</span>
         </div>
       </div>
 

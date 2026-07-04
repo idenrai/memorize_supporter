@@ -16,7 +16,7 @@ interface DeckCardProps {
 
 const typeConfig: Record<string, { label: string, color: string, bg: string }> = {
   practice_quiz: { label: 'Practice Quiz', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
-  flashcard: { label: 'Flashcards', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
+  flashcard: { label: 'Flashcards', color: 'text-teal-400', bg: 'bg-teal-500/10 border-teal-500/20' },
   vocabulary: { label: 'Vocabulary', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
 }
 
@@ -44,7 +44,7 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
   }, [])
 
   return (
-    <div className="bg-[#1c1f26] border border-gray-800 rounded-2xl p-6 h-full flex flex-col hover:border-gray-700 hover:bg-[#232730] transition-colors relative group">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 h-full flex flex-col hover:border-zinc-700 hover:bg-zinc-800/80 transition-colors relative group">
       <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none z-0">
         <div className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full ${config.bg.split(' ')[0]}`}></div>
       </div>
@@ -55,37 +55,39 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
             {type === 'practice_quiz' ? t.quiz.practiceQuiz : type === 'vocabulary' ? t.quiz.vocabulary : t.quiz.flashcard}
           </div>
           
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 bg-[#1c1f26]/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-gray-800/50 shadow-sm">
-            <Layers size={14} className="text-gray-500" aria-hidden="true" />
-            {count} <span className="font-normal text-gray-500 hidden sm:inline">{t.home.cards}</span>
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400 bg-zinc-900/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-zinc-800/50 shadow-sm">
+            <Layers size={14} className="text-zinc-500" aria-hidden="true" />
+            {count} <span className="font-normal text-zinc-500 hidden sm:inline">{t.home.cards}</span>
           </div>
         </div>
-        <h3 className="text-2xl font-bold text-gray-100 mb-2 mt-4 line-clamp-2">{deckName}</h3>
-        <p className="text-sm text-gray-400 line-clamp-2 mb-4">
+        <h3 className="text-2xl font-bold text-zinc-100 mb-2 mt-4 line-clamp-2">{deckName}</h3>
+        <p className="text-sm text-zinc-400 line-clamp-2 mb-4">
           {description || t.home.defaultDesc(count)}
         </p>
       </div>
 
-      <div className="flex items-center justify-end text-sm mt-auto relative z-10 pt-4 border-t border-gray-800/50">
-        <div className="flex items-center bg-[#13151a] border border-gray-800 rounded-full p-1 shadow-sm relative">
+      <div className="flex items-center justify-end text-sm mt-auto relative z-10 pt-4 border-t border-zinc-800/80">
+        <div className="flex items-center bg-zinc-950 border border-zinc-800 rounded-full p-1 shadow-sm relative">
           <div className="relative" ref={dropdownRef}>
             <button 
               onClick={(e) => { e.preventDefault(); setShowDropdown(!showDropdown) }}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-gray-400 hover:text-gray-200 transition-colors text-xs font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 whitespace-nowrap rounded-full hover:bg-white/5"
+              aria-expanded={showDropdown}
+              aria-haspopup="true"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-zinc-400 hover:text-zinc-200 transition-colors text-xs font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/50 whitespace-nowrap rounded-full hover:bg-white/5"
             >
               {limit === count ? t.home.allCards : `${limit} ${t.home.cards}`} <ChevronDown size={14} className={`transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} aria-hidden="true" />
             </button>
             
             {showDropdown && (
-              <div className="absolute bottom-full right-0 mb-3 bg-[#2a2f3a] border border-gray-700 rounded-xl shadow-2xl p-1.5 z-50 min-w-[110px] flex flex-col gap-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+              <div className="absolute bottom-full right-0 mb-3 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl p-1.5 z-50 min-w-[110px] flex flex-col gap-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
                 {limits.map((l, i) => (
                   <button
                     key={i}
                     onClick={(e) => { e.preventDefault(); setLimit(l); setShowDropdown(false) }}
                     className={`px-4 py-2 text-left text-sm rounded-lg transition-colors ${
                       limit === l 
-                        ? 'bg-blue-500/20 text-blue-400 font-medium' 
-                        : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                        ? 'bg-teal-500/20 text-teal-400 font-medium' 
+                        : 'text-zinc-300 hover:bg-white/5 hover:text-white'
                     }`}
                   >
                     {l === count ? t.home.allCards : l}
@@ -95,11 +97,11 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
             )}
           </div>
 
-          <div className="w-px h-4 bg-gray-700 mx-1"></div>
+          <div className="w-px h-4 bg-zinc-700 mx-1"></div>
 
           <Link 
             href={`/${lang}/deck/${deck}?limit=${limit}`}
-            className="flex items-center justify-center min-w-[70px] px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-colors text-xs font-bold uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-lg shadow-blue-900/30"
+            className="flex items-center justify-center min-w-[70px] px-4 py-1.5 bg-teal-600 text-white rounded-full hover:bg-teal-500 transition-colors text-xs font-bold uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-teal-500/50 shadow-lg shadow-teal-900/30"
           >
             {t.common.study}
           </Link>

@@ -5,7 +5,7 @@ export const ko: Translations = {
     backToHome: "대시보드로 돌아가기",
     exit: "종료",
     settings: "설정",
-    loading: "로딩 중...",
+    loading: "로딩 중…",
     study: "학습하기",
     error: "오류가 발생했습니다",
   },
