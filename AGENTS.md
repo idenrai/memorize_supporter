@@ -34,7 +34,7 @@
 AI가 특정 도구나 기능이 필요할 때 로드하세요.
 - 프로젝트 인덱싱 및 컨텍스트 파악 필요 시: `.agents/skills/indexing-awareness/SKILL.md` 읽기
 - 현재 날짜 및 시간 파악 필요 시 (지식 컷오프 회피): `.agents/skills/knowledge-cutoff-awareness/SKILL.md` 읽기
-- AI 프롬프트 작성, 개선 및 프롬프트 엔지니어링 필요 시: `.agents/skills/prompt-engineering/SKILL.md` 읽기
+- AI 프롬프트 작성, 개선 및 프롬프트 엔지니어링 필요 시: `.agents/skills/prompt-engineering/SKILL.md` 및 `.agents/skills/prompt-engineering-patterns/SKILL.md` 읽기
 - **UI/UX 설계 및 프론트엔드 디자인 기획 시:** `.agents/skills/ui-ux-pro-max/SKILL.md` 및 `.agents/skills/frontend-design/SKILL.md` 읽기
 - **디자인 가이드라인 준수 여부 및 시각적 버그 감사 시:** `.agents/skills/web-design-guidelines/SKILL.md`, `.agents/skills/agent-browser/SKILL.md`, `.agents/skills/before-and-after/SKILL.md` 적극 활용
 - **Next.js 앱 라우터(App Router), 서버 컴포넌트 및 데이터 패칭 설계 시:** `.agents/skills/nextjs-best-practices/SKILL.md` 읽기

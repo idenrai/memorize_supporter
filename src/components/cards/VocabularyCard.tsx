@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, useIsPresent } from "framer-motion"
 import { Check, X } from "lucide-react"
 import { useT } from "@/hooks/useT"
@@ -36,36 +36,43 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
   }, [isFlipped, isFeedback, onNext])
 
   // Keyboard Navigation: Any key to flip (if not flipped), Arrows to rate
+  const containerRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
+    if (isPresent) {
+      containerRef.current?.focus()
+    }
+  }, [isPresent])
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isPresent) return
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Prevent triggering if typing in inputs
-      const target = e.target as HTMLElement
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-        return
-      }
-
-      if (!isFlipped) {
-        e.preventDefault()
-        handleFlip()
-      } else {
-        if (e.code === 'ArrowLeft' && !isFeedback) {
-          e.preventDefault()
-          handleFeedback("incorrect")
-        } else if (e.code === 'ArrowRight' && !isFeedback) {
-          e.preventDefault()
-          handleFeedback("correct")
-        }
-      }
+    const target = e.target as HTMLElement
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+      return
     }
 
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [handleFlip, handleFeedback, isFlipped, isFeedback, isPresent])
+    if (!isFlipped) {
+      e.preventDefault()
+      handleFlip()
+    } else {
+      if (e.code === 'ArrowLeft' && !isFeedback) {
+        e.preventDefault()
+        handleFeedback("incorrect")
+      } else if (e.code === 'ArrowRight' && !isFeedback) {
+        e.preventDefault()
+        handleFeedback("correct")
+      }
+    }
+  }
 
   return (
-    <div className="w-full max-w-2xl h-80 perspective-1000 select-none">
+    <div 
+      ref={containerRef}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      className="w-full max-w-2xl h-80 perspective-1000 select-none font-sans antialiased focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/50 rounded-2xl"
+    >
       <motion.div
         className="w-full h-full relative preserve-3d cursor-pointer"
         initial={false}
@@ -76,54 +83,54 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
         }}
       >
         {/* Front of the card */}
-        <div className="absolute w-full h-full backface-hidden bg-[#1c1f26] border border-gray-800 rounded-2xl shadow-xl flex flex-col p-8 items-center justify-center hover:bg-[#232730] transition-colors">
-          <div className="absolute top-6 left-8 text-xs font-semibold text-purple-500 uppercase tracking-wider">
+        <div className="absolute w-full h-full backface-hidden bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl flex flex-col p-8 items-center justify-center hover:border-zinc-700/80 transition-colors duration-300">
+          <div className="absolute top-6 left-8 text-xs font-semibold text-teal-500 uppercase tracking-wider">
             {t.quiz.vocabulary}
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-center text-gray-100 leading-relaxed tracking-tight text-balance whitespace-pre-wrap">
+          <h2 className="text-4xl md:text-5xl font-bold text-center text-zinc-200 leading-relaxed tracking-tight text-balance whitespace-pre-wrap">
             {formatText(word)}
           </h2>
-          <div className="absolute bottom-6 text-sm text-gray-500 animate-pulse">
+          <div className="absolute bottom-6 text-sm text-zinc-500 animate-pulse">
             {t.quiz.clickToReveal}
           </div>
         </div>
 
         {/* Back of the card */}
         <div 
-          className={`absolute w-full h-full backface-hidden rotate-y-180 border border-gray-800 rounded-2xl shadow-xl flex flex-col p-8 justify-center
-            ${isFeedback === 'correct' ? 'bg-green-900/30 border-green-500/50' : 
-              isFeedback === 'incorrect' ? 'bg-red-900/30 border-red-500/50' : 'bg-[#1c1f26]'}`}
+          className={`absolute w-full h-full backface-hidden rotate-y-180 border rounded-2xl shadow-2xl flex flex-col p-8 justify-center
+            ${isFeedback === 'correct' ? 'bg-zinc-900 border-emerald-600/40' : 
+              isFeedback === 'incorrect' ? 'bg-zinc-900 border-rose-600/40' : 'bg-zinc-900 border-zinc-800'}`}
         >
           <div className="flex-1 flex flex-col items-center justify-center overflow-y-auto px-4">
-            <h3 className="text-3xl md:text-4xl font-semibold text-gray-100 mb-4 whitespace-pre-wrap text-balance text-center">{formatText(meaning)}</h3>
+            <h3 className="text-3xl md:text-4xl font-semibold text-zinc-200 mb-4 whitespace-pre-wrap text-balance text-center tracking-wide">{formatText(meaning)}</h3>
             {example && (
-              <p className="text-lg text-gray-400 italic text-center mt-2 border-t border-gray-800/50 pt-4 w-full whitespace-pre-wrap text-balance">
+              <p className="text-lg text-zinc-400 italic text-center mt-2 border-t border-zinc-800/80 pt-4 w-full whitespace-pre-wrap text-balance">
                 &quot;{formatText(example)}&quot;
               </p>
             )}
           </div>
           
-          <div className="h-16 flex items-center justify-center gap-6 pt-4 border-t border-gray-800/50 mt-4">
+          <div className="h-16 flex items-center justify-center gap-6 pt-4 border-t border-zinc-800/80 mt-4">
             <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={(e) => {
                 e.stopPropagation()
                 handleFeedback("incorrect")
               }}
-              className="flex items-center gap-2 px-6 py-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 font-medium"
             >
               <X size={18} aria-hidden="true" />
               <span>{t.quiz.hard}</span>
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={(e) => {
                 e.stopPropagation()
                 handleFeedback("correct")
               }}
-              className="flex items-center gap-2 px-6 py-2 rounded-full bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 font-medium"
             >
               <Check size={18} aria-hidden="true" />
               <span>{t.quiz.easy}</span>

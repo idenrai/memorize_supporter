@@ -40,12 +40,14 @@ This document defines the system architecture of the `memorize_supporter` projec
 **상태 관리 전략:**
 - 로컬 상태(`useState`)를 활용하여 현재 데크(Deck)의 학습 진행 상황과 플립 여부를 관리합니다. 복잡한 전역 상태 관리자(Redux 등)는 지양합니다.
 
-**Styling and Micro-animations:**
-- Focus-mode layout based on dark mode using Tailwind CSS.
+**Styling, Micro-animations, and Accessibility:**
+- Focus-mode layout based on a Zinc (background) and Teal (primary) dark mode theme using Tailwind CSS.
+- Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, ARIA attributes, and robust keyboard navigation focus states (`focus-visible`).
 - Provides visual feedback such as a 180-degree 3D flip and Scale Pop by integrating `framer-motion`.
 
-**스타일링 및 마이크로 애니메이션:**
-- Tailwind CSS를 활용한 다크 모드 포커스 레이아웃.
+**스타일링, 마이크로 애니메이션 및 접근성:**
+- Tailwind CSS를 활용하여 눈이 편안한 Zinc(배경)와 Teal(프라이머리) 기반의 다크 모드 포커스 레이아웃을 제공합니다.
+- Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, ARIA 속성 및 견고한 키보드 네비게이션 포커스 상태(`focus-visible`) 등 최고 수준의 접근성을 보장합니다.
 - `framer-motion`을 도입하여 180도 3D 플립, Scale Pop 등 시각적 피드백을 제공합니다.
 
 ## 3. Backend
