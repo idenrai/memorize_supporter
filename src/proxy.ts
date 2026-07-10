@@ -2,20 +2,18 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
-
-const locales = ["en", "ko", "ja"];
-const defaultLocale = "en";
+import { locales, defaultLocale } from "./i18n/settings";
 
 function getLocale(request: NextRequest): string {
   // First, check if there's a cookie
   const cookieLocale = request.cookies.get("lang")?.value;
-  if (cookieLocale && locales.includes(cookieLocale)) {
+  if (cookieLocale && (locales as readonly string[]).includes(cookieLocale)) {
     return cookieLocale;
   }
 
   // Then, check Accept-Language header
-  const negotiatorHeaders: Record<string, string> = {};
-  request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
+  const acceptLanguage = request.headers.get("accept-language");
+  const negotiatorHeaders: Record<string, string> = acceptLanguage ? { "accept-language": acceptLanguage } : {};
 
   const languages = new Negotiator({ headers: negotiatorHeaders }).languages();
 
@@ -26,7 +24,7 @@ function getLocale(request: NextRequest): string {
   }
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Check if there is any supported locale in the pathname
   const { pathname } = request.nextUrl;
   
@@ -36,7 +34,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/api') ||
     pathname.startsWith('/icon') ||
     pathname.startsWith('/apple-icon') ||
-    pathname.includes('.') // like /favicon.ico
+    /\.(xml|json|png|jpg|jpeg|gif|webp|ico|svg|txt)$/i.test(pathname)
   ) {
     return NextResponse.next();
   }
@@ -57,7 +55,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next)
-    '/((?!_next|api|icon|apple-icon|.*\\.).*)',
+    // Skip all internal paths (_next, api)
+    '/((?!_next|api).*)',
   ],
 };

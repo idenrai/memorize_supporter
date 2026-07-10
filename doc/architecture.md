@@ -33,6 +33,8 @@ This document defines the system architecture of the `memorize_supporter` projec
 **i18n Strategy (다국어 처리 전략):**
 - **URL as Single Source of Truth (SSoT):** Uses dynamic routing (`app/[lang]/...`) to manage the current language state. This prevents hydration errors caused by resolving language through cookies or local storage during SSR.
 - **다국어 처리 전략:** URL 기반 동적 라우팅(`app/[lang]/...`)을 단일 진실 공급원(SSoT)으로 활용합니다. 전역 상태 관리자(Zustand 등)를 배제하여 SSR 렌더링 시점의 쿠키 분석에 의존하지 않고, Hydration 에러를 원천 차단하는 가장 우아한 아키텍처를 채택했습니다.
+- **Locale Routing via Proxy:** Adheres to Next.js 16 conventions by using `src/proxy.ts` (replacing the deprecated `middleware.ts`) for dynamic locale routing. Locale constants are isolated in `src/i18n/settings.ts` to maintain a single source of truth across the application.
+- **프록시 기반 로캘 라우팅:** Next.js 16의 새로운 규칙에 따라 기존 `middleware.ts` 대신 `src/proxy.ts`를 사용하여 동적 로캘 라우팅을 처리합니다. 다국어 상수(locales)는 `src/i18n/settings.ts`로 분리하여 애플리케이션 전체에서 단일 진실 공급원으로 관리합니다.
 
 **State Management Strategy:**
 - Manages the learning progress and flip state of the current deck using local state (`useState`). Avoids using complex global state managers (like Redux).
