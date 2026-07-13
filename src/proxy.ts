@@ -28,17 +28,6 @@ export function proxy(request: NextRequest) {
   // Check if there is any supported locale in the pathname
   const { pathname } = request.nextUrl;
   
-  // Skip public files and API routes
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.startsWith('/icon') ||
-    pathname.startsWith('/apple-icon') ||
-    /\.(xml|json|png|jpg|jpeg|gif|webp|ico|svg|txt)$/i.test(pathname)
-  ) {
-    return NextResponse.next();
-  }
-
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
@@ -49,13 +38,14 @@ export function proxy(request: NextRequest) {
 
   // Redirect if there is no locale
   const locale = getLocale(request);
-  request.nextUrl.pathname = `/${locale}${pathname}`;
-  return NextResponse.redirect(request.nextUrl);
+  const url = request.nextUrl.clone();
+  url.pathname = `/${locale}${pathname}`;
+  return NextResponse.redirect(url);
 }
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next, api)
-    '/((?!_next|api).*)',
+    // Skip all internal paths (_next, api, public files)
+    '/((?!api|_next/static|_next/image|icon|apple-icon|favicon.ico|.*\\.(?:xml|json|png|jpg|jpeg|gif|webp|ico|svg|txt)$).*)',
   ],
 };

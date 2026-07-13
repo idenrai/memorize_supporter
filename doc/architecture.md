@@ -30,6 +30,15 @@ This document defines the system architecture of the `memorize_supporter` projec
 - Next.js (App Router) / React 19
 - Server Components(데이터 패칭: `app/[lang]/deck/[deckId]/page.tsx`)와 Client Components(인터랙션: `Flashcard.tsx`)를 명확히 분리하여 렌더링 성능을 최적화합니다.
 
+**Card Selection Strategy (카드 출제 전략):**
+- **Priority 1 (Unasked):** Cards with no learning history are presented first to ensure full coverage of the deck.
+- **Priority 2 (Incorrect):** Cards with a history of incorrect answers are prioritized next, sorted descending by their estimated failed count to target weaknesses.
+- **Priority 3 (General):** Cards perfectly answered are presented last, sorted ascending by their review count to solidify newer knowledge before re-testing heavily drilled cards.
+- **카드 출제 전략:** 
+  1순위(미출제 문제): 학습 기록이 없는 카드를 최우선 출제하여 덱 전체 커버리지를 확보합니다. 
+  2순위(오답 문제): 틀린 이력이 있는 카드를 추산된 '틀린 횟수'가 높은 순으로 배치하여 약점을 집중 타격합니다. 
+  3순위(일반 문제): 완벽히 맞힌 카드는 '풀이 횟수'가 적은 순으로 출제하여 우연히 맞힌 지식을 확실히 굳힌 뒤, 장기 기억화된 카드를 나중에 복습하도록 설계되었습니다.
+
 **i18n Strategy (다국어 처리 전략):**
 - **URL as Single Source of Truth (SSoT):** Uses dynamic routing (`app/[lang]/...`) to manage the current language state. This prevents hydration errors caused by resolving language through cookies or local storage during SSR.
 - **다국어 처리 전략:** URL 기반 동적 라우팅(`app/[lang]/...`)을 단일 진실 공급원(SSoT)으로 활용합니다. 전역 상태 관리자(Zustand 등)를 배제하여 SSR 렌더링 시점의 쿠키 분석에 의존하지 않고, Hydration 에러를 원천 차단하는 가장 우아한 아키텍처를 채택했습니다.

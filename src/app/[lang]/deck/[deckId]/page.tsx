@@ -49,17 +49,49 @@ export default async function DeckPage({ params, searchParams }: Props) {
   }
 
   // Sort logic: 
-  // 1. Cards with nextReviewAt <= now (due for review)
-  // 2. Cards with no progress (new cards)
-  // 3. Cards with nextReviewAt > now (not due yet)
-  const sortedRaw = rawCards.sort((a, b) => {
-    const aDue = a.progress?.nextReviewAt ? a.progress.nextReviewAt <= now : true
-    const bDue = b.progress?.nextReviewAt ? b.progress.nextReviewAt <= now : true
+  // Priority 1: Unasked cards (!progress or reviewCount === 0)
+  // Priority 2: Incorrect cards (successRate < 1), sorted by highest failed count
+  // Priority 3: General cards (successRate === 1 or unhandled), sorted by fewer reviewCounts then nextReviewAt
+  
+  const mappedRaw = rawCards.map(card => {
+    let category = 3;
+    let failedCount = 0;
+    const p = card.progress;
     
-    if (aDue && !bDue) return -1
-    if (!aDue && bDue) return 1
-    return 0
-  })
+    if (!p || p.reviewCount === 0) {
+      category = 1;
+    } else if (p.successRate !== null && p.successRate < 1) {
+      category = 2;
+      const rate = p.successRate || 0;
+      failedCount = Math.round(p.reviewCount * (1 - rate));
+    }
+
+    // null인 nextReviewAt은 당장 풀 문제가 아니라면 맨 뒤로 미룸 (Infinity)
+    const dateValue = p?.nextReviewAt?.getTime() || Infinity;
+    const reviewCount = p?.reviewCount || 0;
+
+    return { card, category, failedCount, reviewCount, dateValue };
+  });
+
+  mappedRaw.sort((a, b) => {
+    if (a.category !== b.category) {
+      return a.category - b.category;
+    }
+    
+    if (a.category === 2) {
+      if (a.failedCount !== b.failedCount) {
+        return b.failedCount - a.failedCount; // Descending
+      }
+    } else if (a.category === 3) {
+      if (a.reviewCount !== b.reviewCount) {
+        return a.reviewCount - b.reviewCount; // Ascending
+      }
+    }
+
+    return a.dateValue - b.dateValue;
+  });
+
+  const sortedRaw = mappedRaw.map(item => item.card);
 
   // Take requested limit
   const limitedCards = takeCount ? sortedRaw.slice(0, takeCount) : sortedRaw
