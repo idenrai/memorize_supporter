@@ -22,7 +22,7 @@ const typeConfig: Record<string, { label: string, color: string, bg: string }> =
 
 export default function DeckCard({ deck, deckName, description, type = 'flashcard', count, lang }: DeckCardProps) {
   const t = useT()
-  const [limit, setLimit] = useState(10)
+  const [limit, setLimit] = useState(Math.min(10, count))
   const [showDropdown, setShowDropdown] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 

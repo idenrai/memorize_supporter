@@ -12,6 +12,7 @@ model Deck {
   title       String
   description String?
   type        String
+  series      String?
   createdAt   DateTime @default(now())
 
   cards       Card[]

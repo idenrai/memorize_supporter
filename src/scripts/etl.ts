@@ -10,6 +10,7 @@ interface ParsedDeck {
   title: string
   description: string | null
   type: string
+  series: string | null
   cards: {
     id: string
     deck: string
@@ -31,6 +32,7 @@ async function processJson(filePath: string, deckId: string): Promise<ParsedDeck
   let title = deckId
   let description = null
   let type = 'flashcard'
+  let series = null
   let rawCards = []
 
   if (Array.isArray(data)) {
@@ -41,6 +43,7 @@ async function processJson(filePath: string, deckId: string): Promise<ParsedDeck
     title = data.title || deckId
     description = data.description || null
     type = data.type || 'flashcard'
+    series = data.series || null
     rawCards = data.cards
   } else {
     return null
@@ -97,6 +100,7 @@ async function processJson(filePath: string, deckId: string): Promise<ParsedDeck
     title,
     description,
     type,
+    series,
     cards
   }
 }
@@ -137,13 +141,15 @@ async function main() {
           update: {
             title: parsed.title,
             description: parsed.description,
-            type: parsed.type
+            type: parsed.type,
+            series: parsed.series
           },
           create: {
             id: deckId,
             title: parsed.title,
             description: parsed.description,
-            type: parsed.type
+            type: parsed.type,
+            series: parsed.series
           }
         })
 
