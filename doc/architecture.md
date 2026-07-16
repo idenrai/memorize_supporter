@@ -11,11 +11,13 @@ This document defines the system architecture of the `memorize_supporter` projec
 **목적:** 사용자가 플래시카드(핀포인트 팁), 객관식 문제, 영단어 등을 효율적으로 암기할 수 있도록 돕는 범용 암기 애플리케이션입니다. 인지 과학적 원리(Active Recall, Spaced Repetition)와 포커스 모드 디자인을 채택하여 학습 효율을 극대화합니다.
 
 **Core Components:**
+- `DeckGallery`: Client-side component for real-time deck search and series filtering, optimized with `useDeferredValue`.
 - `DeckPlayer`, `Flashcard`, `VocabularyCard`, `PracticeQuizCard`: Frontend interactive card renderer (handling micro-animations and feedback).
 - `SQLite & Prisma`: Lightweight data layer operating in an offline (local file) environment.
 - `ETL Script`: Data pipeline script that reads original documents (JSON), parses them, and pushes them (Upsert) into the DB.
 
 **핵심 컴포넌트:**
+- `DeckGallery`: `useDeferredValue`를 활용한 렌더링 최적화와 함께 실시간 덱 검색 및 시리즈 필터링을 담당하는 클라이언트 컴포넌트
 - `DeckPlayer` 및 세부 카드 컴포넌트들: 프론트엔드 인터랙티브 카드 렌더러 (마이크로 애니메이션, 피드백 처리)
 - `SQLite & Prisma`: 오프라인(로컬 파일) 환경에서 동작하는 경량 데이터 레이어
 - `ETL Script`: 원본 문서(JSON)를 읽고 파싱하여 DB에 밀어넣는(Upsert) 데이터 파이프라인 스크립트

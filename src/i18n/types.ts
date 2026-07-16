@@ -20,11 +20,15 @@ export interface Translations {
     subtitle: string;
     description: string;
     yourDecks: string;
+    uncategorized: string;
     welcomeTitle: string;
     welcomeDesc: string;
     howToAdd: string;
     cards: string;
     allCards: string;
+    searchDecks: string;
+    allSeries: string;
+    noSearchResults: string;
     defaultDesc: (count: number) => string;
   };
   quiz: {
