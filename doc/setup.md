@@ -36,13 +36,15 @@ npm run etl
 ```
 > **참고**: 데이터베이스 파일은 프로젝트 루트의 `.data/memorize.sqlite` 위치에 생성되며, Git의 추적을 받지 않습니다.
 
-## 5. 로컬 서버 실행 (Running Locally)
-설정이 완료되면 개발 서버를 실행합니다.
+## 5. Running Locally
+
+Start the development server. The browser will automatically open `http://localhost:3000` once the server is ready.
+
+설정이 완료되면 개발 서버를 실행합니다. 서버 구동이 완료되면 시스템 기본 브라우저가 자동으로 열리며 `http://localhost:3000` 페이지에 접속됩니다.
 
 ```bash
 npm run dev
 ```
-브라우저에서 `http://localhost:3000`에 접속하여 애플리케이션을 사용할 수 있습니다.
 
 ## 6. 문제 해결 (Troubleshooting)
 데이터베이스 스키마를 직접 변경했거나 전체 학습 기록을 깔끔하게 초기화하고 싶은 경우 아래의 명령어를 사용하세요.
