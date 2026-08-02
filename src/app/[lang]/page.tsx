@@ -52,7 +52,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           </p>
         </div>
 
-        <DeckGallery decks={decks} lang={lang} />
+        <DeckGallery decks={decks} lang={lang as Lang} />
       </main>
     </div>
   )

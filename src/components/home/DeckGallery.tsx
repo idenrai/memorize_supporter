@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useDeferredValue } from "react"
+import { useState, useMemo, useDeferredValue, useCallback } from "react"
 import { Search, Library } from "lucide-react"
 import DeckCard from "@/components/cards/DeckCard"
 import { useT } from "@/hooks/useT"
@@ -18,7 +18,7 @@ export type Deck = {
 
 interface DeckGalleryProps {
   decks: Deck[];
-  lang: string;
+  lang: Lang;
 }
 
 export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
@@ -26,18 +26,21 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const deferredSearchQuery = useDeferredValue(searchQuery)
   const [selectedSeries, setSelectedSeries] = useState<string>("all")
+  const isStale = searchQuery !== deferredSearchQuery;
+
+  const sortSeries = useCallback((a: string, b: string) => {
+    if (a === t.home.uncategorized) return 1;
+    if (b === t.home.uncategorized) return -1;
+    return a.localeCompare(b);
+  }, [t.home.uncategorized]);
 
   const uniqueSeries = useMemo(() => {
     const seriesSet = new Set<string>()
     decks.forEach(deck => {
       seriesSet.add(deck.series || t.home.uncategorized)
     })
-    return Array.from(seriesSet).sort((a, b) => {
-      if (a === t.home.uncategorized) return 1;
-      if (b === t.home.uncategorized) return -1;
-      return a.localeCompare(b);
-    })
-  }, [decks, t.home.uncategorized])
+    return Array.from(seriesSet).sort(sortSeries)
+  }, [decks, sortSeries, t.home.uncategorized])
 
   const filteredDecks = useMemo(() => {
     return decks.filter(deck => {
@@ -59,15 +62,15 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
       return acc;
     }, {} as Record<string, typeof decks>);
 
-    return Object.keys(grouped).sort((a, b) => {
-      if (a === t.home.uncategorized) return 1;
-      if (b === t.home.uncategorized) return -1;
-      return a.localeCompare(b);
-    }).reduce((acc, key) => {
-      acc[key] = grouped[key];
-      return acc;
-    }, {} as Record<string, typeof decks>);
-  }, [filteredDecks, t.home.uncategorized])
+    return Object.keys(grouped)
+      .sort(sortSeries)
+      .map((key) => {
+        const sortedDecks = grouped[key].sort((a, b) => 
+          a.title.localeCompare(b.title, undefined, { numeric: true })
+        );
+        return [key, sortedDecks] as [string, typeof decks];
+      });
+  }, [filteredDecks, sortSeries, t.home.uncategorized])
 
   if (decks.length === 0) {
     return (
@@ -116,6 +119,7 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none w-full">
             <button
               onClick={() => setSelectedSeries("all")}
+              aria-pressed={selectedSeries === "all"}
               className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                 selectedSeries === "all" 
                   ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" 
@@ -128,6 +132,7 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
               <button
                 key={series}
                 onClick={() => setSelectedSeries(series)}
+                aria-pressed={selectedSeries === series}
                 className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   selectedSeries === series 
                     ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" 
@@ -147,24 +152,23 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
         <h3>{t.home.yourDecks}</h3>
       </div>
 
-      {filteredDecks.length === 0 ? (
-        <div className="text-center p-12 bg-zinc-900/30 border border-zinc-800/50 rounded-3xl mt-2 w-full">
-          <Search size={32} className="text-zinc-600 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-zinc-300 mb-2">{t.home.noSearchResults}</h3>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-12 w-full">
-          {Object.entries(groupedDecks).map(([seriesName, seriesDecks]) => (
-            <div key={seriesName} className="mb-2">
-              <div className="flex items-center gap-2 mb-6 text-zinc-300 font-medium border-b border-zinc-800/80 pb-3">
-                <h3 className="text-xl font-semibold text-white">
-                  {seriesName}
-                </h3>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {seriesDecks
-                  .sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }))
-                  .map((deck) => (
+      <div className={`w-full transition-opacity duration-200 ${isStale ? "opacity-50" : "opacity-100"}`}>
+        {filteredDecks.length === 0 ? (
+          <div className="text-center p-12 bg-zinc-900/30 border border-zinc-800/50 rounded-3xl mt-2 w-full">
+            <Search size={32} className="text-zinc-600 mx-auto mb-4" aria-hidden="true" />
+            <h3 className="text-xl font-semibold text-zinc-300 mb-2">{t.home.noSearchResults}</h3>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-12 w-full">
+            {groupedDecks.map(([seriesName, seriesDecks]) => (
+              <div key={seriesName} className="mb-2">
+                <div className="flex items-center gap-2 mb-6 text-zinc-300 font-medium border-b border-zinc-800/80 pb-3">
+                  <h4 className="text-xl font-semibold text-white">
+                    {seriesName}
+                  </h4>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {seriesDecks.map((deck) => (
                     <DeckCard 
                       key={deck.id} 
                       deck={deck.id} 
@@ -172,14 +176,15 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
                       deckName={deck.title} 
                       description={deck.description}
                       type={deck.type}
-                      lang={lang as Lang}
+                      lang={lang}
                     />
                   ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
