@@ -44,27 +44,35 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
   }, [])
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 h-full flex flex-col hover:border-zinc-700 hover:bg-zinc-800/80 transition-colors relative group">
-      <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none z-0">
-        <div className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full ${config.bg.split(' ')[0]}`}></div>
-      </div>
+    <div className="group relative h-full flex flex-col rounded-3xl p-[1px] overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/20">
+      {/* Animated gradient border background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black opacity-100 transition-opacity duration-300 group-hover:opacity-0" />
+      <div className={`absolute inset-0 bg-gradient-to-br from-blue-500/40 via-purple-500/40 to-teal-500/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 blur-md`} />
       
-      <div className="flex-1 relative z-10">
-        <div className="flex justify-between items-start mb-2">
-          <div className={`text-xs font-semibold px-2 py-1 rounded-md border uppercase tracking-wider ${config.color} ${config.bg}`}>
-            {type === 'practice_quiz' ? t.quiz.practiceQuiz : type === 'vocabulary' ? t.quiz.vocabulary : t.quiz.flashcard}
-          </div>
-          
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400 bg-zinc-900/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-zinc-800/50 shadow-sm">
-            <Layers size={14} className="text-zinc-500" aria-hidden="true" />
-            {count} <span className="font-normal text-zinc-500 hidden sm:inline">{t.home.cards}</span>
-          </div>
+      {/* Inner Card Content */}
+      <div className="relative h-full flex flex-col bg-zinc-950/90 backdrop-blur-xl rounded-[23px] p-6 border border-white/5">
+        <div className="absolute inset-0 overflow-hidden rounded-[23px] pointer-events-none z-0">
+          <div className={`absolute -top-12 -right-12 w-40 h-40 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 ${config.bg.split(' ')[0]}`}></div>
         </div>
-        <h3 className="text-2xl font-bold text-zinc-100 mb-2 mt-4 line-clamp-2">{deckName}</h3>
-        <p className="text-sm text-zinc-400 line-clamp-2 mb-4">
-          {description || t.home.defaultDesc(count)}
-        </p>
-      </div>
+        
+        <div className="flex-1 relative z-10">
+          <div className="flex justify-between items-start mb-4">
+            <div className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest ${config.color} bg-white/5 border border-white/10 shadow-inner backdrop-blur-md`}>
+              {type === 'practice_quiz' ? t.quiz.practiceQuiz : type === 'vocabulary' ? t.quiz.vocabulary : t.quiz.flashcard}
+            </div>
+            
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300 bg-white/5 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 shadow-inner">
+              <Layers size={14} className="text-blue-400" aria-hidden="true" />
+              {count} <span className="font-medium text-zinc-500 hidden sm:inline">{t.home.cards}</span>
+            </div>
+          </div>
+          <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-400 mb-2 mt-4 line-clamp-2 leading-tight group-hover:from-white group-hover:to-zinc-300 transition-colors">
+            {deckName}
+          </h3>
+          <p className="text-sm text-zinc-400/80 line-clamp-2 mb-4 leading-relaxed font-medium">
+            {description || t.home.defaultDesc(count)}
+          </p>
+        </div>
 
       <div className="flex items-center justify-end text-sm mt-auto relative z-10 pt-4 border-t border-zinc-800/80">
         <div className="flex items-center bg-zinc-950 border border-zinc-800 rounded-full p-1 shadow-sm relative">
@@ -101,11 +109,12 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
 
           <Link 
             href={`/${lang}/deck/${deck}?limit=${limit}`}
-            className="flex items-center justify-center min-w-[70px] px-4 py-1.5 bg-teal-600 text-white rounded-full hover:bg-teal-500 transition-colors text-xs font-bold uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-teal-500/50 shadow-lg shadow-teal-900/30"
+            className="flex items-center justify-center min-w-[70px] px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-colors text-xs font-bold uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-lg shadow-blue-900/30"
           >
             {t.common.study}
           </Link>
         </div>
+      </div>
       </div>
     </div>
   )

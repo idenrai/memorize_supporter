@@ -14,8 +14,12 @@ model Deck {
   type        String
   series      String?
   createdAt   DateTime @default(now())
+  isSystem    Boolean  @default(false)
+  isHidden    Boolean  @default(false)
 
   cards       Card[]
+
+  @@index([isSystem, createdAt])
 }
 
 model Card {

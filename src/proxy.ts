@@ -39,7 +39,7 @@ export function proxy(request: NextRequest) {
   // Redirect if there is no locale
   const locale = getLocale(request);
   const url = request.nextUrl.clone();
-  url.pathname = `/${locale}${pathname}`;
+  url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`;
   return NextResponse.redirect(url);
 }
 

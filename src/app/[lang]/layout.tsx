@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import type { Lang } from "@/i18n/types";
 import { Toaster } from "sonner";
+import Header from "@/components/layout/Header";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -45,6 +46,7 @@ export default async function RootLayout({
   return (
     <html lang={initialLang} className="dark">
       <body className={`${inter.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}>
+        <Header lang={initialLang} />
         {children}
         <Toaster theme="dark" position="bottom-right" />
       </body>

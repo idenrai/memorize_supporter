@@ -142,14 +142,16 @@ async function main() {
             title: parsed.title,
             description: parsed.description,
             type: parsed.type,
-            series: parsed.series
+            series: parsed.series,
+            isSystem: true
           },
           create: {
             id: deckId,
             title: parsed.title,
             description: parsed.description,
             type: parsed.type,
-            series: parsed.series
+            series: parsed.series,
+            isSystem: true
           }
         })
 
