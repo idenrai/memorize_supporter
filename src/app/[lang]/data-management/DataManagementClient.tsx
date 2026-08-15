@@ -198,27 +198,27 @@ export default function DataManagementClient({ initialDecks, lang }: { initialDe
   };
 
   return (
-    <div className="bg-zinc-950/50 backdrop-blur-xl rounded-3xl p-6 md:p-8 border border-white/5 shadow-2xl relative overflow-hidden">
+    <div className="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-transparent pointer-events-none" />
       
       {/* Upload Section */}
       <div 
         className={`relative z-10 mb-10 p-8 rounded-2xl border-2 border-dashed transition-all duration-300 text-center group ${
           isDragging 
-            ? 'bg-blue-500/10 border-blue-400 scale-[1.02]' 
-            : 'bg-white/5 border-white/10 hover:border-blue-500/50'
+            ? 'bg-indigo-500/10 border-indigo-400 scale-[1.02] shadow-[0_0_30px_rgba(99,102,241,0.3)] ring-4 ring-indigo-500/20' 
+            : 'bg-white/5 border-white/10 hover:border-indigo-500/50 hover:bg-indigo-500/5'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <Upload aria-hidden="true" className={`mx-auto h-12 w-12 mb-4 transition-all duration-300 ${isDragging ? 'text-blue-400 scale-125' : 'text-zinc-500 group-hover:text-blue-400 group-hover:scale-110'}`} />
+        <Upload aria-hidden="true" className={`mx-auto h-12 w-12 mb-4 transition-all duration-300 ${isDragging ? 'text-indigo-400 scale-125 animate-bounce' : 'text-zinc-500 group-hover:text-indigo-400 group-hover:scale-110'}`} />
         <h3 className="text-lg font-bold text-zinc-100 mb-2">{t.management.uploadData}</h3>
         <p className="text-sm text-zinc-400 mb-6 text-balance">
           {t.management.selectJsonFile}
         </p>
         <div>
-          <label className="cursor-pointer inline-flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-full font-bold transition-all shadow-lg shadow-blue-900/20 hover:shadow-blue-900/40 focus-within:ring-2 focus-within:ring-blue-500/50">
+          <label className="cursor-pointer px-6 py-2.5 rounded-full text-base btn-indigo">
             {isPending ? t.management.uploading : t.management.chooseFile}
             <input 
               type="file" 

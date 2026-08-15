@@ -44,10 +44,10 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
   }, [])
 
   return (
-    <div className="group relative h-full flex flex-col rounded-3xl p-[1px] overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/20">
+    <div className="group relative h-full flex flex-col rounded-3xl p-[1px] overflow-hidden hover-glow-indigo">
       {/* Animated gradient border background */}
       <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black opacity-100 transition-opacity duration-300 group-hover:opacity-0" />
-      <div className={`absolute inset-0 bg-gradient-to-br from-blue-500/40 via-purple-500/40 to-teal-500/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 blur-md`} />
+      <div className={`absolute inset-0 bg-gradient-to-br from-indigo-500/40 via-blue-500/30 to-teal-500/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 blur-md`} />
       
       {/* Inner Card Content */}
       <div className="relative h-full flex flex-col bg-zinc-950/90 backdrop-blur-xl rounded-[23px] p-6 border border-white/5">
@@ -66,10 +66,10 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
               {count} <span className="font-medium text-zinc-500 hidden sm:inline">{t.home.cards}</span>
             </div>
           </div>
-          <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-400 mb-2 mt-4 line-clamp-2 leading-tight group-hover:from-white group-hover:to-zinc-300 transition-colors">
+          <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-300 mb-2 mt-4 line-clamp-2 leading-tight group-hover:from-white group-hover:to-zinc-200 transition-colors">
             {deckName}
           </h3>
-          <p className="text-sm text-zinc-400/80 line-clamp-2 mb-4 leading-relaxed font-medium">
+          <p className="text-sm text-zinc-400 line-clamp-2 mb-4 leading-relaxed font-medium">
             {description || t.home.defaultDesc(count)}
           </p>
         </div>
@@ -109,7 +109,7 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
 
           <Link 
             href={`/${lang}/deck/${deck}?limit=${limit}`}
-            className="flex items-center justify-center min-w-[70px] px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-colors text-xs font-bold uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-lg shadow-blue-900/30"
+            className="min-w-[70px] px-4 py-1.5 rounded-full text-xs uppercase tracking-wider btn-indigo"
           >
             {t.common.study}
           </Link>
