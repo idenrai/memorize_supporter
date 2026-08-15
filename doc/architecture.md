@@ -54,14 +54,24 @@ This document defines the system architecture of the `memorize_supporter` projec
 - 로컬 상태(`useState`)를 활용하여 현재 데크(Deck)의 학습 진행 상황과 플립 여부를 관리합니다. 복잡한 전역 상태 관리자(Redux 등)는 지양합니다.
 
 **Styling, Micro-animations, and Accessibility:**
-- Focus-mode layout based on a Zinc (background) and Teal (primary) dark mode theme using Tailwind CSS.
-- Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, ARIA attributes, and robust keyboard navigation focus states (`focus-visible`).
+- Focus-mode layout based on a Zinc (background) and Teal/Indigo (primary) dark mode theme using Tailwind CSS.
+- Enhances code readability and maintainability by defining global semantic utility classes (e.g., `.glass-panel`, `.btn-indigo`) in `globals.css` via `@apply`.
+- Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, ARIA attributes, robust keyboard navigation focus states (`focus-visible`), and touch feedback (`active:scale-95`).
 - Provides visual feedback such as a 180-degree 3D flip and Scale Pop by integrating `framer-motion`.
 
 **스타일링, 마이크로 애니메이션 및 접근성:**
-- Tailwind CSS를 활용하여 눈이 편안한 Zinc(배경)와 Teal(프라이머리) 기반의 다크 모드 포커스 레이아웃을 제공합니다.
-- Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, ARIA 속성 및 견고한 키보드 네비게이션 포커스 상태(`focus-visible`) 등 최고 수준의 접근성을 보장합니다.
+- Tailwind CSS를 활용하여 눈이 편안한 Zinc(배경)와 Teal/Indigo(프라이머리) 기반의 다크 모드 포커스 레이아웃을 제공합니다.
+- `globals.css` 파일에 `@apply`를 활용하여 시맨틱한 글로벌 유틸리티 클래스(`.glass-panel`, `.btn-indigo` 등)를 정의함으로써 컴포넌트 내 복잡한 스타일 코드를 분리하고 가독성을 높였습니다.
+- Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, ARIA 속성, 견고한 키보드 포커스(`focus-visible`), 그리고 모바일 터치 피드백(`active:scale-95`) 등 최고 수준의 접근성을 보장합니다.
 - `framer-motion`을 도입하여 180도 3D 플립, Scale Pop 등 시각적 피드백을 제공합니다.
+
+**PWA & Metadata Strategy:**
+- Implements a Progressive Web App (PWA) standard `manifest.ts` to seamlessly integrate with native device environments (e.g., theme color matching, standalone display).
+- Ensures cross-browser rendering reliability by using pure SVG `<linearGradient>` code for dynamic favicons (`icon.tsx`) and high-resolution Apple icons (`apple-icon.tsx`), bypassing Satori's nested SVG rendering limitations.
+
+**PWA 및 메타데이터 전략:**
+- Progressive Web App (PWA) 표준인 `manifest.ts`를 구현하여 네이티브 디바이스 환경(테마 색상 동기화, Standalone 디스플레이 등)에 자연스럽게 녹아들도록 구성했습니다.
+- 동적 파비콘(`icon.tsx`) 및 고해상도 애플 아이콘(`apple-icon.tsx`) 생성 시, Satori 엔진의 중첩 SVG 렌더링 한계를 회피하기 위해 순수 SVG `<linearGradient>` 코드를 단일 레이아웃과 조합하여 크로스 브라우징 렌더링 안정성을 확보했습니다.
 
 ## 3. Backend
 

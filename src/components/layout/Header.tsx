@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BookOpen, Database, FileJson, LayoutDashboard } from "lucide-react"
+import { Sparkles, Database, FileJson, LayoutDashboard } from "lucide-react"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import LanguageSwitch from "@/components/LanguageSwitch"
@@ -29,8 +29,8 @@ export default function Header({ lang }: { lang: Lang }) {
       {/* Left: Logo */}
       <div className="flex items-center gap-3">
         <Link href={`/${lang}`} className="group flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-            <BookOpen className="text-white w-5 h-5" aria-hidden="true" />
+          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 via-blue-500 to-teal-400 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30 ring-1 ring-white/20">
+            <Sparkles className="text-white w-5 h-5 drop-shadow-md" aria-hidden="true" />
           </div>
           <span className="text-lg font-bold tracking-tight text-white hidden md:block">
             {t.home.title}
