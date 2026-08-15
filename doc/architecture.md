@@ -82,8 +82,14 @@ This document defines the system architecture of the `memorize_supporter` projec
 **API 및 데이터 통신:**
 - 별도의 외부 REST API 서버 없이 Next.js의 Server Actions 또는 Prisma Client 직접 호출을 통해 데이터를 클라이언트에 공급합니다.
 - **보안 격리 정책:** 비즈니스 로직(Server Actions)은 라우터 공간인 `app/` 내부가 아닌, 완전히 분리된 `src/actions/` 디렉토리에 격리하여 보관합니다. 이를 통해 내부 함수가 외부의 퍼블릭 API 엔드포인트로 예기치 않게 노출되는 보안 위험(Security Risk)을 원천 차단합니다.
-- **Data Validation & Shared Schema:** Zod schemas (`src/schemas/deck.ts`) strictly validate the payload of server actions (limiting size to 5MB, arrays to 5000 items, and stripping unknown fields). These schemas are decoupled from actions for seamless reusability on the frontend.
-- **데이터 검증 및 공유 스키마:** Zod 스키마(`src/schemas/deck.ts`)가 서버 액션의 페이로드를 엄격하게 검증합니다(5MB 사이즈 제한, 5000개 배열 제한, 미식별 필드 제거). 프론트엔드에서의 원활한 재사용을 위해 스키마는 액션 로직으로부터 분리되어 있습니다.
+
+**Data Validation & Error Handling (Zero-Trust):**
+- **Action Wrapper (`safe-action.ts`):** All Server Actions are strictly wrapped by a centralized High-Order Component (HOC) that handles `try/catch` logic. This ensures a consistent `{ success, message, data }` response format across the entire application without duplicating error handling logic in every action.
+- **Shared Schema (Zod):** Client inputs are never trusted. Every payload (e.g., 5MB limit check, unknown field stripping) is strictly parsed through reusable Zod schemas (`src/lib/schemas.ts`, `src/schemas/deck.ts`) *before* reaching the business logic.
+
+**데이터 검증 및 에러 처리 (Zero-Trust):**
+- **액션 래퍼 (`safe-action.ts`):** 모든 Server Actions는 중앙화된 HOC(High-Order Component)로 감싸져 내부 `try/catch` 에러를 일괄 처리합니다. 이를 통해 모든 비즈니스 로직에서 에러 핸들링 코드를 제거하고, 애플리케이션 전체에 일관된 `{ success, message, data }` 형태의 응답을 보장합니다.
+- **공유 스키마 (Zod):** 클라이언트의 입력값은 절대 신뢰하지 않습니다. 5MB 용량 제한 검사부터 미식별 필드 제거까지, 모든 페이로드는 비즈니스 로직에 도달하기 전 반드시 재사용 가능한 Zod 스키마(`src/lib/schemas.ts`, `src/schemas/deck.ts`)를 통해 엄격하게 검증됩니다.
 
 **Database and ORM Integration:**
 - **SQLite:** Built locally at `.data/memorize.sqlite`. This file is excluded from Git tracking (`.gitignore`).

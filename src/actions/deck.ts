@@ -8,131 +8,130 @@ import { z } from 'zod'
 const prisma = new PrismaClient()
 
 import { DeckSchema } from '@/schemas/deck'
+import { actionClient } from '@/lib/safe-action'
+import { UploadDeckSchema, UpdateDeckDetailsSchema, ToggleVisibilitySchema, DeleteDeckSchema } from '@/lib/schemas'
 
-export async function uploadDeck(jsonData: string, fileName: string) {
+export const uploadDeck = actionClient(UploadDeckSchema, async ({ jsonData, fileName }) => {
+  let parsedData;
   try {
-    // Server-side payload size validation (5MB limit)
-    // 1 char is roughly 1 byte in standard ASCII JSON, taking a safe margin.
-    if (jsonData.length > 5 * 1024 * 1024) {
-      return { success: false, message: 'Payload too large (exceeds 5MB limit)' }
+    parsedData = JSON.parse(jsonData)
+  } catch (error) {
+    throw new Error('Invalid JSON format: Please check for syntax errors in your file.')
+  }
+
+  const deckId = fileName.replace(/\.json$/i, '')
+  
+  let rawData;
+  if (Array.isArray(parsedData)) {
+    rawData = {
+      title: deckId,
+      type: 'flashcard',
+      cards: parsedData
     }
-
-    const parsedData = JSON.parse(jsonData)
-    const deckId = fileName.replace(/\.json$/i, '')
-    
-    let rawData;
-    if (Array.isArray(parsedData)) {
-      rawData = {
-        title: deckId,
-        type: 'flashcard',
-        cards: parsedData
-      }
-    } else {
-      rawData = {
-        title: parsedData.title || deckId,
-        description: parsedData.description,
-        type: parsedData.type || 'flashcard',
-        series: parsedData.series,
-        cards: parsedData.cards || []
-      }
+  } else {
+    rawData = {
+      title: parsedData.title || deckId,
+      description: parsedData.description,
+      type: parsedData.type || 'flashcard',
+      series: parsedData.series,
+      cards: parsedData.cards || []
     }
+  }
 
-    const validatedData = DeckSchema.parse(rawData)
-
-    const cardsToInsert: { id: string; type: string; content: string }[] = []
-    for (const item of validatedData.cards) {
-      const cardType = item.type || validatedData.type
-
-      if (cardType === 'vocabulary' || (item.word && item.meaning)) {
-        const stableId = item.id ? String(item.id) : crypto.createHash('sha256').update(`${deckId}_vocabulary_${item.word}`).digest('hex').substring(0, 32)
-        cardsToInsert.push({
-          id: stableId,
-          type: 'vocabulary',
-          content: JSON.stringify({
-            word: item.word,
-            meaning: item.meaning,
-            example: item.example
-          })
-        })
-      } else if (cardType === 'practice_quiz' || cardType === 'multiple_choice' || (item.question && item.options)) {
-        const stableId = item.id ? String(item.id) : crypto.createHash('sha256').update(`${deckId}_quiz_${item.question}`).digest('hex').substring(0, 32)
-        cardsToInsert.push({
-          id: stableId,
-          type: 'practice_quiz',
-          content: JSON.stringify({
-            category: typeof item.category === 'string' ? item.category.trim() : item.category,
-            question: item.question,
-            options: item.options,
-            answers: item.answers || (item.answer !== undefined ? [item.answer] : []),
-            explanation: item.explanation
-          })
-        })
-      } else {
-        const stableId = item.id ? String(item.id) : crypto.createHash('sha256').update(`${deckId}_flashcard_${item.front}`).digest('hex').substring(0, 32)
-        cardsToInsert.push({
-          id: stableId,
-          type: 'flashcard',
-          content: JSON.stringify({
-            front: item.front,
-            back: item.back,
-            category: typeof item.category === 'string' ? item.category.trim() : item.category
-          })
-        })
-      }
+  let validatedData;
+  try {
+    validatedData = DeckSchema.parse(rawData)
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw new Error('Invalid data format: ' + error.issues.map((e: any) => e.message).join(', '))
     }
+    throw error;
+  }
 
-    await prisma.$transaction(async (tx) => {
-      await tx.deck.upsert({
-        where: { id: deckId },
-        update: {
-          title: validatedData.title,
-          description: validatedData.description,
-          type: validatedData.type,
-          series: validatedData.series,
-          isSystem: false
-        },
-        create: {
-          id: deckId,
-          title: validatedData.title,
-          description: validatedData.description,
-          type: validatedData.type,
-          series: validatedData.series,
-          isSystem: false
-        }
+  const cardsToInsert: { id: string; type: string; content: string }[] = []
+  for (const item of validatedData.cards) {
+    const cardType = item.type || validatedData.type
+
+    if (cardType === 'vocabulary' || (item.word && item.meaning)) {
+      const stableId = item.id ? String(item.id) : crypto.createHash('sha256').update(`${deckId}_vocabulary_${item.word}`).digest('hex').substring(0, 32)
+      cardsToInsert.push({
+        id: stableId,
+        type: 'vocabulary',
+        content: JSON.stringify({
+          word: item.word,
+          meaning: item.meaning,
+          example: item.example
+        })
       })
-
-      for (const card of cardsToInsert) {
-        await tx.card.upsert({
-          where: { id: card.id },
-          update: {
-            deck: deckId,
-            type: card.type,
-            content: card.content
-          },
-          create: {
-            id: card.id,
-            deck: deckId,
-            type: card.type,
-            content: card.content
-          }
+    } else if (cardType === 'practice_quiz' || cardType === 'multiple_choice' || (item.question && item.options)) {
+      const stableId = item.id ? String(item.id) : crypto.createHash('sha256').update(`${deckId}_quiz_${item.question}`).digest('hex').substring(0, 32)
+      cardsToInsert.push({
+        id: stableId,
+        type: 'practice_quiz',
+        content: JSON.stringify({
+          category: typeof item.category === 'string' ? item.category.trim() : item.category,
+          question: item.question,
+          options: item.options,
+          answers: item.answers || (item.answer !== undefined ? [item.answer] : []),
+          explanation: item.explanation
         })
+      })
+    } else {
+      const stableId = item.id ? String(item.id) : crypto.createHash('sha256').update(`${deckId}_flashcard_${item.front}`).digest('hex').substring(0, 32)
+      cardsToInsert.push({
+        id: stableId,
+        type: 'flashcard',
+        content: JSON.stringify({
+          front: item.front,
+          back: item.back,
+          category: typeof item.category === 'string' ? item.category.trim() : item.category
+        })
+      })
+    }
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.deck.upsert({
+      where: { id: deckId },
+      update: {
+        title: validatedData.title,
+        description: validatedData.description,
+        type: validatedData.type,
+        series: validatedData.series,
+        isSystem: false
+      },
+      create: {
+        id: deckId,
+        title: validatedData.title,
+        description: validatedData.description,
+        type: validatedData.type,
+        series: validatedData.series,
+        isSystem: false
       }
     })
 
-    revalidatePath('/')
-    revalidatePath('/data-management')
-    return { success: true, message: 'Data uploaded successfully!' }
-  } catch (error) {
-    console.error('Upload Error:', error)
-    if (error instanceof SyntaxError) {
-      return { success: false, message: 'Invalid JSON format: Please check for syntax errors in your file.' }
+    for (const card of cardsToInsert) {
+      await tx.card.upsert({
+        where: { id: card.id },
+        update: {
+          deck: deckId,
+          type: card.type,
+          content: card.content
+        },
+        create: {
+          id: card.id,
+          deck: deckId,
+          type: card.type,
+          content: card.content
+        }
+      })
     }
-    if (error instanceof z.ZodError) {
-      return { success: false, message: 'Invalid data format: ' + (error as any).errors.map((e: any) => e.message).join(', ') }
-    }
-    return { success: false, message: error instanceof Error ? error.message : 'Unknown error occurred' }
-  }
-}
+  })
+
+  revalidatePath('/')
+  revalidatePath('/data-management')
+  return { success: true, message: 'Data uploaded successfully!' }
+})
 
 export async function getDecks(includeHidden = false) {
   try {
@@ -155,100 +154,61 @@ export async function getDecks(includeHidden = false) {
   }
 }
 
-export async function toggleDeckVisibility(deckId: string, currentHidden: boolean) {
-  try {
-    await prisma.deck.update({
-      where: { id: deckId },
-      data: { isHidden: !currentHidden }
-    })
-    revalidatePath('/')
-    revalidatePath('/data-management')
-    return { success: true }
-  } catch (error) {
-    console.error('Failed to toggle visibility:', error)
-    return { success: false, message: 'Failed to update visibility' }
+export const toggleDeckVisibility = actionClient(ToggleVisibilitySchema, async ({ deckId, currentHidden }) => {
+  await prisma.deck.update({
+    where: { id: deckId },
+    data: { isHidden: !currentHidden }
+  })
+  revalidatePath('/')
+  revalidatePath('/data-management')
+  return { success: true, message: 'Visibility toggled' }
+})
+export const updateDeckDetails = actionClient(UpdateDeckDetailsSchema, async ({ deckId, title, series }) => {
+  const deck = await prisma.deck.findUnique({
+    where: { id: deckId }
+  })
+
+  if (!deck) {
+    throw new Error('Deck not found')
   }
-}
-export async function updateDeckDetails(deckId: string, data: { title: string, series: string }) {
-  try {
-    const deck = await prisma.deck.findUnique({
-      where: { id: deckId }
-    })
 
-    if (!deck) {
-      return { success: false, message: 'Deck not found' }
-    }
-
-    if (deck.isSystem) {
-      return { success: false, message: 'System data cannot be modified' }
-    }
-
-    if (!data.title || data.title.trim() === '') {
-      return { success: false, message: 'Title cannot be empty' }
-    }
-
-    if (data.title.length > 100) {
-      return { success: false, message: 'Title is too long (maximum 100 characters)' }
-    }
-
-    if (data.series && data.series.length > 50) {
-      return { success: false, message: 'Series name is too long (maximum 50 characters)' }
-    }
-
-    await prisma.deck.update({
-      where: { id: deckId },
-      data: {
-        title: data.title.trim(),
-        series: data.series ? data.series.trim() : ''
-      }
-    })
-
-    revalidatePath('/')
-    revalidatePath('/data-management')
-    return { success: true }
-  } catch (error) {
-    console.error('Failed to update deck details:', error)
-    return { success: false, message: 'Failed to update data' }
+  if (deck.isSystem) {
+    throw new Error('System data cannot be modified')
   }
-}
 
-export async function deleteDeck(deckId: string) {
-  try {
-    const deck = await prisma.deck.findUnique({
-      where: { id: deckId }
-    })
-
-    if (!deck) {
-      return { success: false, message: 'Deck not found' }
+  await prisma.deck.update({
+    where: { id: deckId },
+    data: {
+      title: title.trim(),
+      series: series ? series.trim() : ''
     }
+  })
 
-    if (deck.isSystem) {
-      return { success: false, message: 'System data cannot be deleted' }
-    }
+  revalidatePath('/')
+  revalidatePath('/data-management')
+  return { success: true, message: 'Deck updated successfully' }
+})
 
-    await prisma.$transaction(async (tx) => {
-      const cards = await tx.card.findMany({ where: { deck: deckId } })
-      const cardIds = cards.map(c => c.id)
+export const deleteDeck = actionClient(DeleteDeckSchema, async ({ deckId }) => {
+  const deck = await prisma.deck.findUnique({
+    where: { id: deckId }
+  })
 
-      if (cardIds.length > 0) {
-        await tx.learningProgress.deleteMany({
-          where: { cardId: { in: cardIds } }
-        })
-        await tx.card.deleteMany({
-          where: { deck: deckId }
-        })
-      }
-
-      await tx.deck.delete({
-        where: { id: deckId }
-      })
-    })
-
-    revalidatePath('/')
-    revalidatePath('/data-management')
-    return { success: true }
-  } catch (error) {
-    console.error('Failed to delete deck:', error)
-    return { success: false, message: 'Failed to delete data' }
+  if (!deck) {
+    throw new Error('Deck not found')
   }
-}
+
+  if (deck.isSystem) {
+    throw new Error('System data cannot be deleted')
+  }
+
+  // Thanks to onDelete: Cascade in schema.prisma, 
+  // this single call will automatically delete all associated Cards and LearningProgress!
+  await prisma.deck.delete({
+    where: { id: deckId }
+  })
+
+  revalidatePath('/')
+  revalidatePath('/data-management')
+  return { success: true, message: 'Deck deleted successfully' }
+})
