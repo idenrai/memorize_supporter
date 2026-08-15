@@ -38,7 +38,7 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
     
     // Server Action 호출 (UI 블로킹 없이 백그라운드 처리)
     try {
-      const result = await updateProgress(card.id, isCorrect, deckId)
+      const result = await updateProgress({ cardId: card.id, isCorrect, deckId })
       if (!result.success) {
         console.error("Failed to update progress:", result.error)
         toast.error(t.common?.error || "Failed to save progress")

@@ -36,7 +36,7 @@ model Card {
 model LearningProgress {
   id             String    @id @default(uuid())
   cardId         String    @unique
-  card           Card      @relation(fields: [cardId], references: [id])
+  card           Card      @relation(fields: [cardId], references: [id], onDelete: Cascade)
   reviewCount    Int       @default(0)
   lastReviewedAt DateTime?
   nextReviewAt   DateTime?

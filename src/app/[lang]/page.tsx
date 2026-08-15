@@ -25,7 +25,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const t = getT(lang as Lang)
 
   return (
-    <div className="flex flex-col items-center pt-24 md:pt-32 px-4 sm:px-8">
+    <div className="flex flex-col items-center pt-8 md:pt-12 px-4 sm:px-8">
       {/* Main Content */}
       <main className="w-full max-w-5xl flex flex-col items-center">
         <div className="mb-12 w-full text-center">

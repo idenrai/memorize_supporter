@@ -1,11 +1,12 @@
 "use client"
 
 import { useState, useMemo, useDeferredValue, useCallback } from "react"
-import { Search, Library, LayoutGrid, List as ListIcon } from "lucide-react"
-import DeckCard from "@/components/cards/DeckCard"
+import { Search, Library } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import type { Lang } from "@/i18n/types"
-import Link from "next/link"
+import SearchAndFilter from "./SearchAndFilter"
+import DeckGrid from "./DeckGrid"
+import DeckList from "./DeckList"
 
 export type Deck = {
   id: string;
@@ -107,77 +108,16 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
 
   return (
     <div className="flex flex-col gap-10 w-full">
-      {/* Search and Filter Controls */}
-      <div className="flex flex-col gap-3">
-        <div className="relative w-full group">
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-blue-500/10 to-teal-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-400 group-focus-within:animate-pulse w-5 h-5 pointer-events-none z-20 transition-colors" aria-hidden="true" />
-          <input 
-            type="text" 
-            name="search"
-            autoComplete="off"
-            placeholder={t.home.searchDecks} 
-            aria-label={t.home.searchDecks}
-            spellCheck={false}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="relative z-10 w-full bg-zinc-950/80 backdrop-blur-xl border border-white/10 focus:border-indigo-500/50 transition-all duration-300 rounded-2xl py-4 pl-14 pr-6 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 shadow-lg text-lg"
-          />
-        </div>
+      <SearchAndFilter 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        selectedSeries={selectedSeries}
+        setSelectedSeries={setSelectedSeries}
+        uniqueSeries={uniqueSeries}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+      />
 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-zinc-950/30 p-2.5 rounded-2xl border border-white/5 backdrop-blur-sm">
-          {uniqueSeries.length > 1 && (
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none w-full sm:w-auto px-1">
-              <button
-                onClick={() => setSelectedSeries("all")}
-                aria-pressed={selectedSeries === "all"}
-                className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                  selectedSeries === "all" 
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" 
-                    : "bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-                }`}
-              >
-                {t.home.allSeries}
-              </button>
-              {uniqueSeries.map(series => (
-                <button
-                  key={series}
-                  onClick={() => setSelectedSeries(series)}
-                  aria-pressed={selectedSeries === series}
-                  className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                    selectedSeries === series 
-                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" 
-                      : "bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-                  }`}
-                >
-                  {series}
-                </button>
-              ))}
-            </div>
-          )}
-
-          <div className="flex items-center bg-zinc-900/80 rounded-xl p-1 border border-zinc-800 shadow-inner ml-auto sm:ml-0">
-            <button
-              onClick={() => setViewMode("grid")}
-              title={t.home.viewModeGrid}
-              aria-pressed={viewMode === "grid"}
-              className={`p-2 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${viewMode === "grid" ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300"}`}
-            >
-              <LayoutGrid size={18} aria-hidden="true" />
-            </button>
-            <button
-              onClick={() => setViewMode("list")}
-              title={t.home.viewModeList}
-              aria-pressed={viewMode === "list"}
-              className={`p-2 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${viewMode === "list" ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300"}`}
-            >
-              <ListIcon size={18} aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Decks Grid */}
       <div className="flex items-center gap-2 text-zinc-200 font-medium">
         <Library size={20} className="text-indigo-400" aria-hidden="true" />
         <h3>{t.home.yourDecks}</h3>
@@ -200,47 +140,9 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
                 </div>
                 
                 {viewMode === "grid" ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {seriesDecks.map((deck) => (
-                      <DeckCard 
-                        key={deck.id} 
-                        deck={deck.id} 
-                        count={deck._count.cards} 
-                        deckName={deck.title} 
-                        description={deck.description}
-                        type={deck.type}
-                        lang={lang}
-                      />
-                    ))}
-                  </div>
+                  <DeckGrid decks={seriesDecks} lang={lang} />
                 ) : (
-                  <div className="flex flex-col gap-3">
-                    {seriesDecks.map((deck) => (
-                      <div key={deck.id} className="flex items-center justify-between p-4 bg-zinc-900/40 hover:bg-zinc-800/60 border border-white/5 rounded-2xl transition-colors group">
-                        <div className="flex items-center gap-4 flex-1 overflow-hidden min-w-0">
-                          <div className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 font-bold shrink-0">
-                            {deck.type.charAt(0).toUpperCase()}
-                          </div>
-                          <div className="flex flex-col truncate min-w-0 flex-1">
-                            <span className="font-bold text-zinc-100 truncate text-lg block group-hover:text-indigo-300 transition-colors">{deck.title}</span>
-                            <span className="text-sm text-zinc-400 truncate flex items-center gap-2">
-                              <span className="capitalize shrink-0">{deck.type}</span>
-                              <span className="w-1 h-1 bg-zinc-700 rounded-full shrink-0" />
-                              <span className="shrink-0">{deck._count.cards} {t.home.cards}</span>
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex-shrink-0 ml-4">
-                          <Link 
-                            href={`/${lang}/deck/${deck.id}?limit=0`}
-                            className="px-5 py-2 rounded-full text-sm btn-indigo-outline"
-                          >
-                            {t.common.study}
-                          </Link>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <DeckList decks={seriesDecks} lang={lang} />
                 )}
               </div>
             ))}
