@@ -1,12 +1,13 @@
 {
-  "title": "Flashcards Template",
-  "description": "",
+  "title": "Enter the deck title here",
+  "description": "Optional: Brief description of this deck",
   "type": "flashcard",
+  "series": "Optional: e.g., 'AWS SAP-C02', 'JLPT N1'",
   "cards": [
     {
-      "category": "General",
-      "front": "What is the capital of France?",
-      "back": "Paris"
+      "front": "The concept or term to be memorized",
+      "back": "The definition, explanation, or answer",
+      "category": "Optional: Sub-category or domain for this specific card"
     }
   ]
 }

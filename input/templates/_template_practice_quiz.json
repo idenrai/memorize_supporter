@@ -1,22 +1,20 @@
 {
-  "title": "Practice Quiz Template",
-  "description": "",
+  "title": "Enter the deck title here",
+  "description": "Optional: Brief description of this quiz deck",
   "type": "practice_quiz",
+  "series": "Optional: e.g., 'AWS SAP-C02', 'JLPT N1'",
   "cards": [
     {
-      "question": "Which of the following are valid AWS compute services? (Select two)",
+      "question": "The question text goes here.",
       "options": [
-        "Amazon EC2",
-        "Amazon S3",
-        "AWS Lambda",
-        "Amazon RDS",
-        "Amazon DynamoDB"
+        "First option",
+        "Second option",
+        "Third option",
+        "Fourth option"
       ],
-      "answers": [
-        0,
-        2
-      ],
-      "explanation": "Amazon EC2 and AWS Lambda are compute services. S3 is storage, and RDS/DynamoDB are databases."
+      "answers": [0],
+      "explanation": "Detailed explanation of why the answer(s) are correct.",
+      "category": "Optional: Sub-category for this specific question"
     }
   ]
 }

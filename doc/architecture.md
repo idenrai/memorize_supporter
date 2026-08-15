@@ -72,6 +72,8 @@ This document defines the system architecture of the `memorize_supporter` projec
 **API 및 데이터 통신:**
 - 별도의 외부 REST API 서버 없이 Next.js의 Server Actions 또는 Prisma Client 직접 호출을 통해 데이터를 클라이언트에 공급합니다.
 - **보안 격리 정책:** 비즈니스 로직(Server Actions)은 라우터 공간인 `app/` 내부가 아닌, 완전히 분리된 `src/actions/` 디렉토리에 격리하여 보관합니다. 이를 통해 내부 함수가 외부의 퍼블릭 API 엔드포인트로 예기치 않게 노출되는 보안 위험(Security Risk)을 원천 차단합니다.
+- **Data Validation & Shared Schema:** Zod schemas (`src/schemas/deck.ts`) strictly validate the payload of server actions (limiting size to 5MB, arrays to 5000 items, and stripping unknown fields). These schemas are decoupled from actions for seamless reusability on the frontend.
+- **데이터 검증 및 공유 스키마:** Zod 스키마(`src/schemas/deck.ts`)가 서버 액션의 페이로드를 엄격하게 검증합니다(5MB 사이즈 제한, 5000개 배열 제한, 미식별 필드 제거). 프론트엔드에서의 원활한 재사용을 위해 스키마는 액션 로직으로부터 분리되어 있습니다.
 
 **Database and ORM Integration:**
 - **SQLite:** Built locally at `.data/memorize.sqlite`. This file is excluded from Git tracking (`.gitignore`).
@@ -88,9 +90,9 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **Data Integrity Guarantee (Stable ID & Upsert):** Uses the `crypto` module to generate a unique MD5 hash identifier based on the text content of the question/front. Through this, even if cards are added or deleted, the unique ID of existing cards is maintained, so the user's forgetting curve review record (`learningProgress`) is not destroyed and is safely preserved (Upsert).
 - Execution command: `npm run etl` (TypeScript script execution via tsx).
 
-**커스텀 ETL 파이프라인 (`src/scripts/etl.ts`):**
-- 원본 JSON 데이터를 파싱하여 Prisma Client를 통해 DB에 적재합니다.
-- **데이터 무결성 보장 (Stable ID & Upsert):** `crypto` 모듈을 사용해 문항의 텍스트 콘텐츠(Question/Front)를 기반으로 고유한 MD5 해시 식별자를 생성합니다. 이를 통해 카드를 추가하거나 삭제하더라도, 기존 카드의 고유 ID가 유지되어 유저의 망각 곡선 복습 기록(`learningProgress`)이 파괴되지 않고 안전하게 보존(Upsert)됩니다.
+**커스텀 ETL 파이프라인 (`src/scripts/etl.ts` & Web Upload):**
+- 원본 JSON 데이터를 파싱하여 Prisma Client를 통해 DB에 적재합니다. 웹 UI(데이터 관리 탭)의 Drag & Drop 업로드 또한 동일한 무결성 로직을 공유합니다.
+- **데이터 무결성 보장 (Stable ID & Upsert):** `crypto` 모듈을 사용해 문항의 텍스트 콘텐츠(Question/Front)를 기반으로 고유한 SHA-256 해시 식별자를 생성합니다. 이를 통해 카드를 추가하거나 삭제하더라도, 기존 카드의 고유 ID가 유지되어 유저의 망각 곡선 복습 기록(`learningProgress`)이 파괴되지 않고 안전하게 보존(Upsert)됩니다.
 - 실행 명령어: `npm run etl` (tsx를 통한 TypeScript 스크립트 실행)
 
 ```mermaid
@@ -103,7 +105,7 @@ sequenceDiagram
     E->>J: 1. Read JSON Data
     J-->>E: Return Cards Array
     loop For each card
-        E->>C: 2. Generate MD5 Hash based on Text
+        E->>C: 2. Generate SHA-256 Hash based on Text
         C-->>E: Return Stable Hash ID
         E->>DB: 3. Upsert Card with Hash ID
         DB-->>E: Success (Preserves Learning Progress)

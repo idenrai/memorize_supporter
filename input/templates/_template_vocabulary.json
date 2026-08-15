@@ -1,12 +1,14 @@
 {
-  "title": "Vocabulary Template",
-  "description": "",
+  "title": "Enter the deck title here",
+  "description": "Optional: Brief description of this vocabulary deck",
   "type": "vocabulary",
+  "series": "Optional: e.g., 'English Words', 'JLPT N1'",
   "cards": [
     {
-      "word": "accommodate",
-      "meaning": "수용하다, 편의를 도모하다",
-      "example": "The hotel can accommodate up to 500 guests."
+      "word": "The target word or phrase",
+      "meaning": "The definition or translation of the word",
+      "example": "Optional: An example sentence using the word",
+      "category": "Optional: Sub-category or part of speech"
     }
   ]
 }
