@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { ChevronDown, Layers } from "lucide-react"
+import { ChevronDown, Layers, History } from "lucide-react"
 import { useT } from "@/hooks/useT"
 
 interface DeckCardProps {
@@ -12,6 +12,7 @@ interface DeckCardProps {
   type?: string
   count: number
   lang: string
+  globalLimit: number
 }
 
 const typeConfig: Record<string, { label: string, color: string, bg: string }> = {
@@ -20,28 +21,11 @@ const typeConfig: Record<string, { label: string, color: string, bg: string }> =
   vocabulary: { label: 'Vocabulary', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
 }
 
-export default function DeckCard({ deck, deckName, description, type = 'flashcard', count, lang }: DeckCardProps) {
+export default function DeckCard({ deck, deckName, description, type = 'flashcard', count, lang, globalLimit }: DeckCardProps) {
   const t = useT()
-  const [limit, setLimit] = useState(Math.min(10, count))
-  const [showDropdown, setShowDropdown] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
-  // Determine available limits dynamically based on count
-  const baseLimits = [10, 20, 50, 100]
-  const limits = baseLimits.filter(l => l < count)
-  limits.push(count) // Always add the exact total count as 'All'
+  const [isExamMode, setIsExamMode] = useState(false)
 
   const config = typeConfig[type] || typeConfig['flashcard']
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowDropdown(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
 
   return (
     <div className="group relative h-full flex flex-col rounded-3xl p-[1px] overflow-hidden hover-glow-indigo">
@@ -74,42 +58,45 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
           </p>
         </div>
 
-      <div className="flex items-center justify-end text-sm mt-auto relative z-10 pt-4 border-t border-zinc-800/80">
-        <div className="flex items-center bg-zinc-950 border border-zinc-800 rounded-full p-1 shadow-sm relative">
-          <div className="relative" ref={dropdownRef}>
-            <button 
-              onClick={(e) => { e.preventDefault(); setShowDropdown(!showDropdown) }}
-              aria-expanded={showDropdown}
-              aria-haspopup="true"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-zinc-400 hover:text-zinc-200 transition-colors text-xs font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/50 whitespace-nowrap rounded-full hover:bg-white/5"
-            >
-              {limit === count ? t.home.allCards : `${limit} ${t.home.cards}`} <ChevronDown size={14} className={`transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} aria-hidden="true" />
-            </button>
-            
-            {showDropdown && (
-              <div className="absolute bottom-full right-0 mb-3 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl p-1.5 z-50 min-w-[110px] flex flex-col gap-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
-                {limits.map((l, i) => (
-                  <button
-                    key={i}
-                    onClick={(e) => { e.preventDefault(); setLimit(l); setShowDropdown(false) }}
-                    className={`px-4 py-2 text-left text-sm rounded-lg transition-colors ${
-                      limit === l 
-                        ? 'bg-teal-500/20 text-teal-400 font-medium' 
-                        : 'text-zinc-300 hover:bg-white/5 hover:text-white'
-                    }`}
-                  >
-                    {l === count ? t.home.allCards : l}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+      <div className="w-full mt-auto relative z-10 pt-4 border-t border-zinc-800/80 flex items-center justify-end">
 
-          <div className="w-px h-4 bg-zinc-700 mx-1"></div>
+        <div className="flex items-center bg-zinc-950 border border-zinc-800 rounded-full p-1 shadow-sm relative shrink-0 ml-auto">
+          {type === 'practice_quiz' && (
+            <div className="flex items-center bg-zinc-900/80 rounded-full p-0.5 mr-1 border border-zinc-800/80 shrink-0">
+              <button
+                onClick={(e) => { e.preventDefault(); setIsExamMode(false) }}
+                className={`px-2.5 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 ${
+                  !isExamMode 
+                    ? 'bg-zinc-700 text-white shadow-sm' 
+                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
+                }`}
+              >
+                Practice
+              </button>
+              <button
+                onClick={(e) => { e.preventDefault(); setIsExamMode(true) }}
+                className={`px-2.5 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 ${
+                  isExamMode 
+                    ? 'bg-purple-600 text-white shadow-sm' 
+                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
+                }`}
+              >
+                Exam
+              </button>
+            </div>
+          )}
+
+          <Link
+            href={`/${lang}/records?deckId=${deck}`}
+            className="flex items-center justify-center p-2 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors mr-1"
+            title={t.common.examRecords}
+          >
+            <History size={16} aria-hidden="true" />
+          </Link>
 
           <Link 
-            href={`/${lang}/deck/${deck}?limit=${limit}`}
-            className="min-w-[70px] px-4 py-1.5 rounded-full text-xs uppercase tracking-wider btn-indigo"
+            href={`/${lang}/deck/${deck}?limit=${globalLimit}${isExamMode ? '&mode=exam' : ''}`}
+            className="min-w-[70px] shrink-0 px-4 py-1.5 rounded-full text-xs uppercase tracking-wider btn-indigo text-center"
           >
             {t.common.study}
           </Link>

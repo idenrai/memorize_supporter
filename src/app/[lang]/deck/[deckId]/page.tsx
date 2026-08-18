@@ -7,7 +7,7 @@ import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSch
 
 type Props = {
   params: Promise<{ deckId: string }>
-  searchParams: Promise<{ limit?: string }>
+  searchParams: Promise<{ limit?: string, mode?: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -31,8 +31,9 @@ function shuffle<T>(array: T[]): T[] {
 
 export default async function DeckPage({ params, searchParams }: Props) {
   const { deckId } = await params
-  const { limit } = await searchParams
+  const { limit, mode } = await searchParams
   const takeCount = limit && !isNaN(Number(limit)) ? Number(limit) : undefined
+  const isExamMode = mode === 'exam'
 
   const now = new Date()
 
@@ -142,7 +143,7 @@ export default async function DeckPage({ params, searchParams }: Props) {
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-background">
-      <DeckPlayer deckId={deckId} cards={validCards} />
+      <DeckPlayer deckId={deckId} cards={validCards} mode={isExamMode ? 'exam' : 'practice'} />
     </main>
   )
 }

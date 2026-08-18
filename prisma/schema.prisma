@@ -18,6 +18,7 @@ model Deck {
   isHidden    Boolean  @default(false)
 
   cards       Card[]
+  examResults ExamResult[]
 
   @@index([isSystem, createdAt])
 }
@@ -41,4 +42,16 @@ model LearningProgress {
   lastReviewedAt DateTime?
   nextReviewAt   DateTime?
   successRate    Float?
+}
+
+model ExamResult {
+  id        String   @id @default(uuid())
+  deckId    String
+  deck      Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  score     Int
+  total     Int
+  correct   Int
+  createdAt DateTime @default(now())
+
+  @@index([deckId])
 }

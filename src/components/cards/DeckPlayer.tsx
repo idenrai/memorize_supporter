@@ -9,51 +9,73 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { CardData, FlashcardContent } from "@/types/card"
 import { updateProgress } from "@/actions/progress"
+import { saveExamResult } from "@/actions/exam"
 import { useT } from "@/hooks/useT"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
+import { XCircle, CheckCircle2 } from "lucide-react"
 
 interface DeckPlayerProps {
   deckId: string
   cards: CardData[]
+  mode?: 'practice' | 'exam'
 }
 
-export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
+export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPlayerProps) {
   const t = useT()
   const params = useParams()
   const lang = params.lang as string || 'en'
   const [playingCards, setPlayingCards] = useState<CardData[]>(cards)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [completed, setCompleted] = useState(false)
-  const [sessionResults, setSessionResults] = useState<{cardId: string, isCorrect: boolean}[]>([])
+  const [sessionResults, setSessionResults] = useState<{cardId: string, isCorrect: boolean, selectedIndices?: number[]}[]>([])
+  const [reviewingCard, setReviewingCard] = useState<CardData | null>(null)
 
-  const handleNext = useCallback(async (isCorrect: boolean) => {
+  const handleNext = useCallback(async (isCorrect: boolean, selectedIndices?: number[]) => {
     // 防御: Prevent double-click overflow
     if (completed || currentIndex >= playingCards.length) return;
 
     const card = playingCards[currentIndex]
     
     // 세션 결과 저장
-    setSessionResults(prev => [...prev, { cardId: card.id, isCorrect }])
+    const newResults = [...sessionResults, { cardId: card.id, isCorrect, selectedIndices }]
+    setSessionResults(newResults)
     
-    // Server Action 호출 (UI 블로킹 없이 백그라운드 처리)
-    try {
-      const result = await updateProgress({ cardId: card.id, isCorrect, deckId })
-      if (!result.success) {
-        console.error("Failed to update progress:", result.error)
+    if (mode === 'practice') {
+      // Server Action 호출 (UI 블로킹 없이 백그라운드 처리)
+      try {
+        const result = await updateProgress({ cardId: card.id, isCorrect, deckId })
+        if (!result.success) {
+          console.error("Failed to update progress:", result.error)
+          toast.error(t.common?.error || "Failed to save progress")
+        }
+      } catch (e) {
+        console.error("Server action failed:", e)
         toast.error(t.common?.error || "Failed to save progress")
       }
-    } catch (e) {
-      console.error("Server action failed:", e)
-      toast.error(t.common?.error || "Failed to save progress")
     }
 
     if (currentIndex < playingCards.length - 1) {
       setCurrentIndex(currentIndex + 1)
     } else {
+      if (mode === 'exam') {
+        const correctCount = newResults.filter(r => r.isCorrect).length
+        const totalCards = playingCards.length
+        const score = totalCards > 0 ? Math.round((correctCount / totalCards) * 100) : 0
+        try {
+          const result = await saveExamResult({ deckId, score, total: totalCards, correct: correctCount })
+          if (!result.success) {
+            console.error("Failed to save exam result:", result.error)
+            toast.error(t.common?.error || "Failed to save exam result")
+          }
+        } catch(e) {
+          console.error("Failed to save exam result exception:", e)
+          toast.error(t.common?.error || "Failed to save exam result")
+        }
+      }
       setCompleted(true)
     }
-  }, [currentIndex, playingCards, deckId, completed, t.common])
+  }, [currentIndex, playingCards, deckId, completed, t.common, mode, sessionResults])
 
   if (cards.length === 0) {
     return (
@@ -80,8 +102,75 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
       setCompleted(false)
     }
 
+    if (mode === 'exam') {
+      if (reviewingCard) {
+        return (
+          <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto p-4 md:p-8">
+            <div className="mb-8 shrink-0 z-10 relative">
+              <button onClick={() => setReviewingCard(null)} className="text-zinc-500 hover:text-white transition-colors flex items-center gap-2">
+                <ArrowLeft size={20} aria-hidden="true" />
+                <span>Back to Results</span>
+              </button>
+            </div>
+            <div className="flex-1 flex flex-col items-center py-4 relative min-h-0">
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full flex justify-center my-auto">
+                {reviewingCard.type === 'practice_quiz' && (
+                  <PracticeQuizCard 
+                    content={reviewingCard.content} 
+                    mode="review" 
+                    userSelectedIndices={sessionResults.find(r => r.cardId === reviewingCard.id)?.selectedIndices || []}
+                  />
+                )}
+              </motion.div>
+            </div>
+          </div>
+        )
+      }
+
+      return (
+        <motion.div 
+          aria-live="polite"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex-1 flex flex-col items-center w-full max-w-2xl mx-auto p-4 py-12"
+        >
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-white mb-2">Exam Completed</h2>
+            <div className="text-5xl font-black text-teal-400 mt-4">{accuracy}%</div>
+            <p className="text-zinc-400 mt-2">{correctCount} / {playingCards.length} correct</p>
+          </div>
+
+          <div className="w-full flex flex-col gap-3 mb-8">
+            {playingCards.map((c, i) => {
+              const res = sessionResults.find(r => r.cardId === c.id)
+              const isCorrect = res?.isCorrect
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setReviewingCard(c)}
+                  className="flex items-center gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition text-left focus-visible:ring-2 focus-visible:ring-teal-500"
+                >
+                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isCorrect ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+                    {isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
+                  </div>
+                  <div className="flex-1 font-medium text-zinc-300 truncate">
+                    {i + 1}. {c.type === 'practice_quiz' ? c.content.question : 'Question'}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          <Link href={`/${lang}`} className="px-8 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors">
+            {t.quiz.backToDashboard}
+          </Link>
+        </motion.div>
+      )
+    }
+
     return (
       <motion.div 
+        aria-live="polite"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex-1 flex flex-col items-center justify-center space-y-6"
@@ -135,7 +224,7 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
   return (
     <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto p-4 md:p-8">
       {/* Header / Progress */}
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex items-center justify-between mb-8 sm:mb-12 shrink-0 z-10 relative">
         <Link href={`/${lang}`} aria-label={t.common.exit} className="text-zinc-500 hover:text-white transition-colors flex items-center gap-2">
           <ArrowLeft size={20} aria-hidden="true" />
           <span className="hidden md:inline">{t.common.exit}</span>
@@ -156,7 +245,7 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
       </div>
 
       {/* Card Area */}
-      <div className="flex-1 flex items-center justify-center relative">
+      <div className="flex-1 flex flex-col items-center py-4 relative min-h-0">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentCard.id}
@@ -164,7 +253,7 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -50, scale: 0.9 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="w-full flex justify-center"
+            className="w-full flex justify-center my-auto"
           >
             {currentCard.type === 'flashcard' && (
               <Flashcard 
@@ -184,6 +273,7 @@ export default function DeckPlayer({ deckId, cards }: DeckPlayerProps) {
               <PracticeQuizCard 
                 content={currentCard.content}
                 onNext={handleNext}
+                mode={mode}
               />
             )}
           </motion.div>

@@ -29,6 +29,7 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
   const deferredSearchQuery = useDeferredValue(searchQuery)
   const [selectedSeries, setSelectedSeries] = useState<string>("all")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const [globalLimit, setGlobalLimit] = useState<number>(10)
   const isStale = searchQuery !== deferredSearchQuery;
 
   const sortSeries = useCallback((a: string, b: string) => {
@@ -116,12 +117,11 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
         uniqueSeries={uniqueSeries}
         viewMode={viewMode}
         setViewMode={setViewMode}
+        globalLimit={globalLimit}
+        setGlobalLimit={setGlobalLimit}
       />
 
-      <div className="flex items-center gap-2 text-zinc-200 font-medium">
-        <Library size={20} className="text-indigo-400" aria-hidden="true" />
-        <h3>{t.home.yourDecks}</h3>
-      </div>
+
 
       <div className={`w-full transition-opacity duration-200 ${isStale ? "opacity-50" : "opacity-100"}`}>
         {filteredDecks.length === 0 ? (
@@ -140,9 +140,9 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
                 </div>
                 
                 {viewMode === "grid" ? (
-                  <DeckGrid decks={seriesDecks} lang={lang} />
+                  <DeckGrid decks={seriesDecks} lang={lang} globalLimit={globalLimit} />
                 ) : (
-                  <DeckList decks={seriesDecks} lang={lang} />
+                  <DeckList decks={seriesDecks} lang={lang} globalLimit={globalLimit} />
                 )}
               </div>
             ))}

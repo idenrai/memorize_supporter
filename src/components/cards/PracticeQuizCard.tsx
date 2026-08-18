@@ -10,13 +10,15 @@ import { toast } from "sonner"
 
 interface Props {
   content: PracticeQuizContent
-  onNext?: (isCorrect: boolean) => void
+  onNext?: (isCorrect: boolean, selectedIndices?: number[]) => void
+  mode?: 'practice' | 'exam' | 'review'
+  userSelectedIndices?: number[]
 }
 
-export default function PracticeQuizCard({ content, onNext }: Props) {
+export default function PracticeQuizCard({ content, onNext, mode = 'practice', userSelectedIndices = [] }: Props) {
   const t = useT()
-  const [selectedIndices, setSelectedIndices] = useState<number[]>([])
-  const [isFlipped, setIsFlipped] = useState(false)
+  const [selectedIndices, setSelectedIndices] = useState<number[]>(userSelectedIndices)
+  const [isFlipped, setIsFlipped] = useState(mode === 'review')
   
   const isPresent = useIsPresent()
   
@@ -43,13 +45,17 @@ export default function PracticeQuizCard({ content, onNext }: Props) {
 
   const handleSubmit = useCallback(() => {
     if (selectedIndices.length === 0 || isFlipped) return
-    setIsFlipped(true)
-  }, [selectedIndices, isFlipped])
+    if (mode === 'exam') {
+      onNext?.(isCorrect, selectedIndices)
+    } else {
+      setIsFlipped(true)
+    }
+  }, [selectedIndices, isFlipped, mode, isCorrect, onNext])
 
   const handleNext = useCallback(() => {
-    if (!isFlipped) return
-    onNext?.(isCorrect)
-  }, [isFlipped, isCorrect, onNext])
+    if (!isFlipped || mode === 'review') return
+    onNext?.(isCorrect, selectedIndices)
+  }, [isFlipped, isCorrect, onNext, mode, selectedIndices])
 
   const handleCopyPrompt = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -81,13 +87,12 @@ ${content.explanation || '없음'}
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (isPresent) {
-      containerRef.current?.focus()
-    }
+    // Intentionally left empty: Auto-focus on mount was removed 
+    // to improve accessibility and not steal focus from keyboard users
   }, [isPresent])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isPresent) return
+    if (!isPresent || mode === 'review') return
 
     const target = e.target as HTMLElement
     if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
@@ -112,14 +117,14 @@ ${content.explanation || '없음'}
       ref={containerRef}
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className="w-full max-w-4xl min-h-[550px] sm:min-h-[700px] perspective-1000 select-none font-sans antialiased focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/50 rounded-2xl"
+      className="w-full max-w-4xl min-h-[450px] sm:min-h-[550px] perspective-1000 select-none font-sans antialiased focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/50 rounded-2xl"
     >
-      <div className={`relative grid w-full h-full transition-transform duration-500 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
+      <div className={`relative grid w-full h-full transition-transform duration-500 motion-reduce:transition-none [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
         
         {/* FRONT SIDE (Question & Options) */}
         <div className="[grid-area:1/1] w-full h-full backface-hidden flex flex-col bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-10 shadow-2xl transition duration-300 hover:border-zinc-700/80">
-          <div className="text-xs font-medium text-zinc-400 mb-4 tracking-widest uppercase flex items-center justify-between">
-            <span className="truncate max-w-[180px] sm:max-w-[300px] text-teal-500">{content.category || 'Practice Quiz'}</span>
+          <div className="text-xs font-medium text-zinc-400 mb-4 tracking-widest uppercase flex items-center justify-between min-w-0">
+            <span className="truncate min-w-0 max-w-[180px] sm:max-w-[300px] text-teal-500">{content.category || 'Practice Quiz'}</span>
             <span className="text-zinc-500 shrink-0 ml-2">
               {content.answers.length > 1 ? `Select ${content.answers.length}` : 'Select 1'}
             </span>
@@ -164,22 +169,32 @@ ${content.explanation || '없음'}
         </div>
 
         {/* BACK SIDE (Result & Explanation) */}
-        <div className={`[grid-area:1/1] w-full h-full backface-hidden [transform:rotateY(180deg)] flex flex-col border rounded-2xl p-6 sm:p-10 shadow-2xl bg-zinc-900
-            ${isCorrect ? 'border-emerald-600/40' : 'border-rose-600/40'}`}>
+        <div 
+          aria-live="polite"
+          className={`[grid-area:1/1] w-full h-full backface-hidden [transform:rotateY(180deg)] flex flex-col border rounded-2xl p-6 sm:p-10 shadow-2xl bg-zinc-900
+            ${isCorrect ? 'border-emerald-600/40' : 'border-rose-600/40'} overflow-y-auto`}
+        >
           
-          <div className="flex flex-col items-center justify-center mb-6">
+          <div className="flex items-center gap-4 mb-6 border-b border-zinc-800/80 pb-4 shrink-0">
             {isCorrect ? (
-              <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4 text-emerald-500 ring-1 ring-emerald-600/20">
-                <CheckCircle2 size={32} aria-hidden="true" />
+              <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 ring-1 ring-emerald-600/20 shrink-0">
+                <CheckCircle2 size={24} aria-hidden="true" />
               </div>
             ) : (
-              <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mb-4 text-rose-500 ring-1 ring-rose-600/20">
-                <XCircle size={32} aria-hidden="true" />
+              <div className="w-10 h-10 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-500 ring-1 ring-rose-600/20 shrink-0">
+                <XCircle size={24} aria-hidden="true" />
               </div>
             )}
-            <h2 className={`text-2xl font-bold tracking-wide ${isCorrect ? 'text-emerald-500' : 'text-rose-500'}`}>
+            <h2 className={`text-xl font-bold tracking-wide ${isCorrect ? 'text-emerald-500' : 'text-rose-500'}`}>
               {isCorrect ? t.quiz.correct : t.quiz.incorrect}
             </h2>
+          </div>
+
+          <div className="mb-5 shrink-0">
+            <h3 className="text-xs text-zinc-400 uppercase font-bold tracking-wider mb-2">{t.quiz.question}</h3>
+            <p className="text-zinc-200 text-sm sm:text-base leading-relaxed whitespace-pre-wrap font-medium">
+              {formatText(content.question)}
+            </p>
           </div>
 
           <div className="bg-zinc-800/40 rounded-xl p-5 mb-5 border border-zinc-700/50 backdrop-blur-sm">
@@ -208,21 +223,23 @@ ${content.explanation || '없음'}
               <button
                 type="button"
                 onClick={handleCopyPrompt}
-                className="px-6 py-3 border border-zinc-600 text-zinc-300 font-medium rounded-full flex items-center justify-center gap-2 hover:bg-zinc-800 hover:border-zinc-500 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition-all w-full sm:w-auto shadow-sm"
+                className="px-6 py-3 border border-zinc-600 text-zinc-300 font-medium rounded-full flex items-center justify-center gap-2 hover:bg-zinc-800 hover:border-zinc-500 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition w-full sm:w-auto shadow-sm"
               >
                 <Bot size={18} aria-hidden="true" />
                 <span>AI에게 더 깊이 묻기</span>
               </button>
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleNext()
-                }}
-                className="px-8 py-3 bg-teal-600 text-white font-medium rounded-full hover:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition-all shadow-sm w-full sm:w-auto"
-              >
-                {t.quiz.next}
-              </button>
+              {mode !== 'review' && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleNext()
+                  }}
+                  className="px-8 py-3 bg-teal-600 text-white font-medium rounded-full hover:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition shadow-sm w-full sm:w-auto"
+                >
+                  {t.quiz.next}
+                </button>
+              )}
             </div>
           </div>
         </div>
