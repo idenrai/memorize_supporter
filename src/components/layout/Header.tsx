@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Sparkles, Database, FileJson, LayoutDashboard } from "lucide-react"
+import { Sparkles, Database, FileJson, LayoutDashboard, Trophy } from "lucide-react"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import LanguageSwitch from "@/components/LanguageSwitch"
@@ -48,6 +48,14 @@ export default function Header({ lang }: { lang: Lang }) {
           >
             <LayoutDashboard size={16} />
             <span className="hidden lg:inline">Dashboard</span>
+          </Link>
+          <Link 
+            href={`/${lang}/records`} 
+            className={navItemClass(`/${lang}/records`)}
+            title={t.common.examRecords}
+          >
+            <Trophy size={16} />
+            <span className="hidden lg:inline">{t.common.examRecords}</span>
           </Link>
           <Link 
             href={`/${lang}/data-management`} 

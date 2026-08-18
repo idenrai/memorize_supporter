@@ -12,6 +12,7 @@ export interface Translations {
     dataManagement: string;
     dataPrep: string;
     error: string;
+    examRecords: string;
     exit: string;
     loading: string;
     settings: string;
@@ -27,6 +28,7 @@ export interface Translations {
     noSearchResults: string;
     searchDecks: string;
     subtitle: string;
+    studyLimit: string;
     title: string;
     uncategorized: string;
     viewModeGrid: string;
@@ -85,6 +87,7 @@ export interface Translations {
     next: string;
     noCards: string;
     practiceQuiz: string;
+    question: string;
     quizCompleted: string;
     retryIncorrect: (count: number) => string;
     studyNewSession: string;
@@ -97,5 +100,14 @@ export interface Translations {
     goHome: string;
     somethingWentWrong: string;
     tryAgain: string;
+  };
+  records: {
+    empty: string;
+    viewAll: string;
+    thCorrect: string;
+    thDate: string;
+    thDeck: string;
+    thScore: string;
+    title: string;
   };
 }
