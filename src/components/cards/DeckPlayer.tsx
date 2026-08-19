@@ -107,18 +107,19 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
         return (
           <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto p-4 md:p-8">
             <div className="mb-8 shrink-0 z-10 relative">
-              <button onClick={() => setReviewingCard(null)} className="text-zinc-500 hover:text-white transition-colors flex items-center gap-2">
+              <button onClick={() => setReviewingCard(null)} className="text-zinc-500 hover:text-white transition-colors hidden md:flex items-center gap-2">
                 <ArrowLeft size={20} aria-hidden="true" />
                 <span>Back to Results</span>
               </button>
             </div>
             <div className="flex-1 flex flex-col items-center py-4 relative min-h-0">
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full flex justify-center my-auto">
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full flex justify-center mt-0 sm:mt-8">
                 {reviewingCard.type === 'practice_quiz' && (
                   <PracticeQuizCard 
                     content={reviewingCard.content} 
                     mode="review" 
                     userSelectedIndices={sessionResults.find(r => r.cardId === reviewingCard.id)?.selectedIndices || []}
+                    onClose={() => setReviewingCard(null)}
                   />
                 )}
               </motion.div>

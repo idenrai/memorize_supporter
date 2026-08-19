@@ -94,6 +94,7 @@ export interface Translations {
     submit: string;
     vocabulary: string;
     youScored: (correct: number, total: number) => string;
+    closeReview: string;
   };
   error: {
     defaultMessage: string;
