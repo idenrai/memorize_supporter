@@ -11,11 +11,12 @@ import { toast } from "sonner"
 interface Props {
   content: PracticeQuizContent
   onNext?: (isCorrect: boolean, selectedIndices?: number[]) => void
+  onClose?: () => void
   mode?: 'practice' | 'exam' | 'review'
   userSelectedIndices?: number[]
 }
 
-export default function PracticeQuizCard({ content, onNext, mode = 'practice', userSelectedIndices = [] }: Props) {
+export default function PracticeQuizCard({ content, onNext, onClose, mode = 'practice', userSelectedIndices = [] }: Props) {
   const t = useT()
   const [selectedIndices, setSelectedIndices] = useState<number[]>(userSelectedIndices)
   const [isFlipped, setIsFlipped] = useState(mode === 'review')
@@ -92,12 +93,20 @@ ${content.explanation || '없음'}
   }, [isPresent])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isPresent || mode === 'review') return
-
     const target = e.target as HTMLElement
     if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
       return
     }
+
+    if (mode === 'review') {
+      if (e.key === 'Escape' || e.key === 'Enter' || e.code === 'Space') {
+        e.preventDefault()
+        onClose?.()
+      }
+      return
+    }
+
+    if (!isPresent) return
 
     if (!isFlipped) {
       if (e.key === 'Enter' || e.code === 'Space') {
@@ -229,7 +238,7 @@ ${content.explanation || '없음'}
                 <span>AI에게 더 깊이 묻기</span>
               </button>
 
-              {mode !== 'review' && (
+              {mode !== 'review' ? (
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
@@ -239,6 +248,18 @@ ${content.explanation || '없음'}
                 >
                   {t.quiz.next}
                 </button>
+              ) : (
+                onClose && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onClose()
+                    }}
+                    className="px-8 py-3 bg-zinc-700 text-white font-medium rounded-full hover:bg-zinc-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition shadow-sm w-full sm:w-auto"
+                  >
+                    {t.quiz.closeReview}
+                  </button>
+                )
               )}
             </div>
           </div>

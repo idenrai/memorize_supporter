@@ -98,6 +98,7 @@ ${content}
     submit: "提出",
     vocabulary: "単語帳",
     youScored: (correct, total) => `全 ${total} 問中 ${correct} 問正解しました！`,
+    closeReview: "一覧に戻る",
   },
   error: {
     defaultMessage: "予期せぬエラーが発生しました。",
