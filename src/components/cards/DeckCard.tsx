@@ -13,6 +13,7 @@ interface DeckCardProps {
   count: number
   lang: string
   globalLimit: number
+  globalIsExamMode: boolean
 }
 
 const typeConfig: Record<string, { label: string, color: string, bg: string }> = {
@@ -21,9 +22,8 @@ const typeConfig: Record<string, { label: string, color: string, bg: string }> =
   vocabulary: { label: 'Vocabulary', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
 }
 
-export default function DeckCard({ deck, deckName, description, type = 'flashcard', count, lang, globalLimit }: DeckCardProps) {
+export default function DeckCard({ deck, deckName, description, type = 'flashcard', count, lang, globalLimit, globalIsExamMode }: DeckCardProps) {
   const t = useT()
-  const [isExamMode, setIsExamMode] = useState(false)
 
   const config = typeConfig[type] || typeConfig['flashcard']
 
@@ -61,30 +61,6 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
       <div className="w-full mt-auto relative z-10 pt-4 border-t border-zinc-800/80 flex items-center justify-end">
 
         <div className="flex items-center bg-zinc-950 border border-zinc-800 rounded-full p-1 shadow-sm relative shrink-0 ml-auto">
-          {type === 'practice_quiz' && (
-            <div className="flex items-center bg-zinc-900/80 rounded-full p-0.5 mr-1 border border-zinc-800/80 shrink-0">
-              <button
-                onClick={(e) => { e.preventDefault(); setIsExamMode(false) }}
-                className={`px-2.5 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 ${
-                  !isExamMode 
-                    ? 'bg-zinc-700 text-white shadow-sm' 
-                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
-                }`}
-              >
-                Practice
-              </button>
-              <button
-                onClick={(e) => { e.preventDefault(); setIsExamMode(true) }}
-                className={`px-2.5 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 ${
-                  isExamMode 
-                    ? 'bg-purple-600 text-white shadow-sm' 
-                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
-                }`}
-              >
-                Exam
-              </button>
-            </div>
-          )}
 
           <Link
             href={`/${lang}/records?deckId=${deck}`}
@@ -95,7 +71,7 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
           </Link>
 
           <Link 
-            href={`/${lang}/deck/${deck}?limit=${globalLimit}${isExamMode ? '&mode=exam' : ''}`}
+            href={`/${lang}/deck/${deck}?limit=${globalLimit}${globalIsExamMode && type === 'practice_quiz' ? '&mode=exam' : ''}`}
             className="min-w-[70px] shrink-0 px-4 py-1.5 rounded-full text-xs uppercase tracking-wider btn-indigo text-center"
           >
             {t.common.study}

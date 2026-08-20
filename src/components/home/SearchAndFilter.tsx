@@ -1,7 +1,8 @@
 'use client'
 
-import { Search, LayoutGrid, List as ListIcon } from "lucide-react"
+import { Search, LayoutGrid, List as ListIcon, ChevronDown } from "lucide-react"
 import { useT } from "@/hooks/useT"
+import CustomSelect from "../ui/CustomSelect"
 
 interface SearchAndFilterProps {
   searchQuery: string
@@ -13,6 +14,8 @@ interface SearchAndFilterProps {
   setViewMode: (mode: "grid" | "list") => void
   globalLimit: number
   setGlobalLimit: (limit: number) => void
+  globalIsExamMode: boolean
+  setGlobalIsExamMode: (isExam: boolean) => void
 }
 
 export default function SearchAndFilter({
@@ -24,14 +27,16 @@ export default function SearchAndFilter({
   viewMode,
   setViewMode,
   globalLimit,
-  setGlobalLimit
+  setGlobalLimit,
+  globalIsExamMode,
+  setGlobalIsExamMode
 }: SearchAndFilterProps) {
   const t = useT()
 
   return (
     <div className="flex flex-col gap-6">
       {/* Row 1: Search & Display Settings */}
-      <div className="flex flex-col md:flex-row items-center gap-4 w-full">
+      <div className="flex flex-col md:flex-row items-center gap-3 w-full">
         
         {/* Search Input */}
         <div className="relative w-full md:flex-1 group">
@@ -46,44 +51,76 @@ export default function SearchAndFilter({
             spellCheck={false}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="relative z-10 w-full bg-zinc-950/80 backdrop-blur-xl border border-white/10 focus:border-indigo-500/50 transition-colors duration-300 rounded-2xl py-4 pl-14 pr-6 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 shadow-lg text-lg"
+            className="relative z-10 w-full bg-zinc-950/80 backdrop-blur-xl border border-white/10 focus:border-indigo-500/50 transition-colors duration-300 rounded-2xl py-3.5 pl-14 pr-6 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 shadow-lg text-base"
           />
         </div>
 
         {/* Display Controls */}
-        <div className="flex items-center justify-end gap-3 w-full md:w-auto">
-          <div className="flex items-center gap-1.5 bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800 shadow-inner px-3 h-[60px]">
-            <span className="text-sm font-medium text-zinc-500 hidden sm:inline px-2">{t.home.studyLimit}</span>
-            <select
+        <div className="flex flex-wrap items-center justify-end gap-2.5 w-full md:w-auto">
+          {/* Card Limit Select */}
+          <div className="flex items-center gap-2 bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800/80 shadow-inner px-4 h-[52px] hover:border-zinc-700 transition-colors shrink-0">
+            <span className="text-sm font-medium text-zinc-500 hidden sm:inline">{t.home.studyLimit}</span>
+            <CustomSelect
               value={globalLimit}
-              onChange={(e) => setGlobalLimit(Number(e.target.value))}
-              className="bg-transparent text-base font-medium text-zinc-300 focus:outline-none focus:ring-0 py-2 cursor-pointer"
-              aria-label={t.home.studyLimit}
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value={0}>{t.home.allCards}</option>
-            </select>
+              onChange={setGlobalLimit}
+              ariaLabel={t.home.studyLimit}
+              options={[
+                { label: "10", value: 10 },
+                { label: "20", value: 20 },
+                { label: "50", value: 50 },
+                { label: "100", value: 100 },
+                { label: t.home.allCards, value: 0 }
+              ]}
+            />
           </div>
 
-          <div className="flex items-center bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800 shadow-inner h-[60px]">
+          {/* Global Exam Mode Toggle */}
+          <div className="hidden sm:flex items-center bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800/80 shadow-inner h-[52px] shrink-0">
+            <button
+              onClick={() => setGlobalIsExamMode(false)}
+              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+                !globalIsExamMode 
+                  ? 'bg-zinc-800 text-white shadow-sm ring-1 ring-white/5' 
+                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
+              }`}
+            >
+              {t.home.practiceMode}
+            </button>
+            <button
+              onClick={() => setGlobalIsExamMode(true)}
+              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 ${
+                globalIsExamMode 
+                  ? 'bg-purple-600/90 text-white shadow-sm ring-1 ring-purple-500/50' 
+                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
+              }`}
+            >
+              {t.home.examMode}
+            </button>
+          </div>
+
+          {/* View Mode Toggle */}
+          <div className="flex bg-zinc-900/80 backdrop-blur-xl p-1.5 rounded-2xl border border-zinc-800/80 shadow-inner h-[52px] shrink-0">
             <button
               onClick={() => setViewMode("grid")}
               title={t.home.viewModeGrid}
-              aria-pressed={viewMode === "grid"}
-              className={`p-2.5 rounded-xl cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${viewMode === "grid" ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"}`}
+              className={`p-2 rounded-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+                viewMode === "grid" 
+                  ? 'bg-zinc-800 text-indigo-400 shadow-sm ring-1 ring-white/5' 
+                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
+              }`}
             >
-              <LayoutGrid size={20} aria-hidden="true" />
+              <LayoutGrid size={18} aria-hidden="true" />
             </button>
             <button
               onClick={() => setViewMode("list")}
               title={t.home.viewModeList}
-              aria-pressed={viewMode === "list"}
-              className={`p-2.5 rounded-xl cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${viewMode === "list" ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"}`}
+              className={`p-2 rounded-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+                viewMode === "list" 
+                  ? 'bg-zinc-800 text-indigo-400 shadow-sm ring-1 ring-white/5' 
+                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
+              }`}
             >
-              <ListIcon size={20} aria-hidden="true" />
+              <ListIcon size={18} aria-hidden="true" />
             </button>
           </div>
         </div>

@@ -23,6 +23,8 @@ export const ja: Translations = {
     searchDecks: "デッキを検索...",
     subtitle: "間隔反復 (Spaced Repetition) と積極的想起 (Active Recall) を活用した暗記サポートアプリ",
     studyLimit: "学習するカード数",
+    practiceMode: "練習モード",
+    examMode: "試験モード",
     title: "Memorize Supporter",
     uncategorized: "未分類",
     viewModeGrid: "グリッド表示",
