@@ -1,4 +1,6 @@
 import { z } from "zod"
+import { clientConfig } from "./config.client"
+import { serverConfig } from "./config.server"
 
 export const FlashcardContentSchema = z.object({
   category: z.string().optional(),
@@ -43,8 +45,25 @@ export const DeleteDeckSchema = z.object({
 })
 
 export const UploadDeckSchema = z.object({
-  jsonData: z.string().max(5 * 1024 * 1024, "Payload too large (exceeds 5MB limit)"),
+  jsonData: z.string().max(clientConfig.maxUploadBytes, "Payload too large"),
   fileName: z.string()
+})
+
+export const SessionResultItemSchema = z.object({
+  cardId: z.string().min(1),
+  isCorrect: z.boolean(),
+  selectedIndices: z.array(z.number()).optional()
+})
+
+export const SaveExamResultSchema = z.object({
+  deckId: z.string().min(1, "Deck ID is required"),
+  score: z.number().min(0).max(100),
+  total: z.number().min(1),
+  correct: z.number().min(0),
+  sessionResults: z.array(SessionResultItemSchema).max(serverConfig.maxSessionResults, "Too many session results").optional()
+}).refine((data) => data.correct <= data.total, {
+  message: "Correct answers cannot exceed total questions",
+  path: ["correct"]
 })
 
 export type ActionState = {

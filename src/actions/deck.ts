@@ -10,6 +10,7 @@ const prisma = new PrismaClient()
 import { DeckSchema } from '@/schemas/deck'
 import { actionClient } from '@/lib/safe-action'
 import { UploadDeckSchema, UpdateDeckDetailsSchema, ToggleVisibilitySchema, DeleteDeckSchema } from '@/lib/schemas'
+import { serverConfig } from '@/lib/config.server'
 
 export const uploadDeck = actionClient(UploadDeckSchema, async ({ jsonData, fileName }) => {
   let parsedData;
@@ -110,21 +111,44 @@ export const uploadDeck = actionClient(UploadDeckSchema, async ({ jsonData, file
       }
     })
 
-    for (const card of cardsToInsert) {
-      await tx.card.upsert({
-        where: { id: card.id },
-        update: {
-          deck: deckId,
-          type: card.type,
-          content: card.content
-        },
-        create: {
-          id: card.id,
-          deck: deckId,
-          type: card.type,
-          content: card.content
-        }
-      })
+    const CHUNK_SIZE = serverConfig.dbChunkSize;
+    for (let i = 0; i < cardsToInsert.length; i += CHUNK_SIZE) {
+      const chunk = cardsToInsert.slice(i, i + CHUNK_SIZE);
+      await Promise.all(
+        chunk.map(card => 
+          tx.card.upsert({
+            where: { id: card.id },
+            update: {
+              deck: deckId,
+              type: card.type,
+              content: card.content
+            },
+            create: {
+              id: card.id,
+              deck: deckId,
+              type: card.type,
+              content: card.content
+            }
+          })
+        )
+      )
+    }
+
+    const existingCards = await tx.card.findMany({
+      where: { deck: deckId },
+      select: { id: true }
+    });
+
+    const validCardIds = new Set(cardsToInsert.map(c => c.id));
+    const ghostsToDelete = existingCards.filter(c => !validCardIds.has(c.id)).map(c => c.id);
+
+    if (ghostsToDelete.length > 0) {
+      for (let i = 0; i < ghostsToDelete.length; i += CHUNK_SIZE) {
+        const chunk = ghostsToDelete.slice(i, i + CHUNK_SIZE);
+        await tx.card.deleteMany({
+          where: { id: { in: chunk } }
+        });
+      }
     }
   })
 

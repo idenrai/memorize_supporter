@@ -5,9 +5,11 @@ import { motion, AnimatePresence } from "framer-motion"
 import Flashcard from "./Flashcard"
 import VocabularyCard from "./VocabularyCard"
 import PracticeQuizCard from "./PracticeQuizCard"
+import ExamResultView from "./ExamResultView"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { CardData, FlashcardContent } from "@/types/card"
+import type { Lang } from "@/i18n/types"
 import { updateProgress } from "@/actions/progress"
 import { saveExamResult } from "@/actions/exam"
 import { useT } from "@/hooks/useT"
@@ -29,7 +31,6 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
   const [currentIndex, setCurrentIndex] = useState(0)
   const [completed, setCompleted] = useState(false)
   const [sessionResults, setSessionResults] = useState<{cardId: string, isCorrect: boolean, selectedIndices?: number[]}[]>([])
-  const [reviewingCard, setReviewingCard] = useState<CardData | null>(null)
 
   const handleNext = useCallback(async (isCorrect: boolean, selectedIndices?: number[]) => {
     // 防御: Prevent double-click overflow
@@ -63,7 +64,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
         const totalCards = playingCards.length
         const score = totalCards > 0 ? Math.round((correctCount / totalCards) * 100) : 0
         try {
-          const result = await saveExamResult({ deckId, score, total: totalCards, correct: correctCount })
+          const result = await saveExamResult({ deckId, score, total: totalCards, correct: correctCount, sessionResults: newResults })
           if (!result.success) {
             console.error("Failed to save exam result:", result.error)
             toast.error(t.common?.error || "Failed to save exam result")
@@ -102,70 +103,18 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
       setCompleted(false)
     }
 
+        const PASS_MARK = parseInt(process.env.NEXT_PUBLIC_PASS_MARK_PERCENT || '80', 10);
+        
     if (mode === 'exam') {
-      if (reviewingCard) {
-        return (
-          <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto p-4 md:p-8">
-            <div className="mb-8 shrink-0 z-10 relative">
-              <button onClick={() => setReviewingCard(null)} className="text-zinc-500 hover:text-white transition-colors hidden md:flex items-center gap-2">
-                <ArrowLeft size={20} aria-hidden="true" />
-                <span>Back to Results</span>
-              </button>
-            </div>
-            <div className="flex-1 flex flex-col items-center py-4 relative min-h-0">
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full flex justify-center mt-0 sm:mt-8">
-                {reviewingCard.type === 'practice_quiz' && (
-                  <PracticeQuizCard 
-                    content={reviewingCard.content} 
-                    mode="review" 
-                    userSelectedIndices={sessionResults.find(r => r.cardId === reviewingCard.id)?.selectedIndices || []}
-                    onClose={() => setReviewingCard(null)}
-                  />
-                )}
-              </motion.div>
-            </div>
-          </div>
-        )
-      }
-
       return (
-        <motion.div 
-          aria-live="polite"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex-1 flex flex-col items-center w-full max-w-2xl mx-auto p-4 py-12"
-        >
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-white mb-2">Exam Completed</h2>
-            <div className="text-5xl font-black text-teal-400 mt-4">{accuracy}%</div>
-            <p className="text-zinc-400 mt-2">{correctCount} / {playingCards.length} correct</p>
-          </div>
-
-          <div className="w-full flex flex-col gap-3 mb-8">
-            {playingCards.map((c, i) => {
-              const res = sessionResults.find(r => r.cardId === c.id)
-              const isCorrect = res?.isCorrect
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => setReviewingCard(c)}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition text-left focus-visible:ring-2 focus-visible:ring-teal-500"
-                >
-                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isCorrect ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
-                    {isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
-                  </div>
-                  <div className="flex-1 font-medium text-zinc-300 truncate">
-                    {i + 1}. {c.type === 'practice_quiz' ? c.content.question : 'Question'}
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-
-          <Link href={`/${lang}`} className="px-8 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors">
-            {t.quiz.backToDashboard}
-          </Link>
-        </motion.div>
+        <ExamResultView
+          playingCards={playingCards}
+          sessionResults={sessionResults}
+          lang={lang as Lang}
+          backLink={`/${lang}`}
+          onRetryIncorrect={handleRetryIncorrect}
+          onStudyNewSession={() => window.location.reload()}
+        />
       )
     }
 
@@ -177,9 +126,9 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
         className="flex-1 flex flex-col items-center justify-center space-y-6"
       >
         <div className={`w-24 h-24 rounded-full flex items-center justify-center text-4xl mb-4 ${
-          accuracy >= 80 ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'
+          accuracy >= PASS_MARK ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'
         }`}>
-          {accuracy >= 80 ? '🎉' : '🎯'}
+          {accuracy >= PASS_MARK ? '🎉' : '🎯'}
         </div>
         <h2 className="text-3xl font-bold text-white text-balance">{t.quiz.quizCompleted}</h2>
         <div className="bg-zinc-900/50 rounded-2xl p-8 border border-zinc-800 text-center space-y-2">

@@ -5,54 +5,38 @@ import { revalidatePath } from "next/cache"
 import { UpdateProgressSchema } from "@/lib/schemas"
 import { actionClient } from "@/lib/safe-action"
 
+import { calculateNextReview } from "@/lib/spaced-repetition"
+
 export const updateProgress = actionClient(UpdateProgressSchema, async ({ cardId, isCorrect, deckId }) => {
   const existing = await prisma.learningProgress.findUnique({
     where: { cardId }
   })
 
   const now = new Date()
+  
+  const result = calculateNextReview(isCorrect, existing ? {
+    reviewCount: existing.reviewCount,
+    successRate: existing.successRate
+  } : null, now)
 
   if (!existing) {
-    // First time review
-    const nextReviewAt = new Date(now)
-    if (isCorrect) {
-      nextReviewAt.setDate(now.getDate() + 1) // Review tomorrow if easy
-    } else {
-      nextReviewAt.setMinutes(now.getMinutes() + 10) // Review shortly if hard
-    }
-
     await prisma.learningProgress.create({
       data: {
         cardId,
-        reviewCount: 1,
+        reviewCount: result.nextReviewCount,
         lastReviewedAt: now,
-        nextReviewAt: nextReviewAt,
-        successRate: isCorrect ? 1.0 : 0.0
+        nextReviewAt: result.nextReviewAt,
+        successRate: result.nextSuccessRate
       }
     })
   } else {
-    // Subsequent review
-    const newCount = existing.reviewCount + 1
-    const newSuccessCount = (existing.successRate || 0) * existing.reviewCount + (isCorrect ? 1 : 0)
-    const newSuccessRate = newSuccessCount / newCount
-
-    const nextReviewAt = new Date(now)
-    
-    // Naive Spaced Repetition calculation
-    if (isCorrect) {
-      const intervalDays = Math.pow(2, existing.reviewCount)
-      nextReviewAt.setDate(now.getDate() + intervalDays)
-    } else {
-      nextReviewAt.setMinutes(now.getMinutes() + 10)
-    }
-
     await prisma.learningProgress.update({
       where: { cardId },
       data: {
-        reviewCount: newCount,
+        reviewCount: result.nextReviewCount,
         lastReviewedAt: now,
-        nextReviewAt,
-        successRate: newSuccessRate
+        nextReviewAt: result.nextReviewAt,
+        successRate: result.nextSuccessRate
       }
     })
   }

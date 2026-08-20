@@ -73,7 +73,7 @@ export default function SearchAndFilter({
               onClick={() => setViewMode("grid")}
               title={t.home.viewModeGrid}
               aria-pressed={viewMode === "grid"}
-              className={`p-2.5 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${viewMode === "grid" ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"}`}
+              className={`p-2.5 rounded-xl cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${viewMode === "grid" ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"}`}
             >
               <LayoutGrid size={20} aria-hidden="true" />
             </button>
@@ -81,7 +81,7 @@ export default function SearchAndFilter({
               onClick={() => setViewMode("list")}
               title={t.home.viewModeList}
               aria-pressed={viewMode === "list"}
-              className={`p-2.5 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${viewMode === "list" ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"}`}
+              className={`p-2.5 rounded-xl cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${viewMode === "list" ? "bg-zinc-800 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"}`}
             >
               <ListIcon size={20} aria-hidden="true" />
             </button>

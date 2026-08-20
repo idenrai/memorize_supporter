@@ -13,7 +13,7 @@ export default function UploadZone() {
   const [isDragging, setIsDragging] = useState(false)
 
   const processFile = (file: File) => {
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const MAX_FILE_SIZE = parseInt(process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB || '5', 10) * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
       toast.error(t.management.uploadSizeLimitError)
       if (fileInputRef.current) fileInputRef.current.value = ''

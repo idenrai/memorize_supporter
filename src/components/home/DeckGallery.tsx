@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useDeferredValue, useCallback } from "react"
+import { useState, useMemo, useDeferredValue, useCallback, useEffect } from "react"
 import { Search, Library } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import type { Lang } from "@/i18n/types"
@@ -31,6 +31,34 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [globalLimit, setGlobalLimit] = useState<number>(10)
   const isStale = searchQuery !== deferredSearchQuery;
+
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedLimit = localStorage.getItem('memorize_globalLimit')
+      if (savedLimit) setGlobalLimit(Number(savedLimit))
+      
+      const savedViewMode = localStorage.getItem('memorize_viewMode')
+      if (savedViewMode === 'grid' || savedViewMode === 'list') setViewMode(savedViewMode)
+    } catch (e) {
+      console.warn('Failed to load settings from local storage', e)
+    } finally {
+      setIsLoaded(true)
+    }
+  }, [])
+
+  // Save to localStorage when settings change
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      localStorage.setItem('memorize_globalLimit', globalLimit.toString())
+      localStorage.setItem('memorize_viewMode', viewMode)
+    } catch (e) {
+      console.warn('Failed to save settings to local storage', e)
+    }
+  }, [globalLimit, viewMode, isLoaded])
 
   const sortSeries = useCallback((a: string, b: string) => {
     if (a === t.home.uncategorized) return 1;
