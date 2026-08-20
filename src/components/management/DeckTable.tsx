@@ -76,7 +76,7 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
   }
 
   const sortedDecks = useMemo(() => {
-    let sortableItems = [...initialDecks];
+    const sortableItems = [...initialDecks];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
         let aValue: any;

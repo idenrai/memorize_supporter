@@ -23,6 +23,8 @@ export const ko: Translations = {
     searchDecks: "덱 검색...",
     subtitle: "간격 반복(Spaced Repetition)과 적극적 회상(Active Recall)을 위한 암기 도우미",
     studyLimit: "학습할 카드 수",
+    practiceMode: "연습 모드",
+    examMode: "시험 모드",
     title: "Memorize Supporter",
     uncategorized: "미분류",
     viewModeGrid: "그리드 뷰",

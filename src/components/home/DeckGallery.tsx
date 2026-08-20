@@ -30,6 +30,7 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
   const [selectedSeries, setSelectedSeries] = useState<string>("all")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [globalLimit, setGlobalLimit] = useState<number>(10)
+  const [globalIsExamMode, setGlobalIsExamMode] = useState<boolean>(false)
   const isStale = searchQuery !== deferredSearchQuery;
 
   const [isLoaded, setIsLoaded] = useState(false)
@@ -38,10 +39,14 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
   useEffect(() => {
     try {
       const savedLimit = localStorage.getItem('memorize_globalLimit')
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (savedLimit) setGlobalLimit(Number(savedLimit))
       
       const savedViewMode = localStorage.getItem('memorize_viewMode')
       if (savedViewMode === 'grid' || savedViewMode === 'list') setViewMode(savedViewMode)
+
+      const savedIsExamMode = localStorage.getItem('memorize_globalIsExamMode')
+      if (savedIsExamMode !== null) setGlobalIsExamMode(savedIsExamMode === 'true')
     } catch (e) {
       console.warn('Failed to load settings from local storage', e)
     } finally {
@@ -55,10 +60,11 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
     try {
       localStorage.setItem('memorize_globalLimit', globalLimit.toString())
       localStorage.setItem('memorize_viewMode', viewMode)
+      localStorage.setItem('memorize_globalIsExamMode', globalIsExamMode.toString())
     } catch (e) {
       console.warn('Failed to save settings to local storage', e)
     }
-  }, [globalLimit, viewMode, isLoaded])
+  }, [globalLimit, viewMode, globalIsExamMode, isLoaded])
 
   const sortSeries = useCallback((a: string, b: string) => {
     if (a === t.home.uncategorized) return 1;
@@ -147,6 +153,8 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
         setViewMode={setViewMode}
         globalLimit={globalLimit}
         setGlobalLimit={setGlobalLimit}
+        globalIsExamMode={globalIsExamMode}
+        setGlobalIsExamMode={setGlobalIsExamMode}
       />
 
 
@@ -168,9 +176,9 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
                 </div>
                 
                 {viewMode === "grid" ? (
-                  <DeckGrid decks={seriesDecks} lang={lang} globalLimit={globalLimit} />
+                  <DeckGrid decks={seriesDecks} lang={lang} globalLimit={globalLimit} globalIsExamMode={globalIsExamMode} />
                 ) : (
-                  <DeckList decks={seriesDecks} lang={lang} globalLimit={globalLimit} />
+                  <DeckList decks={seriesDecks} lang={lang} globalLimit={globalLimit} globalIsExamMode={globalIsExamMode} />
                 )}
               </div>
             ))}

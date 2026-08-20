@@ -29,6 +29,8 @@ export interface Translations {
     searchDecks: string;
     subtitle: string;
     studyLimit: string;
+    practiceMode: string;
+    examMode: string;
     title: string;
     uncategorized: string;
     viewModeGrid: string;

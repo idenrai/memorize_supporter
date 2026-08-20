@@ -2,7 +2,7 @@ import type { Lang } from "@/i18n/types"
 import DeckCard from "@/components/cards/DeckCard"
 import type { Deck } from "./DeckGallery"
 
-export default function DeckGrid({ decks, lang, globalLimit }: { decks: Deck[], lang: Lang, globalLimit: number }) {
+export default function DeckGrid({ decks, lang, globalLimit, globalIsExamMode }: { decks: Deck[], lang: Lang, globalLimit: number, globalIsExamMode: boolean }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {decks.map((deck) => (
@@ -15,6 +15,7 @@ export default function DeckGrid({ decks, lang, globalLimit }: { decks: Deck[], 
           type={deck.type}
           lang={lang}
           globalLimit={globalLimit}
+          globalIsExamMode={globalIsExamMode}
         />
       ))}
     </div>
