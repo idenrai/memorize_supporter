@@ -50,6 +50,7 @@ export interface Translations {
     cancel: string;
     chooseFile: string;
     confirmDelete: string;
+    delete: string;
     deleteFailed: string;
     deleteSuccess: string;
     desc: string;
@@ -103,12 +104,16 @@ export interface Translations {
     tryAgain: string;
   };
   records: {
-    empty: string;
+    title: string;
     viewAll: string;
-    thCorrect: string;
+    empty: string;
     thDate: string;
     thDeck: string;
     thScore: string;
-    title: string;
+    thCorrect: string;
+    backToRecords: string;
+    details: string;
+    detailsNotAvailable: string;
+    legacyRecordDesc: string;
   };
 }

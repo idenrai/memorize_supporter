@@ -54,6 +54,7 @@ ${content}
     cancel: "취소",
     chooseFile: "파일 선택",
     confirmDelete: "정말로 이 데이터를 영구적으로 삭제하시겠습니까?",
+    delete: "삭제",
     deleteFailed: "삭제에 실패했습니다.",
     deleteSuccess: "성공적으로 삭제되었습니다.",
     desc: "Data Prep 탭을 이용해 생성한 JSON 데이터를 이곳에서 업로드하여 시스템에 반영할 수 있습니다. 시스템 데이터를 감추고 싶다면 비표시로 설정하세요.",
@@ -114,5 +115,9 @@ ${content}
     thDeck: "덱 이름",
     thScore: "점수",
     title: "시험 점수 기록",
+    backToRecords: "기록 목록으로",
+    details: "상세 보기",
+    detailsNotAvailable: "상세 기록을 제공할 수 없습니다.",
+    legacyRecordDesc: "이 시험 기록은 상세 기록 기능이 추가되기 전에 생성되었기 때문에 문항별 내역을 표시할 수 없습니다."
   },
 };

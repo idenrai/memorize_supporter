@@ -54,6 +54,7 @@ ${content}
     cancel: "キャンセル",
     chooseFile: "ファイルを選択",
     confirmDelete: "本当にこのデータを完全に削除しますか？",
+    delete: "削除",
     deleteFailed: "削除に失敗しました。",
     deleteSuccess: "正常に削除されました。",
     desc: "Data Prep タブで生成した JSON データをアップロードしてシステムに反映できます。システムデータを見たくない場合は非表示に設定できます。",
@@ -109,10 +110,14 @@ ${content}
   records: {
     empty: "まだ試験の記録がありません。",
     viewAll: "すべての記録を表示",
-    thCorrect: "正解数/全体",
+    thCorrect: "正解数 / 全体",
     thDate: "受験日",
     thDeck: "デッキ名",
     thScore: "スコア",
-    title: "試験スコア記録",
+    title: "試験記録",
+    backToRecords: "記録一覧へ",
+    details: "詳細を見る",
+    detailsNotAvailable: "詳細な記録は利用できません",
+    legacyRecordDesc: "この試験記録は詳細記録機能が追加される前に作成されたため、問題ごとの履歴は表示できません。"
   },
 };

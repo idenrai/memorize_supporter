@@ -92,12 +92,16 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **공유 스키마 (Zod):** 클라이언트의 입력값은 절대 신뢰하지 않습니다. 5MB 용량 제한 검사부터 미식별 필드 제거까지, 모든 페이로드는 비즈니스 로직에 도달하기 전 반드시 재사용 가능한 Zod 스키마(`src/lib/schemas.ts`, `src/schemas/deck.ts`)를 통해 엄격하게 검증됩니다.
 
 **Database and ORM Integration:**
-- **SQLite:** Built locally at `.data/memorize.sqlite`. This file is excluded from Git tracking (`.gitignore`).
+- **SQLite (Default):** Built locally at `.data/memorize.sqlite`. This file is excluded from Git tracking (`.gitignore`).
+- **PostgreSQL (Optional):** Supported for production or serverless environments.
 - **Prisma ORM:** Generates type-safe queries and manages the database schema. Maintains a singleton connection in `src/lib/prisma.ts`.
+- **Exam History Tracking:** Records detailed exam sessions using `ExamResult` and `ExamResultDetail` tables, enabling users to review previous quizzes question-by-question (including chosen incorrect answers and accurate scores).
 
 **데이터베이스 및 ORM 연동 방식:**
-- **SQLite:** `.data/memorize.sqlite`에 로컬로 구축되며, 이 파일은 Git 추적에서 제외(`.gitignore`)됩니다.
+- **SQLite (기본값):** `.data/memorize.sqlite`에 로컬로 구축되며, 이 파일은 Git 추적에서 제외(`.gitignore`)됩니다.
+- **PostgreSQL (선택 사항):** 프로덕션 또는 서버리스 환경을 위해 완벽히 지원됩니다.
 - **Prisma ORM:** 타입 안정성이 보장된 쿼리를 생성하며, 데이터베이스 스키마 관리를 담당합니다. `src/lib/prisma.ts`에 싱글톤 패턴으로 연결을 유지합니다.
+- **상세 시험 기록 추적:** `ExamResult` 및 `ExamResultDetail` 테이블을 사용하여 각 세션의 문제별 정오답 기록(사용자가 선택한 오답 포함)을 영구 보존하며, 이후 오답 노트 형태의 리뷰 기능을 제공합니다.
 
 ## 4. Data Pipeline
 

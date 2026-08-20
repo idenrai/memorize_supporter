@@ -172,7 +172,7 @@ ${content.explanation || '없음'}
               disabled={selectedIndices.length === 0}
               className="px-8 py-2.5 bg-teal-600 text-white font-medium rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-teal-500 active:scale-95 transition shadow-sm"
             >
-              {t.quiz.submit}
+              {mode === 'exam' ? t.quiz.next : t.quiz.submit}
             </button>
           </div>
         </div>

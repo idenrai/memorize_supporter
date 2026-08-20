@@ -24,6 +24,8 @@ cp .env.example .env
 ```
 *(Windows 환경의 경우 `copy .env.example .env`를 사용하거나 직접 복사하세요.)*
 
+> **Note**: 기본적으로 로컬 SQLite(`file:./.data/memorize.sqlite`)가 설정되어 있습니다. 프로덕션 환경 등에서 PostgreSQL을 사용하려면 `.env` 파일의 `DATABASE_URL`을 수정하세요.
+
 ## 4. 데이터베이스 및 데이터 초기화 (DB Setup & ETL)
 Prisma ORM을 사용하여 SQLite 데이터베이스를 생성하고, ETL 스크립트를 실행하여 `input/` 디렉토리의 데이터를 DB에 적재합니다.
 

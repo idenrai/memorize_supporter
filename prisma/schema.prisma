@@ -53,5 +53,19 @@ model ExamResult {
   correct   Int
   createdAt DateTime @default(now())
 
+  details   ExamResultDetail[]
+
   @@index([deckId])
+}
+
+model ExamResultDetail {
+  id              String     @id @default(uuid())
+  examResultId    String
+  examResult      ExamResult @relation(fields: [examResultId], references: [id], onDelete: Cascade)
+  cardId          String
+  isCorrect       Boolean
+  selectedIndices String?
+
+  @@index([examResultId])
+  @@index([cardId])
 }
