@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { ChevronDown, History } from "lucide-react"
+import { History } from "lucide-react"
 import type { Lang, Translations } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import type { Deck } from "./DeckGallery"
@@ -21,7 +20,7 @@ function DeckListRow({ deck, lang, t, globalLimit, globalIsExamMode }: { deck: D
           <span className="text-sm text-zinc-400 truncate flex items-center gap-2">
             <span className="shrink-0">{typeLabel}</span>
             <span className="w-1 h-1 bg-zinc-700 rounded-full shrink-0" />
-            <span className="shrink-0">{deck._count.cards} {t.home.cards}</span>
+            <span className="shrink-0 tabular-nums">{deck._count.cards} {t.home.cards}</span>
           </span>
         </div>
       </div>
@@ -33,6 +32,7 @@ function DeckListRow({ deck, lang, t, globalLimit, globalIsExamMode }: { deck: D
             href={`/${lang}/records?deckId=${deck.id}`}
             className="flex items-center justify-center p-2 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors mr-1"
             title={t.common.examRecords}
+            aria-label={t.common.examRecords}
           >
             <History size={16} aria-hidden="true" />
           </Link>

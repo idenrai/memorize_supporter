@@ -85,7 +85,7 @@ export default async function RecordsPage({
             <tbody className="divide-y divide-zinc-800/60">
               {records.map(record => (
                 <tr key={record.id} className="hover:bg-zinc-800/40 transition-colors group">
-                  <td className="px-6 py-4 text-zinc-400">
+                  <td className="px-6 py-4 text-zinc-400 tabular-nums">
                     <div className="flex items-center gap-2">
                       <Calendar size={14} className="text-zinc-500" />
                       {formatDate(record.createdAt)}
@@ -93,7 +93,7 @@ export default async function RecordsPage({
                   </td>
                   {!deckId && <td className="px-6 py-4 text-zinc-200 font-medium truncate max-w-[200px]">{record.deck.title}</td>}
                   <td className="px-6 py-4">
-                    <span className={`font-bold px-2.5 py-1 rounded-md text-xs tracking-wider ${
+                    <span className={`font-bold px-2.5 py-1 rounded-md text-xs tracking-wider tabular-nums ${
                       record.score >= 80 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
                       record.score >= 60 ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
                       'bg-rose-500/10 text-rose-400 border border-rose-500/20'
@@ -101,7 +101,7 @@ export default async function RecordsPage({
                       {record.score}%
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-zinc-300 font-medium">{record.correct} / {record.total}</td>
+                  <td className="px-6 py-4 text-zinc-300 font-medium tabular-nums">{record.correct} / {record.total}</td>
                   <td className="px-6 py-4 text-right">
                     <Link href={`/${validLang}/records/${record.id}`} className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800/50 text-zinc-400 hover:bg-teal-500/20 hover:text-teal-400 transition-colors" aria-label={t.records.details || "View Details"}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>

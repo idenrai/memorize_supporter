@@ -56,20 +56,20 @@ This document defines the system architecture of the `memorize_supporter` projec
 - 로컬 상태(`useState`)를 활용하여 현재 데크(Deck)의 학습 진행 상황과 플립 여부를 관리합니다. 복잡한 전역 상태 관리자(Redux 등)는 지양합니다.
 
 **Styling, Micro-animations, and Accessibility:**
-- Focus-mode layout based on a Zinc (background) and Teal/Indigo (primary) dark mode theme using Tailwind CSS.
-- Enhances code readability and maintainability by defining global semantic utility classes (e.g., `.glass-panel`, `.btn-indigo`) in `globals.css` via `@apply`.
+- Focus-mode layout based on a Zinc (background) and Teal/Indigo (primary) dark mode theme using Tailwind CSS v4 (`@tailwindcss/postcss`).
+- Enhances code readability and maintainability by defining global semantic utilities (e.g., `@utility .glass-panel`, `@utility .btn-indigo`, 3D transforms) in `globals.css` via Tailwind CSS v4 `@utility` directives.
 - **CJK Typography Optimization:** Configures `word-break: keep-all; overflow-wrap: anywhere;` on `body` in `globals.css` to prevent unnatural word splitting in Korean and Japanese, while preventing text overflow in narrow mobile viewports.
-- **Adaptive Height & Motion Control:** Uses `AnimatePresence` with `initial={false}` and `useReducedMotion` in quiz cards to adapt smoothly to varying question/explanation lengths without layout jitter or empty whitespace.
-- Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, ARIA attributes, robust keyboard navigation focus states (`focus-visible`), and touch feedback (`active:scale-95`).
+- **Adaptive Height & Motion Control:** Uses `AnimatePresence` with `initial={false}` and `useReducedMotion` (`motion-reduce:` variants) in cards and interactive controls to adapt smoothly to varying content lengths without layout jitter.
+- Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, WAI-ARIA attributes (`role="group"`, `aria-pressed`, `aria-label`), robust keyboard navigation focus states (`focus-visible`), fixed-width numeric typography (`tabular-nums`), and touch feedback (`active:scale-95`).
 - Implements custom accessible UI components (e.g., `CustomSelect` using React Portals) to replace native browser elements, ensuring a consistent premium look (glassmorphism) across all platforms while maintaining strict WAI-ARIA combobox standards and keyboard type-ahead navigation.
 - Provides visual feedback such as a 180-degree 3D flip and Scale Pop by integrating `framer-motion`.
 
 **스타일링, 마이크로 애니메이션 및 접근성:**
-- Tailwind CSS를 활용하여 눈이 편안한 Zinc(배경)와 Teal/Indigo(프라이머리) 기반의 다크 모드 포커스 레이아웃을 제공합니다.
-- `globals.css` 파일에 `@apply`를 활용하여 시맨틱한 글로벌 유틸리티 클래스(`.glass-panel`, `.btn-indigo` 등)를 정의함으로써 컴포넌트 내 복잡한 스타일 코드를 분리하고 가독성을 높였습니다.
+- Tailwind CSS v4 (`@tailwindcss/postcss`)를 활용하여 눈이 편안한 Zinc(배경)와 Teal/Indigo(프라이머리) 기반의 다크 모드 포커스 레이아웃을 제공합니다.
+- `globals.css` 파일에 Tailwind CSS v4의 `@utility` 지시어를 활용하여 시맨틱한 글로벌 유틸리티(`.glass-panel`, `.btn-indigo`, 3D 변환 등)를 정의함으로써 스타일 코드 결합성과 유지보수성을 극대화했습니다.
 - **CJK 타이포그래피 최적화:** `globals.css`의 `body`에 `word-break: keep-all; overflow-wrap: anywhere;`를 전역 적용하여 한국어/일본어 어절이 음절 단위로 쪼개지는 현상을 방지하고, 좁은 모바일 뷰포트에서의 긴 텍스트 오버플로우를 안전하게 차단합니다.
-- **가변 높이 및 모션 제어:** 퀴즈 카드에 `AnimatePresence (initial={false})`와 `useReducedMotion`을 적용하여 문제/해설 길이에 따라 유연하게 높이를 조절하고, 불필요한 빈 여백 및 모션 덜컹거림(Jitter)을 방지합니다.
-- Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, ARIA 속성, 견고한 키보드 포커스(`focus-visible`), 그리고 모바일 터치 피드백(`active:scale-95`) 등 최고 수준의 접근성을 보장합니다.
+- **가변 높이 및 모션 제어:** 퀴즈 카드 및 상호작용 컨트롤에 `AnimatePresence (initial={false})`와 `useReducedMotion`(`motion-reduce:` 변형자)을 적용하여 컨텐츠 길이에 맞춰 유연하게 조절하고, 불필요한 빈 여백 및 모션 덜컹거림(Jitter)을 방지합니다.
+- Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, WAI-ARIA 속성(`role="group"`, `aria-pressed`, `aria-label`), 견고한 키보드 포커스(`focus-visible`), 고정폭 수치 폰트(`tabular-nums`), 그리고 모바일 터치 피드백(`active:scale-95`) 등 최고 수준의 접근성을 보장합니다.
 - 네이티브 브라우저 엘리먼트를 대체하는 접근성 높은 커스텀 UI 컴포넌트(예: React Portal 기반의 `CustomSelect`)를 구현하여, 모든 플랫폼에서 일관된 프리미엄 룩(글래스모피즘)을 유지하는 동시에 엄격한 WAI-ARIA 콤보박스 표준과 키보드 Type-ahead 네비게이션을 지원합니다.
 - `framer-motion`을 도입하여 180도 3D 플립, Scale Pop 등 시각적 피드백을 제공합니다.
 

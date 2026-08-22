@@ -116,7 +116,7 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
       <div className="relative text-center p-12 sm:p-16 mt-4 w-full glass-panel rounded-3xl overflow-hidden group">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-transparent pointer-events-none" />
         <div className="relative z-10">
-          <div className="w-20 h-20 bg-gradient-to-br from-indigo-500/20 to-teal-500/20 text-indigo-400 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner border border-white/10 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(99,102,241,0.3)] transition-all duration-500">
+          <div className="w-20 h-20 bg-gradient-to-br from-indigo-500/20 to-teal-500/20 text-indigo-400 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner border border-white/10 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(99,102,241,0.3)] transition-[transform,box-shadow] duration-500">
             <Library size={36} aria-hidden="true" />
           </div>
           <h3 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400 mb-4 break-keep">{t.home.welcomeTitle}</h3>

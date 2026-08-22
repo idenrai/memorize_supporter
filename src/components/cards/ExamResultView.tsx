@@ -85,8 +85,8 @@ export default function ExamResultView({
     >
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-white mb-2">{t.quiz.quizCompleted}</h2>
-        <div className="text-5xl font-black text-teal-400 mt-4">{accuracy}%</div>
-        <p className="text-zinc-400 mt-2">{correctCount} / {totalCardsCount} {t.quiz.correctAnswers || "correct"}</p>
+        <div className="text-5xl font-black text-teal-400 mt-4 tabular-nums">{accuracy}%</div>
+        <p className="text-zinc-400 mt-2"><span className="tabular-nums">{correctCount}</span> / <span className="tabular-nums">{totalCardsCount}</span> {t.quiz.correctAnswers || "correct"}</p>
       </div>
 
       <div className="w-full flex flex-col gap-3 mb-8">
@@ -97,7 +97,7 @@ export default function ExamResultView({
             <button
               key={c.id}
               onClick={() => setReviewingCard(c)}
-              className="flex items-center gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition text-left focus-visible:ring-2 focus-visible:ring-teal-500"
+              className="flex items-center gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-colors text-left focus-visible:ring-2 focus-visible:ring-teal-500"
             >
               <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isCorrect ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                 {isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />}

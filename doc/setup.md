@@ -3,7 +3,7 @@
 이 문서는 `memorize_supporter` 프로젝트의 개발 환경 설정 및 설치 과정을 안내합니다.
 
 ## 1. 사전 요구 사항 (Prerequisites)
-- **Node.js**: v20.x 이상 권장 (최신 LTS, Next.js 14/15 호환성 보장)
+- **Node.js**: `Node.js >= 20.9.0` (최신 LTS v20.x 또는 v22.x+ 권장, Next.js 16 호환)
 - **운영 체제**: Windows, macOS, Linux 무관 (SQLite 로컬 파일 DB 사용)
 - 별도의 외부 데이터베이스 소프트웨어(MySQL, PostgreSQL 등)를 설치할 필요가 없습니다.
 

@@ -26,43 +26,41 @@
   }
 }
 
-/* Perspective for 3D flip */
-.perspective-1000 {
+/* 3D Transform Utilities */
+@utility perspective-1000 {
   perspective: 1000px;
 }
 
-/* Backface hidden */
-.backface-hidden {
+@utility backface-hidden {
   backface-visibility: hidden;
 }
 
-.rotate-y-180 {
+@utility rotate-y-180 {
   transform: rotateY(180deg);
 }
 
-.preserve-3d {
+@utility preserve-3d {
   transform-style: preserve-3d;
 }
 
-@layer components {
-  /* UI/UX Refactoring: Reusable Utilities */
-  .hover-glow-indigo {
-    @apply transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-[0_0_30px_rgba(99,102,241,0.25)] hover:ring-1 hover:ring-indigo-500/30 active:scale-[0.98];
-  }
-
-  .btn-indigo {
-    @apply inline-flex items-center justify-center bg-indigo-600 text-white hover:bg-indigo-500 transition-all font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-lg shadow-indigo-900/30 active:scale-95;
-  }
-
-  .btn-blue-outline {
-    @apply flex items-center justify-center bg-blue-600/10 text-blue-400 hover:bg-blue-600 hover:text-white transition-all font-bold border border-blue-500/20 hover:border-blue-500/50 active:scale-95;
-  }
-  
-  .btn-indigo-outline {
-    @apply flex items-center justify-center bg-indigo-600/10 text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all font-bold border border-indigo-500/20 hover:border-indigo-500/50 hover:shadow-[0_0_15px_rgba(99,102,241,0.4)] active:scale-95;
-  }
-
-  .glass-panel {
-    @apply bg-zinc-950/80 backdrop-blur-xl border border-white/5 shadow-2xl;
-  }
+/* UI/UX Reusable Utilities */
+@utility hover-glow-indigo {
+  @apply transition-[transform,box-shadow,border-color] duration-300 hover:scale-[1.02] hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-[0_0_30px_rgba(99,102,241,0.25)] hover:ring-1 hover:ring-indigo-500/30 active:scale-[0.98];
 }
+
+@utility btn-indigo {
+  @apply inline-flex items-center justify-center bg-indigo-600 text-white hover:bg-indigo-500 transition-[background-color,transform,box-shadow] duration-200 font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 shadow-lg shadow-indigo-900/30 active:scale-95;
+}
+
+@utility btn-blue-outline {
+  @apply flex items-center justify-center bg-blue-600/10 text-blue-400 hover:bg-blue-600 hover:text-white transition-[background-color,color,border-color] duration-200 font-bold border border-blue-500/20 hover:border-blue-500/50 active:scale-95;
+}
+
+@utility btn-indigo-outline {
+  @apply flex items-center justify-center bg-indigo-600/10 text-indigo-400 hover:bg-indigo-600 hover:text-white transition-[background-color,color,border-color,box-shadow] duration-200 font-bold border border-indigo-500/20 hover:border-indigo-500/50 hover:shadow-[0_0_15px_rgba(99,102,241,0.4)] active:scale-95;
+}
+
+@utility glass-panel {
+  @apply bg-zinc-950/80 backdrop-blur-xl border border-white/5 shadow-2xl;
+}
+
