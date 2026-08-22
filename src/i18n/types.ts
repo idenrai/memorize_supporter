@@ -9,6 +9,8 @@ export const LANG_NAMES: Record<Lang, string> = {
 export interface Translations {
   common: {
     backToHome: string;
+    changeLanguage: string;
+    dashboard: string;
     dataManagement: string;
     dataPrep: string;
     error: string;
@@ -25,6 +27,10 @@ export interface Translations {
     defaultDesc: (count: number) => string;
     description: string;
     howToAdd: string;
+    howToAddStep1: string;
+    howToAddStep2: string;
+    howToAddStep3: string;
+    howToAddStep4: string;
     noSearchResults: string;
     searchDecks: string;
     subtitle: string;
@@ -46,6 +52,9 @@ export interface Translations {
     desc: string;
     promptFormat: (content: string) => string;
     selectTemplate: string;
+    templateFlashcardDesc: string;
+    templateQuizDesc: string;
+    templateVocabDesc: string;
     title: string;
   };
   management: {
@@ -62,12 +71,17 @@ export interface Translations {
     hidden: string;
     hideFailed: string;
     hideSuccess: string;
+    noDecks: string;
+    optional: string;
     save: string;
     selectJsonFile: string;
+    sourceSystem: string;
+    sourceUser: string;
     thActions: string;
     thCards: string;
     thName: string;
     thSeries: string;
+    thSource: string;
     thType: string;
     title: string;
     uploadData: string;
@@ -78,6 +92,14 @@ export interface Translations {
     visible: string;
   };
   quiz: {
+    askAi: string;
+    aiDeepPrompt: (question: string, options: string, explanation: string) => string;
+    promptCopied: string;
+    promptCopyFailed: string;
+    selectOne: string;
+    selectMultiple: (count: number) => string;
+    none: string;
+    unknownCard: string;
     backToDashboard: string;
     clickToReveal: string;
     correct: string;
@@ -117,5 +139,8 @@ export interface Translations {
     details: string;
     detailsNotAvailable: string;
     legacyRecordDesc: string;
+    confirmDeleteRecord: string;
+    deleteSuccess: string;
+    deleteFailed: string;
   };
 }

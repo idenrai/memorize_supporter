@@ -3,12 +3,12 @@
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { ChevronDown, History } from "lucide-react"
-import type { Lang } from "@/i18n/types"
+import type { Lang, Translations } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import type { Deck } from "./DeckGallery"
 
-function DeckListRow({ deck, lang, t, globalLimit, globalIsExamMode }: { deck: Deck, lang: Lang, t: any, globalLimit: number, globalIsExamMode: boolean }) {
-  const count = deck._count.cards
+function DeckListRow({ deck, lang, t, globalLimit, globalIsExamMode }: { deck: Deck, lang: Lang, t: Translations, globalLimit: number, globalIsExamMode: boolean }) {
+  const typeLabel = deck.type === 'practice_quiz' ? t.quiz.practiceQuiz : deck.type === 'vocabulary' ? t.quiz.vocabulary : t.quiz.flashcard
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-zinc-900/40 hover:bg-zinc-800/60 border border-white/5 rounded-2xl transition-colors group gap-4">
@@ -19,7 +19,7 @@ function DeckListRow({ deck, lang, t, globalLimit, globalIsExamMode }: { deck: D
         <div className="flex flex-col truncate min-w-0 flex-1">
           <span className="font-bold text-zinc-100 truncate text-lg block group-hover:text-indigo-300 transition-colors">{deck.title}</span>
           <span className="text-sm text-zinc-400 truncate flex items-center gap-2">
-            <span className="capitalize shrink-0">{deck.type}</span>
+            <span className="shrink-0">{typeLabel}</span>
             <span className="w-1 h-1 bg-zinc-700 rounded-full shrink-0" />
             <span className="shrink-0">{deck._count.cards} {t.home.cards}</span>
           </span>

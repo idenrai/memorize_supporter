@@ -41,9 +41,11 @@ This document defines the system architecture of the `memorize_supporter` projec
   2순위(오답 문제): 틀린 이력이 있는 카드를 추산된 '틀린 횟수'가 높은 순으로 배치하여 약점을 집중 타격합니다. 
   3순위(일반 문제): 완벽히 맞힌 카드는 '풀이 횟수'가 적은 순으로 출제하여 우연히 맞힌 지식을 확실히 굳힌 뒤, 장기 기억화된 카드를 나중에 복습하도록 설계되었습니다.
 
-**i18n Strategy (다국어 처리 전략):**
+**i18n Strategy & Product UX Writing (다국어 처리 및 UX 라이팅 전략):**
 - **URL as Single Source of Truth (SSoT):** Uses dynamic routing (`app/[lang]/...`) to manage the current language state. This prevents hydration errors caused by resolving language through cookies or local storage during SSR.
 - **다국어 처리 전략:** URL 기반 동적 라우팅(`app/[lang]/...`)을 단일 진실 공급원(SSoT)으로 활용합니다. 전역 상태 관리자(Zustand 등)를 배제하여 SSR 렌더링 시점의 쿠키 분석에 의존하지 않고, Hydration 에러를 원천 차단하는 가장 우아한 아키텍처를 채택했습니다.
+- **Strictly Typed Translations (SSoT):** Managed via `src/i18n/types.ts` as the single source of truth, synchronizing Korean (`ko.ts`), English (`en.ts`), and Japanese (`ja.ts`) with 100% type safety and natural product-oriented UX copywriting.
+- **엄격한 타입 안전 다국어 관리:** `src/i18n/types.ts`를 단일 진실 공급원으로 삼아 한국어, 영어, 일본어 3개 국어의 번역 사전을 완전 동기화하고, 실제 웹 앱의 사용자 흐름에 맞춘 직관적인 UX 카피라이팅을 적용합니다.
 - **Locale Routing via Proxy:** Adheres to Next.js 16 conventions by using `src/proxy.ts` (replacing the deprecated `middleware.ts`) for dynamic locale routing. Locale constants are isolated in `src/i18n/settings.ts` to maintain a single source of truth across the application.
 - **프록시 기반 로캘 라우팅:** Next.js 16의 새로운 규칙에 따라 기존 `middleware.ts` 대신 `src/proxy.ts`를 사용하여 동적 로캘 라우팅을 처리합니다. 다국어 상수(locales)는 `src/i18n/settings.ts`로 분리하여 애플리케이션 전체에서 단일 진실 공급원으로 관리합니다.
 
@@ -56,6 +58,8 @@ This document defines the system architecture of the `memorize_supporter` projec
 **Styling, Micro-animations, and Accessibility:**
 - Focus-mode layout based on a Zinc (background) and Teal/Indigo (primary) dark mode theme using Tailwind CSS.
 - Enhances code readability and maintainability by defining global semantic utility classes (e.g., `.glass-panel`, `.btn-indigo`) in `globals.css` via `@apply`.
+- **CJK Typography Optimization:** Configures `word-break: keep-all; overflow-wrap: anywhere;` on `body` in `globals.css` to prevent unnatural word splitting in Korean and Japanese, while preventing text overflow in narrow mobile viewports.
+- **Adaptive Height & Motion Control:** Uses `AnimatePresence` with `initial={false}` and `useReducedMotion` in quiz cards to adapt smoothly to varying question/explanation lengths without layout jitter or empty whitespace.
 - Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, ARIA attributes, robust keyboard navigation focus states (`focus-visible`), and touch feedback (`active:scale-95`).
 - Implements custom accessible UI components (e.g., `CustomSelect` using React Portals) to replace native browser elements, ensuring a consistent premium look (glassmorphism) across all platforms while maintaining strict WAI-ARIA combobox standards and keyboard type-ahead navigation.
 - Provides visual feedback such as a 180-degree 3D flip and Scale Pop by integrating `framer-motion`.
@@ -63,6 +67,8 @@ This document defines the system architecture of the `memorize_supporter` projec
 **스타일링, 마이크로 애니메이션 및 접근성:**
 - Tailwind CSS를 활용하여 눈이 편안한 Zinc(배경)와 Teal/Indigo(프라이머리) 기반의 다크 모드 포커스 레이아웃을 제공합니다.
 - `globals.css` 파일에 `@apply`를 활용하여 시맨틱한 글로벌 유틸리티 클래스(`.glass-panel`, `.btn-indigo` 등)를 정의함으로써 컴포넌트 내 복잡한 스타일 코드를 분리하고 가독성을 높였습니다.
+- **CJK 타이포그래피 최적화:** `globals.css`의 `body`에 `word-break: keep-all; overflow-wrap: anywhere;`를 전역 적용하여 한국어/일본어 어절이 음절 단위로 쪼개지는 현상을 방지하고, 좁은 모바일 뷰포트에서의 긴 텍스트 오버플로우를 안전하게 차단합니다.
+- **가변 높이 및 모션 제어:** 퀴즈 카드에 `AnimatePresence (initial={false})`와 `useReducedMotion`을 적용하여 문제/해설 길이에 따라 유연하게 높이를 조절하고, 불필요한 빈 여백 및 모션 덜컹거림(Jitter)을 방지합니다.
 - Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, ARIA 속성, 견고한 키보드 포커스(`focus-visible`), 그리고 모바일 터치 피드백(`active:scale-95`) 등 최고 수준의 접근성을 보장합니다.
 - 네이티브 브라우저 엘리먼트를 대체하는 접근성 높은 커스텀 UI 컴포넌트(예: React Portal 기반의 `CustomSelect`)를 구현하여, 모든 플랫폼에서 일관된 프리미엄 룩(글래스모피즘)을 유지하는 동시에 엄격한 WAI-ARIA 콤보박스 표준과 키보드 Type-ahead 네비게이션을 지원합니다.
 - `framer-motion`을 도입하여 180도 3D 플립, Scale Pop 등 시각적 피드백을 제공합니다.

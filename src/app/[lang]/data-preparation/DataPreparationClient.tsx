@@ -38,10 +38,12 @@ export default function DataPreparationClient({ templates, lang }: { templates: 
                   : 'border-white/10 bg-white/5 hover:border-zinc-600 hover:bg-white/10'
               }`}
             >
-              <div className={`font-bold ${selectedTemplate?.id === template.id ? 'text-blue-400' : 'text-zinc-200'}`}>
+              <div className={`font-bold text-base ${selectedTemplate?.id === template.id ? 'text-blue-400' : 'text-zinc-200'}`}>
                 {template.name}
               </div>
-              <div className="text-xs text-zinc-500 mt-1.5 font-mono truncate">{template.id}</div>
+              <div className="text-xs text-zinc-400 mt-2 line-clamp-2 leading-relaxed">
+                {template.description}
+              </div>
             </button>
           ))}
         </div>

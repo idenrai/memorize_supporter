@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo, useDeferredValue, useCallback, useEffect } from "react"
+import Link from "next/link"
 import { Search, Library } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import type { Lang } from "@/i18n/types"
@@ -118,23 +119,33 @@ export default function DeckGallery({ decks, lang }: DeckGalleryProps) {
           <div className="w-20 h-20 bg-gradient-to-br from-indigo-500/20 to-teal-500/20 text-indigo-400 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner border border-white/10 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(99,102,241,0.3)] transition-all duration-500">
             <Library size={36} aria-hidden="true" />
           </div>
-          <h3 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400 mb-4">{t.home.welcomeTitle}</h3>
-          <p className="text-zinc-400 mb-10 max-w-lg mx-auto leading-relaxed text-lg text-balance">
+          <h3 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400 mb-4 break-keep">{t.home.welcomeTitle}</h3>
+          <p className="text-zinc-400 mb-10 max-w-xl mx-auto leading-relaxed text-lg break-keep">
             {t.home.welcomeDesc}
           </p>
           
-          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 text-left max-w-2xl mx-auto border border-white/10 shadow-lg relative overflow-hidden">
+          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 text-left max-w-3xl mx-auto border border-white/10 shadow-lg relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full" />
-            <h4 className="text-zinc-200 font-bold mb-6 text-lg flex items-center gap-2">
+            <h4 className="text-zinc-200 font-bold mb-6 text-lg flex items-center gap-2 break-keep">
               <span className="w-2 h-6 bg-blue-500 rounded-full" />
               {t.home.howToAdd}
             </h4>
-            <ol className="list-decimal list-inside space-y-4 text-base text-zinc-400 font-medium">
-              <li>Create a JSON file containing your flashcards or quizzes.</li>
-              <li>Place the file in <code className="bg-zinc-900/80 px-2 py-1 rounded-md text-indigo-400 border border-zinc-800">input/private</code> or <code className="bg-zinc-900/80 px-2 py-1 rounded-md text-indigo-400 border border-zinc-800">input/public</code> directory.</li>
-              <li>Run <code className="bg-zinc-900/80 px-2 py-1 rounded-md text-teal-400 font-mono border border-zinc-800">npm run etl</code> in your terminal to load the data.</li>
-              <li>Refresh this page and start studying!</li>
+            <ol className="list-decimal list-inside space-y-3.5 text-base text-zinc-300 font-medium leading-relaxed mb-6">
+              <li>{t.home.howToAddStep1}</li>
+              <li>{t.home.howToAddStep2}</li>
+              <li>{t.home.howToAddStep3}</li>
+              <li>{t.home.howToAddStep4}</li>
             </ol>
+            
+            <div className="pt-2">
+              <Link
+                href={`/${lang}/data-preparation`}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold btn-indigo shadow-lg shadow-indigo-500/20"
+              >
+                <span>{t.common.dataPrep}</span>
+                <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

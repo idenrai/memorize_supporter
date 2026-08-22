@@ -44,10 +44,10 @@ export default function Header({ lang }: { lang: Lang }) {
           <Link 
             href={`/${lang}`} 
             className={navItemClass(`/${lang}`)}
-            title="Dashboard"
+            title={t.common.dashboard}
           >
             <LayoutDashboard size={16} />
-            <span className="hidden lg:inline">Dashboard</span>
+            <span className="hidden lg:inline">{t.common.dashboard}</span>
           </Link>
           <Link 
             href={`/${lang}/records`} 

@@ -5,16 +5,18 @@ import { useRouter, usePathname, useParams } from 'next/navigation'
 import { setLanguageCookie } from '@/actions/i18n'
 import type { Lang } from '@/i18n/types'
 import { LANG_NAMES } from '@/i18n/types'
+import { useT } from '@/hooks/useT'
 
 import CustomSelect from './ui/CustomSelect'
 
 const LANG_LABELS: Record<Lang, string> = {
-  ko: "KR",
-  en: "US",
-  ja: "JP",
+  ko: "KO",
+  en: "EN",
+  ja: "JA",
 }
 
 export default function LanguageSwitch() {
+  const t = useT()
   const router = useRouter()
   const pathname = usePathname()
   const params = useParams()
@@ -32,13 +34,13 @@ export default function LanguageSwitch() {
     <CustomSelect
       value={lang}
       onChange={handleLangChange}
-      ariaLabel="Change Language"
-      className="flex h-9 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-black"
+      ariaLabel={t.common.changeLanguage}
+      className="flex h-10 sm:h-9 items-center justify-center gap-1.5 rounded-md border border-transparent px-2.5 sm:px-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-black"
       dropdownClassName="min-w-[140px]"
       trigger={
         <>
           <Globe className="size-4" />
-          <span className="text-xs font-bold uppercase">{LANG_LABELS[lang] || "US"}</span>
+          <span className="text-xs font-bold uppercase">{LANG_LABELS[lang] || "EN"}</span>
         </>
       }
       options={(Object.keys(LANG_NAMES) as Lang[]).map((l) => ({

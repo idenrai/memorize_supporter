@@ -186,9 +186,9 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
               onKeyDown={(e) => handleSortKeyDown(e, 'source')}
               tabIndex={0}
               role="button"
-              aria-label="Sort by Source"
+              aria-label={`Sort by ${t.management.thSource}`}
             >
-              Source {renderSortIcon('source')}
+              {t.management.thSource} {renderSortIcon('source')}
             </th>
             <th className="px-4 py-3 sm:px-6 sm:py-4 text-right text-xs font-bold text-zinc-400 uppercase tracking-wider select-none">
               {t.management.thActions}
@@ -231,7 +231,7 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
                     }}
                     aria-label={t.management.thSeries}
                     className="bg-zinc-900 border border-zinc-700 rounded px-3 py-1.5 text-sm text-zinc-100 w-full focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    placeholder="Optional"
+                    placeholder={t.management.optional}
                     disabled={isPending}
                   />
                 ) : (
@@ -250,7 +250,7 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
                     ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
                     : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                 }`}>
-                  {deck.isSystem ? 'System' : 'User'}
+                  {deck.isSystem ? t.management.sourceSystem : t.management.sourceUser}
                 </span>
               </td>
               <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -306,8 +306,8 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
                             onClick={() => handleDelete(deck.id)}
                             disabled={isPending}
                             className="text-red-400/70 hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-                            title="Delete"
-                            aria-label="Delete"
+                            title={t.management.delete}
+                            aria-label={t.management.delete}
                           >
                             <Trash2 size={18} aria-hidden="true" />
                           </button>
@@ -322,7 +322,7 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
           {sortedDecks.length === 0 && (
             <tr>
               <td colSpan={6} className="px-6 py-12 text-center text-zinc-500 text-sm">
-                No decks found.
+                {t.management.noDecks}
               </td>
             </tr>
           )}
