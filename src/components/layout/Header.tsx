@@ -2,10 +2,11 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Sparkles, Database, FileJson, LayoutDashboard, Trophy } from "lucide-react"
+import { Database, FileJson, LayoutDashboard, Trophy } from "lucide-react"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import LanguageSwitch from "@/components/LanguageSwitch"
+import BrandLogo from "@/components/common/BrandLogo"
 
 export default function Header({ lang }: { lang: Lang }) {
   const t = useT()
@@ -28,11 +29,9 @@ export default function Header({ lang }: { lang: Lang }) {
     <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-white/5 bg-zinc-950/80 backdrop-blur-md px-4 md:px-8 shadow-md">
       {/* Left: Logo */}
       <div className="flex items-center gap-3">
-        <Link href={`/${lang}`} className="group flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 via-blue-500 to-teal-400 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30 ring-1 ring-white/20">
-            <Sparkles className="text-white w-5 h-5 drop-shadow-md" aria-hidden="true" />
-          </div>
-          <span className="text-lg font-bold tracking-tight text-white hidden md:block">
+        <Link href={`/${lang}`} className="group flex items-center gap-3 hover:opacity-90 transition-opacity">
+          <BrandLogo size="md" />
+          <span className="text-lg font-bold tracking-tight text-white hidden md:block group-hover:text-teal-300 transition-colors">
             {t.home.title}
           </span>
         </Link>

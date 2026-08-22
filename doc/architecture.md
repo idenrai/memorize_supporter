@@ -84,10 +84,12 @@ This document defines the system architecture of the `memorize_supporter` projec
 **PWA & Metadata Strategy:**
 - Implements a Progressive Web App (PWA) standard `manifest.ts` to seamlessly integrate with native device environments (e.g., theme color matching, standalone display).
 - Ensures cross-browser rendering reliability by using pure SVG `<linearGradient>` code for dynamic favicons (`icon.tsx`) and high-resolution Apple icons (`apple-icon.tsx`), bypassing Satori's nested SVG rendering limitations.
+- **Brand Identity & Iconography (Synaptic Recall Deck):** Replaces generic star templates with a custom geometric symbol featuring 3D stacked flashcard layers and an active recall spark core. Scaled and contrasted specifically for small browser tab favicons (`icon.tsx`, 32x32) and high-resolution mobile app icons (`apple-icon.tsx`, 180x180), complemented by a reusable `<BrandLogo />` component.
 
 **PWA 및 메타데이터 전략:**
 - Progressive Web App (PWA) 표준인 `manifest.ts`를 구현하여 네이티브 디바이스 환경(테마 색상 동기화, Standalone 디스플레이 등)에 자연스럽게 녹아들도록 구성했습니다.
 - 동적 파비콘(`icon.tsx`) 및 고해상도 애플 아이콘(`apple-icon.tsx`) 생성 시, Satori 엔진의 중첩 SVG 렌더링 한계를 회피하기 위해 순수 SVG `<linearGradient>` 코드를 단일 레이아웃과 조합하여 크로스 브라우징 렌더링 안정성을 확보했습니다.
+- **브랜드 아이덴티티 및 아이콘(Synaptic Recall Deck):** 기존의 진부한 별 모양 템플릿을 탈피하고, 3D 입체 카드 덱 레이어와 능동 인출 시냅스 불꽃을 융합한 도메인 특화 심볼을 구현했습니다. 초소형 탭 파비콘(`icon.tsx`, 32x32)의 고대비 최적화와 고해상도 앱 아이콘(`apple-icon.tsx`, 180x180), 그리고 재사용 가능한 `<BrandLogo />` 컴포넌트를 통해 앱 전반에 걸쳐 일관된 브랜드 정체성을 제공합니다.
 
 ## 3. Backend
 
