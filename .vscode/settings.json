@@ -1,0 +1,39 @@
+{
+  // 1. CSS & Tailwind CSS v4 최적화
+  "css.lint.unknownAtRules": "ignore",
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+
+  // 2. TypeScript & 포맷팅/린트 자동화
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // 3. 파일 탐색기 네스팅 (설정 파일 깔끔하게 묶기)
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, tsconfig.json, tsconfig.*.json, next.config.*, postcss.config.*, eslint.config.*, skills-lock.json, .env*",
+    "README.md": "AGENTS.md, CLAUDE.md, GEMINI.md, .markdownlint*"
+  },
+
+  // 4. 불필요한 빌드/DB 캐시 파일 검색 및 감시 제외 (성능 향상)
+  "search.exclude": {
+    "**/.next": true,
+    "**/.data": true,
+    "**/node_modules": true
+  },
+  "files.watcherExclude": {
+    "**/.next/**": true,
+    "**/.data/**": true,
+    "**/node_modules/**": true
+  },
+
+  // 5. Prisma 포맷팅 지원
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
+}

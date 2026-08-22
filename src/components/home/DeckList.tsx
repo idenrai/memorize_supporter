@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { ChevronDown, History } from "lucide-react"
+import { History } from "lucide-react"
 import type { Lang, Translations } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import type { Deck } from "./DeckGallery"

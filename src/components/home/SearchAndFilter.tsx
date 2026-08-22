@@ -1,6 +1,6 @@
 'use client'
 
-import { Search, LayoutGrid, List as ListIcon, ChevronDown } from "lucide-react"
+import { Search, LayoutGrid, List as ListIcon } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import CustomSelect from "../ui/CustomSelect"
 
@@ -41,7 +41,7 @@ export default function SearchAndFilter({
         {/* Search Input */}
         <div className="relative w-full md:flex-1 group">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-blue-500/10 to-teal-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-400 group-focus-within:animate-pulse w-5 h-5 pointer-events-none z-20 transition-colors" aria-hidden="true" />
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-400 group-focus-within:animate-pulse motion-reduce:animate-none w-5 h-5 pointer-events-none z-20 transition-colors" aria-hidden="true" />
           <input 
             type="text" 
             name="search"
@@ -75,9 +75,14 @@ export default function SearchAndFilter({
           </div>
 
           {/* Global Exam Mode Toggle */}
-          <div className="hidden sm:flex items-center bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800/80 shadow-inner h-[52px] shrink-0">
+          <div 
+            role="group" 
+            aria-label={`${t.home.practiceMode} / ${t.home.examMode}`}
+            className="hidden sm:flex items-center bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800/80 shadow-inner h-[52px] shrink-0"
+          >
             <button
               onClick={() => setGlobalIsExamMode(false)}
+              aria-pressed={!globalIsExamMode}
               className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                 !globalIsExamMode 
                   ? 'bg-zinc-800 text-white shadow-sm ring-1 ring-white/5' 
@@ -88,6 +93,7 @@ export default function SearchAndFilter({
             </button>
             <button
               onClick={() => setGlobalIsExamMode(true)}
+              aria-pressed={globalIsExamMode}
               className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 ${
                 globalIsExamMode 
                   ? 'bg-purple-600/90 text-white shadow-sm ring-1 ring-purple-500/50' 
@@ -99,11 +105,16 @@ export default function SearchAndFilter({
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex bg-zinc-900/80 backdrop-blur-xl p-1.5 rounded-2xl border border-zinc-800/80 shadow-inner h-[52px] shrink-0">
+          <div 
+            role="group" 
+            aria-label={`${t.home.viewModeGrid} / ${t.home.viewModeList}`}
+            className="flex bg-zinc-900/80 backdrop-blur-xl p-1.5 rounded-2xl border border-zinc-800/80 shadow-inner h-[52px] shrink-0"
+          >
             <button
               onClick={() => setViewMode("grid")}
               title={t.home.viewModeGrid}
               aria-label={t.home.viewModeGrid}
+              aria-pressed={viewMode === "grid"}
               className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                 viewMode === "grid" 
                   ? 'bg-zinc-800 text-indigo-400 shadow-sm ring-1 ring-white/5' 
@@ -116,6 +127,7 @@ export default function SearchAndFilter({
               onClick={() => setViewMode("list")}
               title={t.home.viewModeList}
               aria-label={t.home.viewModeList}
+              aria-pressed={viewMode === "list"}
               className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                 viewMode === "list" 
                   ? 'bg-zinc-800 text-indigo-400 shadow-sm ring-1 ring-white/5' 

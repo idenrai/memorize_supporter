@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { ChevronDown, Layers, History } from "lucide-react"
+import { Layers, History } from "lucide-react"
 import { useT } from "@/hooks/useT"
 
 interface DeckCardProps {
