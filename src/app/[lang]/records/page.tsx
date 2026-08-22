@@ -51,7 +51,7 @@ export default async function RecordsPage({
               <span>{deckTitle}</span>
             </div>
             <Link href={`/${validLang}/records`} className="text-xs text-zinc-500 hover:text-zinc-300 underline underline-offset-2 ml-2 transition-colors">
-              {t.records.viewAll || "모든 기록 보기"}
+              {t.records.viewAll || "View All"}
             </Link>
           </div>
         )}

@@ -8,6 +8,7 @@ import type { Lang } from "@/i18n/types"
 export type TemplateData = {
   id: string
   name: string
+  description: string
   content: string
 }
 
@@ -17,18 +18,21 @@ export default async function DataPreparationPage({ params }: { params: Promise<
   
   const templates: TemplateData[] = [
     {
-      id: '_template_flashcards.json',
+      id: 'flashcards',
       name: t.quiz.flashcard,
+      description: t.prep.templateFlashcardDesc,
       content: JSON.stringify(templateFlashcards, null, 2)
     },
     {
-      id: '_template_practice_quiz.json',
+      id: 'practice_quiz',
       name: t.quiz.practiceQuiz,
+      description: t.prep.templateQuizDesc,
       content: JSON.stringify(templatePracticeQuiz, null, 2)
     },
     {
-      id: '_template_vocabulary.json',
+      id: 'vocabulary',
       name: t.quiz.vocabulary,
+      description: t.prep.templateVocabDesc,
       content: JSON.stringify(templateVocabulary, null, 2)
     }
   ]
@@ -36,7 +40,7 @@ export default async function DataPreparationPage({ params }: { params: Promise<
   return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-8 pt-8 md:pt-12">
       <h1 className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-400 tracking-tight">{t.prep.title}</h1>
-      <p className="text-zinc-400 mb-10 max-w-2xl font-medium text-balance">
+      <p className="text-zinc-400 mb-10 max-w-3xl font-medium leading-relaxed break-keep text-base">
         {t.prep.desc}
       </p>
 

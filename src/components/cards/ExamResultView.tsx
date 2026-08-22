@@ -73,7 +73,7 @@ export default function ExamResultView({
     if (card.type === 'practice_quiz') return card.content.question
     if (card.type === 'vocabulary') return card.content.word
     if (card.type === 'flashcard') return card.content.front
-    return 'Unknown Card'
+    return t.quiz.unknownCard || 'Unknown Card'
   }
 
   return (

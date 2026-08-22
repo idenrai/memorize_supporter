@@ -11,14 +11,14 @@ export default function DeleteRecordButton({ id }: { id: string }) {
   const t = useT()
 
   const handleDelete = () => {
-    if (!window.confirm(t.management?.confirmDelete || "정말로 이 기록을 삭제하시겠습니까?")) return
+    if (!window.confirm(t.records?.confirmDeleteRecord || t.management?.confirmDelete || "Are you sure you want to delete this record?")) return
 
     startTransition(async () => {
       const result = await deleteExamResult({ id })
       if (result?.success) {
-        toast.success(t.management?.deleteSuccess || "기록이 삭제되었습니다.")
+        toast.success(t.records?.deleteSuccess || t.management?.deleteSuccess || "Record deleted successfully.")
       } else {
-        toast.error(result?.message || t.management?.deleteFailed || "기록 삭제에 실패했습니다.")
+        toast.error(result?.message || t.records?.deleteFailed || t.management?.deleteFailed || "Failed to delete record.")
       }
     })
   }
