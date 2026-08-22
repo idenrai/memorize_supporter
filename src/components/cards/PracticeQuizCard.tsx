@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { PracticeQuizContent } from "@/types/card"
-import { CheckCircle2, XCircle, Bot } from "lucide-react"
+import { CheckCircle2, XCircle, Bot, ChevronLeft, ChevronRight } from "lucide-react"
 import { motion, AnimatePresence, useIsPresent, useReducedMotion } from "framer-motion"
 import { useT } from "@/hooks/useT"
 import { formatText } from "@/lib/format"
@@ -14,9 +14,23 @@ interface Props {
   onClose?: () => void
   mode?: 'practice' | 'exam' | 'review'
   userSelectedIndices?: number[]
+  onPrevReview?: () => void
+  onNextReview?: () => void
+  hasPrevReview?: boolean
+  hasNextReview?: boolean
 }
 
-export default function PracticeQuizCard({ content, onNext, onClose, mode = 'practice', userSelectedIndices = [] }: Props) {
+export default function PracticeQuizCard({ 
+  content, 
+  onNext, 
+  onClose, 
+  mode = 'practice', 
+  userSelectedIndices = [],
+  onPrevReview,
+  onNextReview,
+  hasPrevReview = false,
+  hasNextReview = false
+}: Props) {
   const t = useT()
   const [selectedIndices, setSelectedIndices] = useState<number[]>(userSelectedIndices)
   const [isFlipped, setIsFlipped] = useState(mode === 'review')
@@ -92,9 +106,22 @@ export default function PracticeQuizCard({ content, onNext, onClose, mode = 'pra
     }
 
     if (mode === 'review') {
-      if (e.key === 'Escape' || e.key === 'Enter' || e.code === 'Space') {
+      if (e.key === 'Escape') {
         e.preventDefault()
         onClose?.()
+      } else if (e.key === 'ArrowLeft') {
+        if (hasPrevReview) {
+          e.preventDefault()
+          onPrevReview?.()
+        }
+      } else if (e.key === 'ArrowRight' || e.key === 'Enter' || e.code === 'Space') {
+        if (hasNextReview) {
+          e.preventDefault()
+          onNextReview?.()
+        } else {
+          e.preventDefault()
+          onClose?.()
+        }
       }
       return
     }
@@ -295,17 +322,52 @@ export default function PracticeQuizCard({ content, onNext, onClose, mode = 'pra
                     {t.quiz.next}
                   </button>
                 ) : (
-                  onClose && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onClose()
-                      }}
-                      className="px-8 py-3 bg-zinc-700 text-white font-medium rounded-full hover:bg-zinc-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition shadow-sm w-full sm:w-auto"
-                    >
-                      {t.quiz.closeReview}
-                    </button>
-                  )
+                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                    {onPrevReview && (
+                      <button
+                        type="button"
+                        disabled={!hasPrevReview}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onPrevReview()
+                        }}
+                        title={`${t.quiz.prevQuestion} (←)`}
+                        className="px-5 py-3 border border-zinc-700 text-zinc-300 font-medium rounded-full flex items-center justify-center gap-1.5 hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
+                      >
+                        <ChevronLeft size={18} aria-hidden="true" />
+                        <span>{t.quiz.prevQuestion}</span>
+                      </button>
+                    )}
+
+                    {onNextReview && hasNextReview ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onNextReview()
+                        }}
+                        title={`${t.quiz.nextQuestion} (→ / Enter)`}
+                        className="px-6 py-3 bg-teal-600 text-white font-medium rounded-full flex items-center justify-center gap-1.5 hover:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
+                      >
+                        <span>{t.quiz.nextQuestion}</span>
+                        <ChevronRight size={18} aria-hidden="true" />
+                      </button>
+                    ) : (
+                      onClose && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onClose()
+                          }}
+                          title={`${t.quiz.closeReview} (Esc)`}
+                          className="px-6 py-3 bg-zinc-700 text-white font-medium rounded-full hover:bg-zinc-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
+                        >
+                          {t.quiz.closeReview}
+                        </button>
+                      )
+                    )}
+                  </div>
                 )}
               </div>
             </div>

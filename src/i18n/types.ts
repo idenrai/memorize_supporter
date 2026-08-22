@@ -127,6 +127,8 @@ export interface Translations {
     vocabulary: string;
     youScored: (correct: number, total: number) => string;
     closeReview: string;
+    prevQuestion: string;
+    nextQuestion: string;
   };
   error: {
     defaultMessage: string;

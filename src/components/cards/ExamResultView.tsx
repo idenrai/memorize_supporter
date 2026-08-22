@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import PracticeQuizCard from "./PracticeQuizCard"
-import { XCircle, CheckCircle2, ArrowLeft } from "lucide-react"
+import { XCircle, CheckCircle2, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { CardData } from "@/types/card"
 import { useT } from "@/hooks/useT"
@@ -53,6 +53,16 @@ export default function ExamResultView({
   if (reviewingCard) {
     const reviewingIndex = playingCards.findIndex(c => c.id === reviewingCard.id)
     const currentNum = reviewingIndex >= 0 ? reviewingIndex + 1 : 1
+    const hasPrev = reviewingIndex > 0
+    const hasNext = reviewingIndex < playingCards.length - 1
+
+    const handlePrevCard = () => {
+      if (hasPrev) setReviewingCard(playingCards[reviewingIndex - 1])
+    }
+
+    const handleNextCard = () => {
+      if (hasNext) setReviewingCard(playingCards[reviewingIndex + 1])
+    }
 
     return (
       <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto p-4 md:p-8">
@@ -61,7 +71,8 @@ export default function ExamResultView({
           <button 
             type="button"
             onClick={() => setReviewingCard(null)} 
-            aria-label={t.quiz.closeReview} 
+            aria-label={t.quiz.closeReview}
+            title={`${t.quiz.closeReview} (Esc)`}
             className="text-zinc-400 hover:text-white transition-colors flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-teal-500 rounded px-2 py-1"
           >
             <ArrowLeft size={20} aria-hidden="true" />
@@ -78,22 +89,59 @@ export default function ExamResultView({
               />
             </div>
           </div>
-          <div className="text-zinc-400 font-medium tabular-nums text-sm sm:text-base">
-            {currentNum} <span className="text-zinc-600">/ {playingCards.length}</span>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center bg-zinc-800/80 rounded-lg p-0.5 border border-zinc-700/50">
+              <button
+                type="button"
+                disabled={!hasPrev}
+                onClick={handlePrevCard}
+                aria-label={t.quiz.prevQuestion}
+                title={`${t.quiz.prevQuestion} (←)`}
+                className="p-1 text-zinc-400 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-400 transition rounded focus-visible:ring-1 focus-visible:ring-teal-500"
+              >
+                <ChevronLeft size={16} aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                disabled={!hasNext}
+                onClick={handleNextCard}
+                aria-label={t.quiz.nextQuestion}
+                title={`${t.quiz.nextQuestion} (→)`}
+                className="p-1 text-zinc-400 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-400 transition rounded focus-visible:ring-1 focus-visible:ring-teal-500"
+              >
+                <ChevronRight size={16} aria-hidden="true" />
+              </button>
+            </div>
+            <div className="text-zinc-400 font-medium tabular-nums text-sm sm:text-base hidden sm:inline-block">
+              {currentNum} <span className="text-zinc-600">/ {playingCards.length}</span>
+            </div>
           </div>
         </div>
 
         <div className="flex-1 flex flex-col items-center py-2 relative min-h-0">
-          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="w-full flex justify-center">
-            {reviewingCard.type === 'practice_quiz' && (
-              <PracticeQuizCard 
-                content={reviewingCard.content} 
-                mode="review" 
-                userSelectedIndices={sessionResults.find(r => r.cardId === reviewingCard.id)?.selectedIndices || []}
-                onClose={() => setReviewingCard(null)}
-              />
-            )}
-          </motion.div>
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={reviewingCard.id}
+              initial={{ opacity: 0, x: 20 }} 
+              animate={{ opacity: 1, x: 0 }} 
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+              className="w-full flex justify-center"
+            >
+              {reviewingCard.type === 'practice_quiz' && (
+                <PracticeQuizCard 
+                  content={reviewingCard.content} 
+                  mode="review" 
+                  userSelectedIndices={sessionResults.find(r => r.cardId === reviewingCard.id)?.selectedIndices || []}
+                  onClose={() => setReviewingCard(null)}
+                  onPrevReview={handlePrevCard}
+                  onNextReview={handleNextCard}
+                  hasPrevReview={hasPrev}
+                  hasNextReview={hasNext}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     )

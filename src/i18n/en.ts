@@ -143,6 +143,8 @@ Based on the above information, please explain clearly so that I can thoroughly 
     vocabulary: "Vocabulary",
     youScored: (correct, total) => `You scored ${correct} out of ${total}!`,
     closeReview: "Back to List",
+    prevQuestion: "Previous Question",
+    nextQuestion: "Next Question",
   },
   error: {
     defaultMessage: "An unexpected error occurred.",

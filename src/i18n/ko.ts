@@ -143,6 +143,8 @@ ${explanation || '없음'}
     vocabulary: "단어장",
     youScored: (correct, total) => `총 ${total}문제 중 ${correct}문제를 맞혔습니다!`,
     closeReview: "목록으로 돌아가기",
+    prevQuestion: "이전 문제",
+    nextQuestion: "다음 문제",
   },
   error: {
     defaultMessage: "예상치 못한 오류가 발생했습니다.",
