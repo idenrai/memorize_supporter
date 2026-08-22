@@ -36,12 +36,17 @@ export default function PracticeQuizCard({ content, onNext, onClose, mode = 'pra
 
     if (isSingleChoice) {
       setSelectedIndices([index])
+      return
+    }
+
+    if (selectedIndices.includes(index)) {
+      setSelectedIndices(prev => prev.filter(i => i !== index))
     } else {
-      setSelectedIndices(prev => 
-        prev.includes(index) 
-          ? prev.filter(i => i !== index)
-          : [...prev, index]
-      )
+      if (selectedIndices.length >= content.answers.length) {
+        toast.info(t.quiz.maxSelectionReached(content.answers.length))
+        return
+      }
+      setSelectedIndices(prev => [...prev, index])
     }
   }
 
@@ -130,7 +135,9 @@ export default function PracticeQuizCard({ content, onNext, onClose, mode = 'pra
             <div className="text-xs font-medium text-zinc-400 mb-4 tracking-widest uppercase flex items-center justify-between min-w-0">
               <span className="truncate min-w-0 max-w-[180px] sm:max-w-[300px] text-teal-500">{content.category || t.quiz.practiceQuiz}</span>
               <span className="text-zinc-500 shrink-0 ml-2">
-                {content.answers.length > 1 ? t.quiz.selectMultiple(content.answers.length) : t.quiz.selectOne}
+                {content.answers.length > 1 
+                  ? `${t.quiz.selectMultiple(content.answers.length)} ${t.quiz.selectionProgress(selectedIndices.length, content.answers.length)}` 
+                  : t.quiz.selectOne}
               </span>
             </div>
             
@@ -142,6 +149,8 @@ export default function PracticeQuizCard({ content, onNext, onClose, mode = 'pra
               {content.options.map((opt, i) => (
                 <button
                   key={i}
+                  type="button"
+                  aria-pressed={selectedIndices.includes(i)}
                   onClick={() => toggleSelection(i)}
                   className={`text-left px-5 py-4 rounded-xl border transition duration-200 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 text-sm sm:text-base active:scale-[0.99] ${
                     selectedIndices.includes(i) 
@@ -205,21 +214,59 @@ export default function PracticeQuizCard({ content, onNext, onClose, mode = 'pra
               </p>
             </div>
 
-            <div className="bg-zinc-800/40 rounded-xl p-5 mb-5 border border-zinc-700/50 backdrop-blur-sm">
-              <h3 className="text-xs text-zinc-400 uppercase font-bold tracking-wider mb-3">{t.quiz.correctAnswers}</h3>
-              <ul className="flex flex-col gap-2">
-                {content.answers.map(ansIdx => (
-                  <li key={ansIdx} className="text-zinc-200 flex items-start gap-2">
-                    <div className="mt-1 text-emerald-500"><CheckCircle2 size={16} aria-hidden="true" /></div>
-                    <span className="whitespace-pre-wrap text-zinc-300 font-medium">{formatText(content.options[ansIdx])}</span>
-                  </li>
-                ))}
-              </ul>
+            <div className="flex flex-col gap-2.5 mb-6">
+              {content.options.map((opt, i) => {
+                const isAnswer = content.answers.includes(i)
+                const isUserSelected = selectedIndices.includes(i)
+                
+                let cardStyle = "border-zinc-800/80 bg-zinc-800/20 text-zinc-400 opacity-60"
+                let iconContainer = "border-zinc-700 bg-zinc-800/50 text-zinc-500"
+                let badgeText: string | null = null
+                let badgeStyle = ""
+
+                if (isAnswer && isUserSelected) {
+                  cardStyle = "border-emerald-500/80 bg-emerald-950/30 text-emerald-100 shadow-sm shadow-emerald-950/20"
+                  iconContainer = "border-emerald-500 bg-emerald-500 text-white"
+                  badgeText = `${t.quiz.correctBadge} (${t.quiz.yourChoiceBadge})`
+                  badgeStyle = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                } else if (isAnswer && !isUserSelected) {
+                  cardStyle = "border-emerald-600/70 bg-emerald-950/20 text-emerald-200"
+                  iconContainer = "border-emerald-500 text-emerald-400 bg-emerald-500/10"
+                  badgeText = t.quiz.correctBadge
+                  badgeStyle = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                } else if (!isAnswer && isUserSelected) {
+                  cardStyle = "border-rose-500/80 bg-rose-950/30 text-rose-100 shadow-sm shadow-rose-950/20"
+                  iconContainer = "border-rose-500 bg-rose-500 text-white"
+                  badgeText = t.quiz.yourChoiceIncorrectBadge
+                  badgeStyle = "bg-rose-500/20 text-rose-300 border-rose-500/30"
+                }
+
+                return (
+                  <div
+                    key={i}
+                    className={`p-4 rounded-xl border transition-all flex items-center justify-between gap-3 text-sm sm:text-base font-medium ${cardStyle}`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className={`w-6 h-6 flex items-center justify-center shrink-0 border ${isSingleChoice ? 'rounded-full' : 'rounded'} ${iconContainer}`}>
+                        {isAnswer && <CheckCircle2 size={15} aria-hidden="true" />}
+                        {!isAnswer && isUserSelected && <XCircle size={15} aria-hidden="true" />}
+                        {!isAnswer && !isUserSelected && <span className="text-xs">{i + 1}</span>}
+                      </div>
+                      <span className="whitespace-pre-wrap leading-relaxed">{formatText(opt)}</span>
+                    </div>
+                    {badgeText && (
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-bold border shrink-0 tracking-wider whitespace-nowrap ${badgeStyle}`}>
+                        {badgeText}
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
             </div>
 
             {content.explanation && (
               <div className="bg-teal-900/10 rounded-xl p-5 mb-6 border border-teal-600/20 backdrop-blur-sm shadow-inner">
-                <h3 className="text-xs text-teal-500 uppercase font-bold tracking-wider mb-3">{t.quiz.explanation}</h3>
+                <h3 className="text-xs text-teal-500 uppercase font-bold tracking-wider mb-2">{t.quiz.explanation}</h3>
                 <p className="text-zinc-300 text-sm sm:text-base leading-relaxed whitespace-pre-wrap tracking-wide">
                   {formatText(content.explanation)}
                 </p>
