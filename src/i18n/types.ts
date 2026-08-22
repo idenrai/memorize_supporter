@@ -98,6 +98,13 @@ export interface Translations {
     promptCopyFailed: string;
     selectOne: string;
     selectMultiple: (count: number) => string;
+    maxSelectionReached: (count: number) => string;
+    selectionProgress: (current: number, max: number) => string;
+    correctBadge: string;
+    yourChoiceBadge: string;
+    yourChoiceIncorrectBadge: string;
+    retrySessionBadge: string;
+    reviewingQuestion: (current: number, total: number) => string;
     none: string;
     unknownCard: string;
     backToDashboard: string;

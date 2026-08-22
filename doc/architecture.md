@@ -60,6 +60,9 @@ This document defines the system architecture of the `memorize_supporter` projec
 - Enhances code readability and maintainability by defining global semantic utilities (e.g., `@utility .glass-panel`, `@utility .btn-indigo`, 3D transforms) in `globals.css` via Tailwind CSS v4 `@utility` directives.
 - **CJK Typography Optimization:** Configures `word-break: keep-all; overflow-wrap: anywhere;` on `body` in `globals.css` to prevent unnatural word splitting in Korean and Japanese, while preventing text overflow in narrow mobile viewports.
 - **Adaptive Height & Motion Control:** Uses `AnimatePresence` with `initial={false}` and `useReducedMotion` (`motion-reduce:` variants) in cards and interactive controls to adapt smoothly to varying content lengths without layout jitter.
+- **Multiple-Choice Selection Constraint:** Dynamically restricts the maximum number of selectable options to the exact count of correct answers (`content.answers.length`), providing immediate toast feedback and live selection progress badges (`(1/2 selected)`) to prevent accidental excessive clicks.
+- **Comprehensive Explanation & Visual Highlights:** In quiz result/review views, displays all available choices (`content.options`) with color-coded and badged visual highlights (Emerald for correct answers, Rose for user-selected incorrect answers, and neutral for unpicked choices) to reinforce Active Recall.
+- **Sticky Progress Bar & Retry Animation Reset:** Keeps the top header and progress bar fixed (`sticky top-0 z-20 backdrop-blur-md`) during scrolling and isolates retry rounds with distinct animation keys to ensure clean progress tracking across retries and exam reviews.
 - Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, WAI-ARIA attributes (`role="group"`, `aria-pressed`, `aria-label`), robust keyboard navigation focus states (`focus-visible`), fixed-width numeric typography (`tabular-nums`), and touch feedback (`active:scale-95`).
 - Implements custom accessible UI components (e.g., `CustomSelect` using React Portals) to replace native browser elements, ensuring a consistent premium look (glassmorphism) across all platforms while maintaining strict WAI-ARIA combobox standards and keyboard type-ahead navigation.
 - Provides visual feedback such as a 180-degree 3D flip and Scale Pop by integrating `framer-motion`.
@@ -69,6 +72,9 @@ This document defines the system architecture of the `memorize_supporter` projec
 - `globals.css` 파일에 Tailwind CSS v4의 `@utility` 지시어를 활용하여 시맨틱한 글로벌 유틸리티(`.glass-panel`, `.btn-indigo`, 3D 변환 등)를 정의함으로써 스타일 코드 결합성과 유지보수성을 극대화했습니다.
 - **CJK 타이포그래피 최적화:** `globals.css`의 `body`에 `word-break: keep-all; overflow-wrap: anywhere;`를 전역 적용하여 한국어/일본어 어절이 음절 단위로 쪼개지는 현상을 방지하고, 좁은 모바일 뷰포트에서의 긴 텍스트 오버플로우를 안전하게 차단합니다.
 - **가변 높이 및 모션 제어:** 퀴즈 카드 및 상호작용 컨트롤에 `AnimatePresence (initial={false})`와 `useReducedMotion`(`motion-reduce:` 변형자)을 적용하여 컨텐츠 길이에 맞춰 유연하게 조절하고, 불필요한 빈 여백 및 모션 덜컹거림(Jitter)을 방지합니다.
+- **다중 선택 문항 개수 제한:** 정답 개수(`content.answers.length`)를 초과하여 선택할 수 없도록 동적으로 상한선을 제한하고, 실시간 진행 뱃지(`(1/2 선택됨)`) 및 안내 토스트를 제공하여 불필요한 중복 클릭을 방지합니다.
+- **전체 선택지 하이라이트 및 해설 강화:** 퀴즈 해설 및 결과 검토 화면에서 문제의 전체 선택지를 렌더링하고, 실제 정답(초록색), 사용자가 고른 오답(빨간색), 미선택 보기를 아이콘과 뱃지로 3중 강조하여 오답 원인을 직관적으로 학습할 수 있도록 지원합니다.
+- **상시 노출(Sticky) 프로그레스 바 및 재도전 리셋:** 스크롤 시에도 상단 헤더(`sticky top-0 z-20 backdrop-blur-md`)가 고정되어 진도율을 상시 표시하며, 오답 재도전 라운드마다 고유 애니메이션 키를 할당하여 게이지가 0%부터 정상 차오르도록 보장합니다.
 - Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, WAI-ARIA 속성(`role="group"`, `aria-pressed`, `aria-label`), 견고한 키보드 포커스(`focus-visible`), 고정폭 수치 폰트(`tabular-nums`), 그리고 모바일 터치 피드백(`active:scale-95`) 등 최고 수준의 접근성을 보장합니다.
 - 네이티브 브라우저 엘리먼트를 대체하는 접근성 높은 커스텀 UI 컴포넌트(예: React Portal 기반의 `CustomSelect`)를 구현하여, 모든 플랫폼에서 일관된 프리미엄 룩(글래스모피즘)을 유지하는 동시에 엄격한 WAI-ARIA 콤보박스 표준과 키보드 Type-ahead 네비게이션을 지원합니다.
 - `framer-motion`을 도입하여 180도 3D 플립, Scale Pop 등 시각적 피드백을 제공합니다.

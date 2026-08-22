@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import PracticeQuizCard from "./PracticeQuizCard"
-import { XCircle, CheckCircle2 } from "lucide-react"
+import { XCircle, CheckCircle2, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { CardData } from "@/types/card"
 import { useT } from "@/hooks/useT"
@@ -51,10 +51,40 @@ export default function ExamResultView({
   const incorrectIds = sessionResults.filter(r => !r.isCorrect).map(r => r.cardId)
 
   if (reviewingCard) {
+    const reviewingIndex = playingCards.findIndex(c => c.id === reviewingCard.id)
+    const currentNum = reviewingIndex >= 0 ? reviewingIndex + 1 : 1
+
     return (
       <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto p-4 md:p-8">
-        <div className="flex-1 flex flex-col items-center py-4 relative min-h-0">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full flex justify-center mt-0 sm:mt-8">
+        {/* Reviewing Header / Progress */}
+        <div className="sticky top-0 z-20 bg-background/90 backdrop-blur-md py-3 -mt-2 mb-6 sm:mb-8 flex items-center justify-between shrink-0 border-b border-zinc-800/40">
+          <button 
+            type="button"
+            onClick={() => setReviewingCard(null)} 
+            aria-label={t.quiz.closeReview} 
+            className="text-zinc-400 hover:text-white transition-colors flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-teal-500 rounded px-2 py-1"
+          >
+            <ArrowLeft size={20} aria-hidden="true" />
+            <span className="text-sm font-medium">{t.quiz.closeReview}</span>
+          </button>
+          <div className="flex-1 max-w-md mx-4 sm:mx-8 flex flex-col gap-1">
+            <div className="text-[10px] sm:text-xs font-bold text-teal-400 uppercase tracking-widest text-center">
+              {t.quiz.reviewingQuestion(currentNum, playingCards.length)}
+            </div>
+            <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-teal-500 transition-all duration-300"
+                style={{ width: `${(currentNum / playingCards.length) * 100}%` }}
+              />
+            </div>
+          </div>
+          <div className="text-zinc-400 font-medium tabular-nums text-sm sm:text-base">
+            {currentNum} <span className="text-zinc-600">/ {playingCards.length}</span>
+          </div>
+        </div>
+
+        <div className="flex-1 flex flex-col items-center py-2 relative min-h-0">
+          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="w-full flex justify-center">
             {reviewingCard.type === 'practice_quiz' && (
               <PracticeQuizCard 
                 content={reviewingCard.content} 
