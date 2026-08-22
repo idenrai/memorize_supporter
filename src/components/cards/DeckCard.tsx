@@ -45,7 +45,7 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
               {type === 'practice_quiz' ? t.quiz.practiceQuiz : type === 'vocabulary' ? t.quiz.vocabulary : t.quiz.flashcard}
             </div>
             
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300 bg-white/5 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 shadow-inner">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300 bg-white/5 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 shadow-inner tabular-nums">
               <Layers size={14} className="text-blue-400" aria-hidden="true" />
               {count} <span className="font-medium text-zinc-500 hidden sm:inline">{t.home.cards}</span>
             </div>
@@ -66,6 +66,7 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
             href={`/${lang}/records?deckId=${deck}`}
             className="flex items-center justify-center p-2 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors mr-1"
             title={t.common.examRecords}
+            aria-label={t.common.examRecords}
           >
             <History size={16} aria-hidden="true" />
           </Link>

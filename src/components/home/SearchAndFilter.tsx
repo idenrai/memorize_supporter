@@ -78,7 +78,7 @@ export default function SearchAndFilter({
           <div className="hidden sm:flex items-center bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800/80 shadow-inner h-[52px] shrink-0">
             <button
               onClick={() => setGlobalIsExamMode(false)}
-              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                 !globalIsExamMode 
                   ? 'bg-zinc-800 text-white shadow-sm ring-1 ring-white/5' 
                   : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
@@ -88,7 +88,7 @@ export default function SearchAndFilter({
             </button>
             <button
               onClick={() => setGlobalIsExamMode(true)}
-              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 ${
+              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 ${
                 globalIsExamMode 
                   ? 'bg-purple-600/90 text-white shadow-sm ring-1 ring-purple-500/50' 
                   : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
@@ -103,7 +103,8 @@ export default function SearchAndFilter({
             <button
               onClick={() => setViewMode("grid")}
               title={t.home.viewModeGrid}
-              className={`p-2 rounded-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+              aria-label={t.home.viewModeGrid}
+              className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                 viewMode === "grid" 
                   ? 'bg-zinc-800 text-indigo-400 shadow-sm ring-1 ring-white/5' 
                   : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
@@ -114,7 +115,8 @@ export default function SearchAndFilter({
             <button
               onClick={() => setViewMode("list")}
               title={t.home.viewModeList}
-              className={`p-2 rounded-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+              aria-label={t.home.viewModeList}
+              className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                 viewMode === "list" 
                   ? 'bg-zinc-800 text-indigo-400 shadow-sm ring-1 ring-white/5' 
                   : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
@@ -132,7 +134,7 @@ export default function SearchAndFilter({
           <button
             onClick={() => setSelectedSeries("all")}
             aria-pressed={selectedSeries === "all"}
-            className={`whitespace-nowrap px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 border-b-2 ${
+            className={`whitespace-nowrap px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 border-b-2 ${
               selectedSeries === "all" 
                 ? "border-indigo-500 text-indigo-400 bg-indigo-500/10" 
                 : "border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
@@ -145,7 +147,7 @@ export default function SearchAndFilter({
               key={series}
               onClick={() => setSelectedSeries(series)}
               aria-pressed={selectedSeries === series}
-              className={`whitespace-nowrap px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 border-b-2 ${
+              className={`whitespace-nowrap px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 border-b-2 ${
                 selectedSeries === series 
                   ? "border-indigo-500 text-indigo-400 bg-indigo-500/10" 
                   : "border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
