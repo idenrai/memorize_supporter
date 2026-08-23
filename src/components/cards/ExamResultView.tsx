@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import PracticeQuizCard from "./PracticeQuizCard"
+import QuizHeader from "./QuizHeader"
 import { XCircle, CheckCircle2, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { CardData } from "@/types/card"
@@ -66,30 +67,19 @@ export default function ExamResultView({
 
     return (
       <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto p-4 md:p-8">
-        {/* Reviewing Header / Progress */}
-        <div className="sticky top-0 z-20 bg-background/90 backdrop-blur-md py-3 -mt-2 mb-6 sm:mb-8 flex items-center justify-between shrink-0 border-b border-zinc-800/40">
-          <button 
-            type="button"
-            onClick={() => setReviewingCard(null)} 
-            aria-label={t.quiz.closeReview}
-            title={`${t.quiz.closeReview} (Esc)`}
-            className="text-zinc-400 hover:text-white transition-colors flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-teal-500 rounded px-2 py-1"
-          >
-            <ArrowLeft size={20} aria-hidden="true" />
-            <span className="text-sm font-medium">{t.quiz.closeReview}</span>
-          </button>
-          <div className="flex-1 max-w-md mx-4 sm:mx-8 flex flex-col gap-1">
+        {/* Reviewing Header / Progress - Unified Sticky QuizHeader */}
+        <QuizHeader
+          onBack={() => setReviewingCard(null)}
+          backLabel={t.quiz.closeReview}
+          current={currentNum}
+          total={playingCards.length}
+          animateProgress={false}
+          badge={
             <div className="text-[10px] sm:text-xs font-bold text-teal-400 uppercase tracking-widest text-center">
               {t.quiz.reviewingQuestion(currentNum, playingCards.length)}
             </div>
-            <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-teal-500 transition-all duration-300"
-                style={{ width: `${(currentNum / playingCards.length) * 100}%` }}
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
+          }
+          rightControls={
             <div className="flex items-center bg-zinc-800/80 rounded-lg p-0.5 border border-zinc-700/50">
               <button
                 type="button"
@@ -112,13 +102,10 @@ export default function ExamResultView({
                 <ChevronRight size={16} aria-hidden="true" />
               </button>
             </div>
-            <div className="text-zinc-400 font-medium tabular-nums text-sm sm:text-base hidden sm:inline-block">
-              {currentNum} <span className="text-zinc-600">/ {playingCards.length}</span>
-            </div>
-          </div>
-        </div>
+          }
+        />
 
-        <div className="flex-1 flex flex-col items-center py-2 relative min-h-0">
+        <div className="flex-1 flex flex-col items-center py-0 sm:py-2 relative min-h-0">
           <AnimatePresence mode="wait">
             <motion.div 
               key={reviewingCard.id}
@@ -126,7 +113,7 @@ export default function ExamResultView({
               animate={{ opacity: 1, x: 0 }} 
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.2 }}
-              className="w-full flex justify-center"
+              className="w-full flex justify-center mt-2 sm:mt-4 mb-6"
             >
               {reviewingCard.type === 'practice_quiz' && (
                 <PracticeQuizCard 
