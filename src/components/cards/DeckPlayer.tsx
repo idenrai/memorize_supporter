@@ -6,6 +6,7 @@ import Flashcard from "./Flashcard"
 import VocabularyCard from "./VocabularyCard"
 import PracticeQuizCard from "./PracticeQuizCard"
 import ExamResultView from "./ExamResultView"
+import QuizHeader from "./QuizHeader"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { CardData, FlashcardContent } from "@/types/card"
@@ -15,7 +16,6 @@ import { saveExamResult } from "@/actions/exam"
 import { useT } from "@/hooks/useT"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
-import { XCircle, CheckCircle2 } from "lucide-react"
 
 interface DeckPlayerProps {
   deckId: string
@@ -175,35 +175,24 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
 
   return (
     <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto p-4 md:p-8">
-      {/* Header / Progress - Sticky to ensure always visible */}
-      <div className="sticky top-0 z-20 bg-background/90 backdrop-blur-md py-3 -mt-2 mb-6 sm:mb-8 flex items-center justify-between shrink-0 border-b border-zinc-800/40">
-        <Link href={`/${lang}`} aria-label={t.common.exit} className="text-zinc-500 hover:text-white transition-colors flex items-center gap-2">
-          <ArrowLeft size={20} aria-hidden="true" />
-          <span className="hidden md:inline">{t.common.exit}</span>
-        </Link>
-        <div className="flex-1 max-w-md mx-4 sm:mx-8 flex flex-col gap-1">
-          {retryRound > 0 && (
+      {/* Header / Progress - Unified Sticky QuizHeader */}
+      <QuizHeader
+        backHref={`/${lang}`}
+        backLabel={t.common.exit}
+        current={currentIndex + 1}
+        total={playingCards.length}
+        badge={
+          retryRound > 0 ? (
             <div className="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-widest text-center">
               {t.quiz.retrySessionBadge}
             </div>
-          )}
-          <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
-            <motion.div 
-              key={`progress-${retryRound}-${playingCards.length}`}
-              className="h-full bg-teal-500"
-              initial={{ width: 0 }}
-              animate={{ width: `${((currentIndex + 1) / playingCards.length) * 100}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-        </div>
-        <div className="text-zinc-400 font-medium tabular-nums text-sm sm:text-base">
-          {currentIndex + 1} <span className="text-zinc-600">/ {playingCards.length}</span>
-        </div>
-      </div>
+          ) : undefined
+        }
+        animationKey={`progress-${retryRound}-${playingCards.length}`}
+      />
 
       {/* Card Area */}
-      <div className="flex-1 flex flex-col items-center py-4 relative min-h-0">
+      <div className="flex-1 flex flex-col items-center py-0 sm:py-2 relative min-h-0">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentCard.id}
@@ -211,7 +200,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -50, scale: 0.9 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="w-full flex justify-center my-auto"
+            className="w-full flex justify-center mt-2 sm:mt-4 mb-6"
           >
             {currentCard.type === 'flashcard' && (
               <Flashcard 

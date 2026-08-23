@@ -35,8 +35,6 @@ export default async function DeckPage({ params, searchParams }: Props) {
   const takeCount = limit && !isNaN(Number(limit)) ? Number(limit) : undefined
   const isExamMode = mode === 'exam'
 
-  const now = new Date()
-
   // Fetch cards that need review (or haven't been reviewed)
   // SQLite doesn't have a great way to sort by related fields dynamically if null, 
   // so we'll fetch them, prioritize in JS, then limit and shuffle.
@@ -142,7 +140,7 @@ export default async function DeckPage({ params, searchParams }: Props) {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-background">
+    <main className="flex-1 flex flex-col items-center bg-background w-full">
       <DeckPlayer deckId={deckId} cards={validCards} mode={isExamMode ? 'exam' : 'practice'} />
     </main>
   )

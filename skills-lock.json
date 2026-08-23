@@ -19,6 +19,12 @@
       "skillPath": "plugins/llm-application-dev/skills/prompt-engineering-patterns/SKILL.md",
       "computedHash": "de45b8066301dda62d6912dfe54c4062bad1f4259a7231a9e98c55b10c49fa2e"
     },
+    "sticky-and-fixed-elements": {
+      "source": "dembrandt/dembrandt-skills",
+      "sourceType": "github",
+      "skillPath": "skills/sticky-and-fixed-elements/SKILL.md",
+      "computedHash": "6723053a38c40abf62c703a8838c45af69cf1656f13c223e794e4eb6adde9ce9"
+    },
     "tailwind-4-docs": {
       "source": "lombiq/tailwind-agent-skills",
       "sourceType": "github",
