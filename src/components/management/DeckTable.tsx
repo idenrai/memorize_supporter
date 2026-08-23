@@ -7,10 +7,23 @@ import { useT } from '@/hooks/useT'
 import { toast } from 'sonner'
 import type { Deck } from '@/types/deck'
 
+type SortKey = keyof Deck | 'cards' | 'source'
+
+function getDeckSortValue(deck: Deck, key: SortKey): string | number {
+  if (key === 'cards') return deck._count.cards
+  if (key === 'source') return deck.isSystem ? 1 : 0
+  if (key === 'createdAt') return new Date(deck.createdAt).getTime()
+  if (key === 'isHidden') return deck.isHidden ? 1 : 0
+  const val = deck[key]
+  if (typeof val === 'string') return val
+  if (typeof val === 'number') return val
+  return ''
+}
+
 export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
   const t = useT()
   const [isPending, startTransition] = useTransition()
-  const [sortConfig, setSortConfig] = useState<{ key: keyof Deck | 'cards' | 'source'; direction: 'asc' | 'desc' } | null>(null)
+  const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'asc' | 'desc' } | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<{ title: string; series: string }>({ title: '', series: '' })
 
@@ -19,7 +32,7 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
       try {
         await toggleDeckVisibility({ deckId: id, currentHidden })
         toast.success(currentHidden ? t.management.visible : t.management.hidden)
-      } catch (error) {
+      } catch {
         toast.error(t.common.error)
       }
     })
@@ -36,7 +49,7 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
         } else {
           toast.success(t.management.deleteSuccess)
         }
-      } catch (error) {
+      } catch {
         toast.error(t.common.error)
       }
     })
@@ -69,55 +82,39 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
         } else {
           toast.error(t.management.editFailed)
         }
-      } catch (error) {
+      } catch {
         toast.error(t.common.error)
       }
     })
   }
 
   const sortedDecks = useMemo(() => {
-    const sortableItems = [...initialDecks];
+    const sortableItems = [...initialDecks]
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
-        let aValue: any;
-        let bValue: any;
-        
-        if (sortConfig.key === 'cards') {
-          aValue = a._count.cards;
-          bValue = b._count.cards;
-        } else if (sortConfig.key === 'source') {
-          aValue = a.isSystem ? 1 : 0;
-          bValue = b.isSystem ? 1 : 0;
-        } else {
-          aValue = a[sortConfig.key];
-          bValue = b[sortConfig.key];
-        }
-        
-        if (aValue === null) aValue = '';
-        if (bValue === null) bValue = '';
-        
-        if (typeof aValue === 'string' && typeof bValue === 'string') {
-          const comp = aValue.localeCompare(bValue);
-          if (comp !== 0) {
-            return sortConfig.direction === 'asc' ? comp : -comp;
-          }
-        } else {
-          if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-          if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableItems;
-  }, [initialDecks, sortConfig]);
+        const aVal = getDeckSortValue(a, sortConfig.key)
+        const bVal = getDeckSortValue(b, sortConfig.key)
 
-  const requestSort = (key: keyof Deck | 'cards' | 'source') => {
-    let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+        if (typeof aVal === 'string' && typeof bVal === 'string') {
+          const comp = aVal.localeCompare(bVal)
+          return sortConfig.direction === 'asc' ? comp : -comp
+        }
+
+        if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1
+        if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1
+        return 0
+      })
     }
-    setSortConfig({ key, direction });
-  };
+    return sortableItems
+  }, [initialDecks, sortConfig])
+
+  const requestSort = (key: SortKey) => {
+    let direction: 'asc' | 'desc' = 'asc'
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc'
+    }
+    setSortConfig({ key, direction })
+  }
 
   const renderSortIcon = (columnKey: string) => {
     if (sortConfig?.key !== columnKey) {
@@ -198,7 +195,7 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
         <tbody className="divide-y divide-white/5 bg-transparent">
           {sortedDecks.map((deck) => (
             <tr key={deck.id} className={`hover:bg-white/5 transition-colors ${deck.isHidden && editingId !== deck.id ? 'opacity-40 grayscale' : ''}`}>
-              <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap max-w-[150px] sm:max-w-[250px] lg:max-w-xs">
+              <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap max-w-37.5 sm:max-w-62.5 lg:max-w-xs">
                 {editingId === deck.id ? (
                   <input 
                     type="text" 
@@ -219,7 +216,7 @@ export default function DeckTable({ initialDecks }: { initialDecks: Deck[] }) {
                   </div>
                 )}
               </td>
-              <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-sm text-zinc-300 max-w-[120px] sm:max-w-[200px] truncate" title={deck.series || ''}>
+              <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-sm text-zinc-300 max-w-30 sm:max-w-50 truncate" title={deck.series || ''}>
                 {editingId === deck.id ? (
                   <input 
                     type="text" 

@@ -29,3 +29,15 @@ description: 프론트엔드 UI/UX 컴포넌트 신규 생성, 수정 및 리팩
 
 ## 4. 다국어 지원 (i18n) 동기화
 프로젝트에 다국어 지원이 설정되어 있는 경우, 컴포넌트 내에 사용자에게 노출되는 하드코딩된 텍스트를 피하고 반드시 i18n 번역 키와 로캘 파일을 동기화합니다.
+
+## 5. Tailwind CSS v4 캐노니컬 클래스 및 진단(Diagnostics) 검증
+- 컴포넌트 및 스타일 작성/수정 시, Tailwind CSS v4의 공식 캐노니컬 클래스 규칙을 철저히 준수합니다:
+  - 그라디언트: `bg-gradient-to-*` 대신 **`bg-linear-to-*`** 사용
+  - 플렉스 축소/확장: `flex-shrink-*` 대신 **`shrink-*`**, `flex-grow-*` 대신 **`grow-*`** 사용
+  - 스케일/사이징: 분수/소수점 캐노니컬 클래스(예: `min-w-17.5`, `h-13`, `p-px` 등) 및 `@theme` 토큰 우선 활용
+  - CSS 변수 바인딩: `top-[var(--header-height,4rem)]` 대신 **`top-(--header-height)`** 사용
+- 작업 완료 전 CSS 충돌(`tailwindcss(cssConflict)`) 및 캐노니컬 제안(`tailwindcss(suggestCanonicalClasses)`) 등의 린트/진단 검출 결과가 남아있지 않은지 필히 확인합니다.
+
+## 6. ESLint 및 맞춤법(cSpell) 진단 검증
+- **ESLint 무결성 검증:** 미사용 변수/임포트(`@typescript-eslint/no-unused-vars`), 불필요한 `any` 타입(`@typescript-eslint/no-explicit-any`)이 없도록 `npm run lint`를 실행하여 0 error / 0 warning 상태를 필수로 확인하고 유지합니다.
+- **cSpell 맞춤법 검사 준수:** 변수명, 유틸리티 클래스명, UI 텍스트에 오탈자가 없도록 확인하고, 프로젝트 고유 도메인 용어나 약어(예: `nums`, `tabular`, `turbopack` 등)는 `.vscode/settings.json`의 `cSpell.words` 사전에 등록하여 관리합니다.

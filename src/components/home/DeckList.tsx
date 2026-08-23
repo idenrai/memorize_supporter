@@ -39,7 +39,7 @@ function DeckListRow({ deck, lang, t, globalLimit, globalIsExamMode }: { deck: D
 
           <Link 
             href={`/${lang}/deck/${deck.id}?limit=${globalLimit}${globalIsExamMode && deck.type === 'practice_quiz' ? '&mode=exam' : ''}`}
-            className="min-w-[70px] shrink-0 px-4 py-1.5 rounded-full text-xs uppercase tracking-wider btn-indigo text-center"
+            className="min-w-17.5 shrink-0 px-4 py-1.5 rounded-full text-xs uppercase tracking-wider btn-indigo text-center"
           >
             {t.common.study}
           </Link>

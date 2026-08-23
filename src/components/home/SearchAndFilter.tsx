@@ -40,7 +40,7 @@ export default function SearchAndFilter({
         
         {/* Search Input */}
         <div className="relative w-full md:flex-1 group">
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-blue-500/10 to-teal-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-r from-indigo-500/20 via-blue-500/10 to-teal-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-400 group-focus-within:animate-pulse motion-reduce:animate-none w-5 h-5 pointer-events-none z-20 transition-colors" aria-hidden="true" />
           <input 
             type="text" 
@@ -58,7 +58,7 @@ export default function SearchAndFilter({
         {/* Display Controls */}
         <div className="flex flex-wrap items-center justify-end gap-2.5 w-full md:w-auto">
           {/* Card Limit Select */}
-          <div className="flex items-center gap-2 bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800/80 shadow-inner px-4 h-[52px] hover:border-zinc-700 transition-colors shrink-0">
+          <div className="flex items-center gap-2 bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800/80 shadow-inner px-4 h-13 hover:border-zinc-700 transition-colors shrink-0">
             <span className="text-sm font-medium text-zinc-500 hidden sm:inline">{t.home.studyLimit}</span>
             <CustomSelect
               value={globalLimit}
@@ -78,7 +78,7 @@ export default function SearchAndFilter({
           <div 
             role="group" 
             aria-label={`${t.home.practiceMode} / ${t.home.examMode}`}
-            className="hidden sm:flex items-center bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800/80 shadow-inner h-[52px] shrink-0"
+            className="hidden sm:flex items-center bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-1.5 border border-zinc-800/80 shadow-inner h-13 shrink-0"
           >
             <button
               onClick={() => setGlobalIsExamMode(false)}
@@ -108,7 +108,7 @@ export default function SearchAndFilter({
           <div 
             role="group" 
             aria-label={`${t.home.viewModeGrid} / ${t.home.viewModeList}`}
-            className="flex bg-zinc-900/80 backdrop-blur-xl p-1.5 rounded-2xl border border-zinc-800/80 shadow-inner h-[52px] shrink-0"
+            className="flex bg-zinc-900/80 backdrop-blur-xl p-1.5 rounded-2xl border border-zinc-800/80 shadow-inner h-13 shrink-0"
           >
             <button
               onClick={() => setViewMode("grid")}

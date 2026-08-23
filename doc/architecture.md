@@ -13,14 +13,20 @@ This document defines the system architecture of the `memorize_supporter` projec
 **Core Components:**
 - `DeckGallery`: Client-side component for real-time deck search and series filtering, optimized with `useDeferredValue`.
 - `DeckPlayer`, `Flashcard`, `VocabularyCard`, `PracticeQuizCard`: Frontend interactive card renderer (handling micro-animations and feedback).
+- `ExamResultView`: Comprehensive exam review interface supporting question-by-question replay, visual color-coded answer comparison, and "Retry Incorrect Only" session trigger.
+- `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, and real-time schema validation.
 - `SQLite & Prisma`: Lightweight data layer operating in an offline (local file) environment.
 - `ETL Script`: Data pipeline script that reads original documents (JSON), parses them, and pushes them (Upsert) into the DB.
+- `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
 
 **핵심 컴포넌트:**
 - `DeckGallery`: `useDeferredValue`를 활용한 렌더링 최적화와 함께 실시간 덱 검색 및 시리즈 필터링을 담당하는 클라이언트 컴포넌트
 - `DeckPlayer` 및 세부 카드 컴포넌트들: 프론트엔드 인터랙티브 카드 렌더러 (마이크로 애니메이션, 피드백 처리)
+- `ExamResultView`: 문항별 오답 상세 복습, 시각적 선택지 비교 및 '틀린 문제만 다시 풀기'를 지원하는 시험 결과 뷰어
+- `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 템플릿을 생성/검증하는 관리 도구
 - `SQLite & Prisma`: 오프라인(로컬 파일) 환경에서 동작하는 경량 데이터 레이어
 - `ETL Script`: 원본 문서(JSON)를 읽고 파싱하여 DB에 밀어넣는(Upsert) 데이터 파이프라인 스크립트
+- `CardParser` (`src/lib/card-parser.ts`): DB 원시 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
 
 ## 2. Frontend
 
@@ -62,7 +68,7 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **Adaptive Height & Motion Control:** Uses `AnimatePresence` with `initial={false}` and `useReducedMotion` (`motion-reduce:` variants) in cards and interactive controls to adapt smoothly to varying content lengths without layout jitter.
 - **Multiple-Choice Selection Constraint:** Dynamically restricts the maximum number of selectable options to the exact count of correct answers (`content.answers.length`), providing immediate toast feedback and live selection progress badges (`(1/2 selected)`) to prevent accidental excessive clicks.
 - **Comprehensive Explanation & Visual Highlights:** In quiz result/review views, displays all available choices (`content.options`) with color-coded and badged visual highlights (Emerald for correct answers, Rose for user-selected incorrect answers, and neutral for unpicked choices) to reinforce Active Recall.
-- **SSoT Sticky Header & Unified `QuizHeader` Component:** Implements a reusable `QuizHeader` (and matching `QuizHeader.Skeleton`) that sticks beneath the global navigation bar (`sticky top-[var(--header-height,4rem)] z-30 backdrop-blur-md`). This resolves header collision, eliminates vertical gaps by replacing dynamic `my-auto` margins with consistent top alignment, and unifies progress tracking across practice, exam, and review modes without layout shift (CLS).
+- **SSoT Sticky Header & Unified `QuizHeader` Component:** Implements a reusable `QuizHeader` (and matching `QuizHeader.Skeleton`) that sticks beneath the global navigation bar (`sticky top-(--header-height) z-30 backdrop-blur-md`). This resolves header collision, eliminates vertical gaps by replacing dynamic `my-auto` margins with consistent top alignment, and unifies progress tracking across practice, exam, and review modes without layout shift (CLS).
 - **Seamless Review Navigation & Shortcuts:** In exam history and question review views, provides dual navigation controls (sticky top header and card bottom action buttons) along with full keyboard navigation (`ArrowLeft`/`ArrowRight` for prev/next question, `Escape` for list view, `Enter`/`Space` for progression) to review question details consecutively without navigating back and forth.
 - Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, WAI-ARIA attributes (`role="group"`, `aria-pressed`, `aria-label`), robust keyboard navigation focus states (`focus-visible`), fixed-width numeric typography (`tabular-nums`), and touch feedback (`active:scale-95`).
 - Implements custom accessible UI components (e.g., `CustomSelect` using React Portals) to replace native browser elements, ensuring a consistent premium look (glassmorphism) across all platforms while maintaining strict WAI-ARIA combobox standards and keyboard type-ahead navigation.
@@ -75,7 +81,7 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **가변 높이 및 모션 제어:** 퀴즈 카드 및 상호작용 컨트롤에 `AnimatePresence (initial={false})`와 `useReducedMotion`(`motion-reduce:` 변형자)을 적용하여 컨텐츠 길이에 맞춰 유연하게 조절하고, 불필요한 빈 여백 및 모션 덜컹거림(Jitter)을 방지합니다.
 - **다중 선택 문항 개수 제한:** 정답 개수(`content.answers.length`)를 초과하여 선택할 수 없도록 동적으로 상한선을 제한하고, 실시간 진행 뱃지(`(1/2 선택됨)`) 및 안내 토스트를 제공하여 불필요한 중복 클릭을 방지합니다.
 - **전체 선택지 하이라이트 및 해설 강화:** 퀴즈 해설 및 결과 검토 화면에서 문제의 전체 선택지를 렌더링하고, 실제 정답(초록색), 사용자가 고른 오답(빨간색), 미선택 보기를 아이콘과 뱃지로 3중 강조하여 오답 원인을 직관적으로 학습할 수 있도록 지원합니다.
-- **단일 진실 공급원(SSoT) 스티키 헤더 및 공통 `QuizHeader` 컴포넌트:** 전역 헤더 높이 토큰과 완벽히 연동되는 재사용 가능한 `QuizHeader`(및 `QuizHeader.Skeleton`)를 도입하여 스크롤 시 글로벌 네비게이션 바로 아래(`sticky top-[var(--header-height,4rem)] z-30`)에 안정적으로 고정됩니다. 또한 `my-auto`를 제거하고 상단 기준 정렬을 확립하여 문제 카드와의 비정상적 여백을 해소하고, 로딩부터 실 뷰까지 누적 레이아웃 시프트(CLS) 없는 일관된 학습/복습 환경을 보장합니다.
+- **단일 진실 공급원(SSoT) 스티키 헤더 및 공통 `QuizHeader` 컴포넌트:** 전역 헤더 높이 토큰과 완벽히 연동되는 재사용 가능한 `QuizHeader`(및 `QuizHeader.Skeleton`)를 도입하여 스크롤 시 글로벌 네비게이션 바로 아래(`sticky top-(--header-height) z-30`)에 안정적으로 고정됩니다. 또한 `my-auto`를 제거하고 상단 기준 정렬을 확립하여 문제 카드와의 비정상적 여백을 해소하고, 로딩부터 실 뷰까지 누적 레이아웃 시프트(CLS) 없는 일관된 학습/복습 환경을 보장합니다.
 - **끊김 없는 문제 검토 네비게이션 및 단축키:** 시험 기록 및 오답 검토 화면에서 목록으로 나가지 않고도 전후 문제로 즉시 이동할 수 있도록 상단 Sticky 헤더와 하단 액션 버튼을 양방향 제공하며, 키보드 좌우 방향키(`←`, `→`), `Escape`, `Enter` 단축키를 완벽 지원합니다.
 - Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, WAI-ARIA 속성(`role="group"`, `aria-pressed`, `aria-label`), 견고한 키보드 포커스(`focus-visible`), 고정폭 수치 폰트(`tabular-nums`), 그리고 모바일 터치 피드백(`active:scale-95`) 등 최고 수준의 접근성을 보장합니다.
 - 네이티브 브라우저 엘리먼트를 대체하는 접근성 높은 커스텀 UI 컴포넌트(예: React Portal 기반의 `CustomSelect`)를 구현하여, 모든 플랫폼에서 일관된 프리미엄 룩(글래스모피즘)을 유지하는 동시에 엄격한 WAI-ARIA 콤보박스 표준과 키보드 Type-ahead 네비게이션을 지원합니다.
@@ -91,7 +97,7 @@ This document defines the system architecture of the `memorize_supporter` projec
 - 동적 파비콘(`icon.tsx`) 및 고해상도 애플 아이콘(`apple-icon.tsx`) 생성 시, Satori 엔진의 중첩 SVG 렌더링 한계를 회피하기 위해 순수 SVG `<linearGradient>` 코드를 단일 레이아웃과 조합하여 크로스 브라우징 렌더링 안정성을 확보했습니다.
 - **브랜드 아이덴티티 및 아이콘(Synaptic Recall Deck):** 기존의 진부한 별 모양 템플릿을 탈피하고, 3D 입체 카드 덱 레이어와 능동 인출 시냅스 불꽃을 융합한 도메인 특화 심볼을 구현했습니다. 초소형 탭 파비콘(`icon.tsx`, 32x32)의 고대비 최적화와 고해상도 앱 아이콘(`apple-icon.tsx`, 180x180), 그리고 재사용 가능한 `<BrandLogo />` 컴포넌트를 통해 앱 전반에 걸쳐 일관된 브랜드 정체성을 제공합니다.
 
-## 3. Backend
+## 3. Backend & Type Architecture
 
 **API and Data Communication:**
 - Supplies data to the client through Next.js Server Actions or direct Prisma Client calls without a separate external REST API server.
@@ -100,6 +106,14 @@ This document defines the system architecture of the `memorize_supporter` projec
 **API 및 데이터 통신:**
 - 별도의 외부 REST API 서버 없이 Next.js의 Server Actions 또는 Prisma Client 직접 호출을 통해 데이터를 클라이언트에 공급합니다.
 - **보안 격리 정책:** 비즈니스 로직(Server Actions)은 라우터 공간인 `app/` 내부가 아닌, 완전히 분리된 `src/actions/` 디렉토리에 격리하여 보관합니다. 이를 통해 내부 함수가 외부의 퍼블릭 API 엔드포인트로 예기치 않게 노출되는 보안 위험(Security Risk)을 원천 차단합니다.
+
+**Domain Type Architecture: "Parse, Don't Validate":**
+- **Centralized Domain Parser (`src/lib/card-parser.ts`):** Raw card strings stored in the database are never blindly cast using unsafe assertions like `as unknown as CardData`. All records are validated at runtime against Zod schemas and promoted to the strictly-typed `CardData` discriminated union.
+- **Zero Unsafe Assertions:** Ensures 0% `as any` or `as unknown as` assertions across the entire codebase.
+
+**도메인 타입 아키텍처 ("Parse, Don't Validate"):**
+- **중앙화된 도메인 파서 (`src/lib/card-parser.ts`):** DB에 저장된 원시 카드 문자열은 컴포넌트나 액션에서 `as unknown as CardData`와 같은 위험한 타입 단언으로 임의 캐스팅되지 않습니다. 모든 레코드는 `parseCardData(card)` 및 `parseCardDataList(cards)`를 통해 Zod 스키마로 런타임 검증된 후 정식 `CardData` 판별 유니온 타입으로 승격됩니다.
+- **강제 단언 0% 유지:** 코드베이스 전반에서 `as any` 및 `as unknown as`를 완전히 배제하여 컴파일 타임 및 런타임 무결성을 100% 보장합니다.
 
 **Data Validation & Error Handling (Zero-Trust):**
 - **Action Wrapper (`safe-action.ts`):** All Server Actions are strictly wrapped by a centralized High-Order Component (HOC) that handles `try/catch` logic. This ensures a consistent `{ success, message, data }` response format across the entire application without duplicating error handling logic in every action.
@@ -130,7 +144,7 @@ This document defines the system architecture of the `memorize_supporter` projec
 
 **커스텀 ETL 파이프라인 (`src/scripts/etl.ts` & Web Upload):**
 - 원본 JSON 데이터를 파싱하여 Prisma Client를 통해 DB에 적재합니다. 웹 UI(데이터 관리 탭)의 Drag & Drop 업로드 또한 동일한 무결성 로직을 공유합니다.
-- **데이터 무결성 보장 (Stable ID & Upsert):** `crypto` 모듈을 사용해 문항의 텍스트 콘텐츠(Question/Front)를 기반으로 고유한 SHA-256 해시 식별자를 생성합니다. 이를 통해 카드를 추가하거나 삭제하더라도, 기존 카드의 고유 ID가 유지되어 유저의 망각 곡선 복습 기록(`learningProgress`)이 파괴되지 않고 안전하게 보존(Upsert)됩니다.
+- **데이터 무결성 보장 (Stable ID & Upsert):** `crypto` 모듈을 사용해 문항의 텍스트 콘텐츠(Question/Front)를 기반으로 고유한 MD5 해시 식별자를 생성합니다. 이를 통해 카드를 추가하거나 삭제하더라도, 기존 카드의 고유 ID가 유지되어 유저의 망각 곡선 복습 기록(`learningProgress`)이 파괴되지 않고 안전하게 보존(Upsert)됩니다.
 - 실행 명령어: `npm run etl` (tsx를 통한 TypeScript 스크립트 실행)
 
 ```mermaid
@@ -143,7 +157,7 @@ sequenceDiagram
     E->>J: 1. Read JSON Data
     J-->>E: Return Cards Array
     loop For each card
-        E->>C: 2. Generate SHA-256 Hash based on Text
+        E->>C: 2. Generate MD5 Hash based on Text
         C-->>E: Return Stable Hash ID
         E->>DB: 3. Upsert Card with Hash ID
         DB-->>E: Success (Preserves Learning Progress)
@@ -159,13 +173,19 @@ sequenceDiagram
 - 기본적으로는 로컬(Self-hosted)에서 `npm run build`로 구동되지만, Vercel 등의 서버리스 호스팅 플랫폼 배포도 완벽하게 지원합니다. (서버리스 배포 시 Turso, Supabase 등 외부 프로덕션 데이터베이스 사용 권장)
 
 **CI/CD Pipeline:**
-- We plan to configure GitHub Actions later to perform Type Check and Linting, as well as introduce an automation pipeline (see Issue #2) that automatically executes `npm run etl` to the DB production environment when a JSON file is pushed to the `input/public/` folder.
+- GitHub Actions can be configured to perform Type Check and Linting (`npm run lint`), as well as automate the ETL pipeline when JSON files are pushed to `input/public/`.
 
 **CI/CD 파이프라인:**
-- 추후 GitHub Actions를 구성하여 Type Check 및 Linting을 수행할 뿐만 아니라, `input/public/` 폴더에 JSON 파일 푸시 시 자동으로 DB 프로덕션 환경에 `npm run etl`을 수행하는 자동화 파이프라인(Issue #2 참조)을 도입할 예정입니다.
+- GitHub Actions를 구성하여 Type Check 및 Linting(`npm run lint`)을 수행하고, `input/public/` 폴더에 JSON 파일 푸시 시 자동으로 DB 프로덕션 환경에 `npm run etl`을 수행하는 자동화 파이프라인을 연동할 수 있습니다.
 
 **Environment Variable Management:**
 - Core variables like `DATABASE_URL` are injected through the `.env` file.
 
 **환경 변수 관리:**
 - `.env` 파일을 통해 `DATABASE_URL` 등 핵심 변수를 주입받습니다.
+
+## 6. Quality & Diagnostics Standards (품질 및 진단 표준)
+
+- **Tailwind CSS v4 Canonical Rules:** Strict adherence to v4 standard utilities (`bg-linear-to-*`, `shrink-0`, `grow-0`, `@theme` token references like `top-(--header-height)`). Zero CSS conflicts or obsolete syntax.
+- **ESLint Zero Tolerance:** All PRs and commits must maintain 0 errors and 0 warnings on `npm run lint`.
+- **Domain Spellcheck (cSpell):** All project domain words, classes, and acronyms are registered and managed in `.vscode/settings.json` under `cSpell.words`.

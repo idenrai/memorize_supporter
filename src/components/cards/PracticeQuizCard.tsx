@@ -160,7 +160,7 @@ export default function PracticeQuizCard({
             className="w-full flex flex-col bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-10 shadow-2xl transition duration-300 hover:border-zinc-700/80"
           >
             <div className="text-xs font-medium text-zinc-400 mb-4 tracking-widest uppercase flex items-center justify-between min-w-0">
-              <span className="truncate min-w-0 max-w-[180px] sm:max-w-[300px] text-teal-500">{content.category || t.quiz.practiceQuiz}</span>
+              <span className="truncate min-w-0 max-w-45 sm:max-w-75 text-teal-500">{content.category || t.quiz.practiceQuiz}</span>
               <span className="text-zinc-500 shrink-0 ml-2">
                 {content.answers.length > 1 
                   ? `${t.quiz.selectMultiple(content.answers.length)} ${t.quiz.selectionProgress(selectedIndices.length, content.answers.length)}` 
@@ -168,7 +168,7 @@ export default function PracticeQuizCard({
               </span>
             </div>
             
-            <h2 className={`${content.question.length > 300 ? 'text-sm sm:text-base' : content.question.length > 150 ? 'text-base sm:text-lg' : 'text-xl sm:text-2xl'} font-semibold text-zinc-200 mb-6 flex-shrink-0 leading-relaxed whitespace-pre-wrap text-balance tracking-wide`}>
+            <h2 className={`${content.question.length > 300 ? 'text-sm sm:text-base' : content.question.length > 150 ? 'text-base sm:text-lg' : 'text-xl sm:text-2xl'} font-semibold text-zinc-200 mb-6 shrink-0 leading-relaxed whitespace-pre-wrap text-balance tracking-wide`}>
               {formatText(content.question)}
             </h2>
 
@@ -179,13 +179,13 @@ export default function PracticeQuizCard({
                   type="button"
                   aria-pressed={selectedIndices.includes(i)}
                   onClick={() => toggleSelection(i)}
-                  className={`text-left px-5 py-4 rounded-xl border transition duration-200 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 text-sm sm:text-base active:scale-[0.99] ${
+                  className={`text-left px-5 py-4 rounded-xl border transition duration-200 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 text-sm sm:text-base active:scale-99 ${
                     selectedIndices.includes(i) 
                       ? 'border-teal-600 bg-teal-600/10 text-teal-200 shadow-sm shadow-teal-900/10' 
                       : 'border-zinc-800 hover:border-zinc-700 text-zinc-300 bg-zinc-800/30 hover:bg-zinc-800/50'
                   }`}
                 >
-                  <div className={`w-5 h-5 flex items-center justify-center flex-shrink-0 border transition-colors ${
+                  <div className={`w-5 h-5 flex items-center justify-center shrink-0 border transition-colors ${
                     isSingleChoice ? 'rounded-full' : 'rounded'
                   } ${
                     selectedIndices.includes(i) ? 'border-teal-600 bg-teal-600 text-white' : 'border-zinc-600'

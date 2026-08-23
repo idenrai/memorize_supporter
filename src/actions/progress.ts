@@ -7,7 +7,7 @@ import { actionClient } from "@/lib/safe-action"
 
 import { calculateNextReview } from "@/lib/spaced-repetition"
 
-export const updateProgress = actionClient(UpdateProgressSchema, async ({ cardId, isCorrect, deckId }) => {
+export const updateProgress = actionClient(UpdateProgressSchema, async ({ cardId, isCorrect }) => {
   const existing = await prisma.learningProgress.findUnique({
     where: { cardId }
   })

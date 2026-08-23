@@ -33,7 +33,7 @@ export default function UploadZone() {
           } else {
             toast.error(t.management.uploadFailed)
           }
-        } catch (error) {
+        } catch {
           toast.error(t.common.error)
         }
       })
@@ -78,7 +78,7 @@ export default function UploadZone() {
     <div 
       className={`relative z-10 mb-10 p-8 rounded-2xl border-2 border-dashed transition-colors duration-300 text-center group ${
         isDragging 
-          ? 'bg-indigo-500/10 border-indigo-400 scale-[1.02] shadow-[0_0_30px_rgba(99,102,241,0.3)] ring-4 ring-indigo-500/20' 
+          ? 'bg-indigo-500/10 border-indigo-400 scale-102 shadow-glow-indigo ring-4 ring-indigo-500/20' 
           : 'bg-white/5 border-white/10 hover:border-indigo-500/50 hover:bg-indigo-500/5'
       }`}
       onDragOver={handleDragOver}

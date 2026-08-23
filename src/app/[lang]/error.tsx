@@ -29,21 +29,21 @@ export default function ErrorBoundary({
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md w-full bg-[#1c1f26] border border-red-900/50 rounded-2xl p-8 flex flex-col items-center text-center shadow-2xl"
+        className="max-w-md w-full bg-zinc-900 border border-red-900/50 rounded-2xl p-8 flex flex-col items-center text-center shadow-2xl"
       >
         <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
           <AlertCircle className="w-8 h-8 text-red-500" aria-hidden="true" />
         </div>
         
-        <h2 className="text-2xl font-bold text-gray-100 mb-2">{t.error.somethingWentWrong}</h2>
-        <p className="text-gray-400 mb-8 text-sm">
+        <h2 className="text-2xl font-bold text-zinc-100 mb-2">{t.error.somethingWentWrong}</h2>
+        <p className="text-zinc-400 mb-8 text-sm">
           {error.message || t.error.defaultMessage}
         </p>
         
         <div className="flex gap-4">
           <button
             onClick={() => router.push(`/${lang}`)}
-            className="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded-lg transition-colors font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+            className="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg transition-colors font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
           >
             {t.error.goHome}
           </button>

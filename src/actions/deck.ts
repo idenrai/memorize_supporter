@@ -16,7 +16,7 @@ export const uploadDeck = actionClient(UploadDeckSchema, async ({ jsonData, file
   let parsedData;
   try {
     parsedData = JSON.parse(jsonData)
-  } catch (error) {
+  } catch {
     throw new Error('Invalid JSON format: Please check for syntax errors in your file.')
   }
 
@@ -44,7 +44,7 @@ export const uploadDeck = actionClient(UploadDeckSchema, async ({ jsonData, file
     validatedData = DeckSchema.parse(rawData)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      throw new Error('Invalid data format: ' + error.issues.map((e: any) => e.message).join(', '))
+      throw new Error('Invalid data format: ' + error.issues.map((e) => e.message).join(', '))
     }
     throw error;
   }
