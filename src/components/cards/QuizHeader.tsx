@@ -43,7 +43,7 @@ export default function QuizHeader({
   const progressPercent = total > 0 ? Math.min(100, Math.max(0, (current / total) * 100)) : 0
 
   return (
-    <div className="sticky top-[var(--header-height,4rem)] z-30 bg-background/95 backdrop-blur-md py-3 -mt-2 mb-4 sm:mb-6 flex items-center justify-between shrink-0 border-b border-zinc-800/40">
+    <div className="sticky top-(--header-height) z-30 bg-background/95 backdrop-blur-md py-3 -mt-2 mb-4 sm:mb-6 flex items-center justify-between shrink-0 border-b border-zinc-800/40">
       {/* Left Back / Exit */}
       {backHref ? (
         <Link
@@ -101,7 +101,7 @@ export default function QuizHeader({
 
 export function QuizHeaderSkeleton() {
   return (
-    <div className="sticky top-[var(--header-height,4rem)] z-30 bg-background/95 backdrop-blur-md py-3 -mt-2 mb-4 sm:mb-6 flex items-center justify-between shrink-0 border-b border-zinc-800/40">
+    <div className="sticky top-(--header-height) z-30 bg-background/95 backdrop-blur-md py-3 -mt-2 mb-4 sm:mb-6 flex items-center justify-between shrink-0 border-b border-zinc-800/40">
       <div className="flex items-center gap-2 text-zinc-500">
         <ArrowLeft size={20} aria-hidden="true" />
         <div className="h-5 w-12 bg-zinc-800 rounded animate-pulse hidden md:block" />

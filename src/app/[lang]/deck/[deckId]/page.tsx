@@ -1,9 +1,9 @@
 import prisma from "@/lib/prisma"
 import DeckPlayer from "@/components/cards/DeckPlayer"
 import { notFound } from "next/navigation"
-import { CardData } from "@/types/card"
-import { Metadata } from "next"
-import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSchema } from "@/lib/schemas"
+import type { CardData } from "@/types/card"
+import type { Metadata } from "next"
+import { parseCardDataList } from "@/lib/card-parser"
 
 type Props = {
   params: Promise<{ deckId: string }>
@@ -100,39 +100,8 @@ export default async function DeckPage({ params, searchParams }: Props) {
 
 
 
-  // Parse JSON content and cast to our discriminated union CardData type safely
-  const validCards: CardData[] = []
-
-  for (const c of shuffledCards) {
-    try {
-      const parsed = JSON.parse(c.content)
-
-      if (c.type === 'flashcard' || c.type === 'tip') {
-        const result = FlashcardContentSchema.safeParse(parsed)
-        if (result.success) {
-          validCards.push({ id: c.id, type: 'flashcard', content: result.data })
-        } else {
-          console.error(`Invalid flashcard data for id ${c.id}:`, result.error)
-        }
-      } else if (c.type === 'practice_quiz' || c.type === 'multiple_choice') {
-        const result = PracticeQuizContentSchema.safeParse(parsed)
-        if (result.success) {
-          validCards.push({ id: c.id, type: 'practice_quiz', content: result.data })
-        } else {
-          console.error(`Invalid practice_quiz data for id ${c.id}:`, result.error)
-        }
-      } else if (c.type === 'vocabulary') {
-        const result = VocabularyContentSchema.safeParse(parsed)
-        if (result.success) {
-          validCards.push({ id: c.id, type: 'vocabulary', content: result.data })
-        } else {
-          console.error(`Invalid vocabulary data for id ${c.id}:`, result.error)
-        }
-      }
-    } catch (e) {
-      console.error(`Failed to parse JSON for card id ${c.id}:`, e)
-    }
-  }
+  // Parse JSON content and validate against Zod schemas into strictly-typed CardData
+  const validCards: CardData[] = parseCardDataList(shuffledCards)
 
   // Fallback if all cards were invalid
   if (validCards.length === 0) {

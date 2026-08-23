@@ -183,7 +183,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
         total={playingCards.length}
         badge={
           retryRound > 0 ? (
-            <div className="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-widest text-center">
+            <div className="text-2xs sm:text-xs font-bold text-amber-400 uppercase tracking-widest text-center">
               {t.quiz.retrySessionBadge}
             </div>
           ) : undefined

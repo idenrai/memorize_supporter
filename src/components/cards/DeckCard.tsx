@@ -27,10 +27,10 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
   const config = typeConfig[type] || typeConfig['flashcard']
 
   return (
-    <div className="group relative h-full flex flex-col rounded-3xl p-[1px] overflow-hidden hover-glow-indigo">
+    <div className="group relative h-full flex flex-col rounded-3xl p-px overflow-hidden hover-glow-indigo">
       {/* Animated gradient border background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black opacity-100 transition-opacity duration-300 group-hover:opacity-0" />
-      <div className={`absolute inset-0 bg-gradient-to-br from-indigo-500/40 via-blue-500/30 to-teal-500/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 blur-md`} />
+      <div className="absolute inset-0 bg-linear-to-br from-zinc-800 via-zinc-900 to-black opacity-100 transition-opacity duration-300 group-hover:opacity-0" />
+      <div className={`absolute inset-0 bg-linear-to-br from-indigo-500/40 via-blue-500/30 to-teal-500/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 blur-md`} />
       
       {/* Inner Card Content */}
       <div className="relative h-full flex flex-col bg-zinc-950/90 backdrop-blur-xl rounded-[23px] p-6 border border-white/5">
@@ -40,7 +40,7 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
         
         <div className="flex-1 relative z-10">
           <div className="flex justify-between items-start mb-4">
-            <div className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest ${config.color} bg-white/5 border border-white/10 shadow-inner backdrop-blur-md`}>
+            <div className={`text-2xs font-bold px-2.5 py-1 rounded-full uppercase tracking-widest ${config.color} bg-white/5 border border-white/10 shadow-inner backdrop-blur-md`}>
               {type === 'practice_quiz' ? t.quiz.practiceQuiz : type === 'vocabulary' ? t.quiz.vocabulary : t.quiz.flashcard}
             </div>
             
@@ -49,7 +49,7 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
               {count} <span className="font-medium text-zinc-500 hidden sm:inline">{t.home.cards}</span>
             </div>
           </div>
-          <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-300 mb-2 mt-4 line-clamp-2 leading-tight group-hover:from-white group-hover:to-zinc-200 transition-colors">
+          <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-zinc-100 to-zinc-300 mb-2 mt-4 line-clamp-2 leading-tight group-hover:from-white group-hover:to-zinc-200 transition-colors">
             {deckName}
           </h3>
           <p className="text-sm text-zinc-400 line-clamp-2 mb-4 leading-relaxed font-medium">
@@ -72,7 +72,7 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
 
           <Link 
             href={`/${lang}/deck/${deck}?limit=${globalLimit}${globalIsExamMode && type === 'practice_quiz' ? '&mode=exam' : ''}`}
-            className="min-w-[70px] shrink-0 px-4 py-1.5 rounded-full text-xs uppercase tracking-wider btn-indigo text-center"
+            className="min-w-17.5 shrink-0 px-4 py-1.5 rounded-full text-xs uppercase tracking-wider btn-indigo text-center"
           >
             {t.common.study}
           </Link>

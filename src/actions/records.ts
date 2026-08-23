@@ -4,6 +4,8 @@ import prisma from "@/lib/prisma"
 import { actionClient } from "@/lib/safe-action"
 import { z } from "zod"
 import { revalidatePath } from "next/cache"
+import type { CardData } from "@/types/card"
+import { parseCardData } from "@/lib/card-parser"
 
 export async function getExamRecords(deckId?: string) {
   try {
@@ -56,8 +58,8 @@ export async function getExamResultDetails(examId: string) {
       return { success: false, error: "Record not found" }
     }
     
-    let playingCards: any[] = []
-    let sessionResults: any[] = []
+    let playingCards: CardData[] = []
+    let sessionResults: { cardId: string; isCorrect: boolean; selectedIndices?: number[] }[] = []
 
     if (record.details && record.details.length > 0) {
       sessionResults = record.details.map(d => ({
@@ -67,30 +69,22 @@ export async function getExamResultDetails(examId: string) {
       }))
 
       // Fetch from DB
-      const cardIds = sessionResults.map((r: any) => r.cardId)
+      const cardIds = sessionResults.map(r => r.cardId)
       const fetchedCards = await prisma.card.findMany({
         where: { id: { in: cardIds } }
       })
       
-      const cardMap = new Map(fetchedCards.map(c => {
-        let parsedContent = {}
-        try {
-          parsedContent = JSON.parse(c.content)
-        } catch (err) {
-          console.warn(`Failed to parse content for card ${c.id}`)
-          parsedContent = { question: "Failed to load content", answer: "" }
+      const cardMap = new Map<string, CardData>()
+      for (const c of fetchedCards) {
+        const parsed = parseCardData(c)
+        if (parsed) {
+          cardMap.set(c.id, parsed)
         }
-        return [c.id, {
-          id: c.id,
-          deckId: c.deck,
-          type: c.type,
-          content: parsedContent
-        }]
-      }))
+      }
       
       playingCards = sessionResults
         .map(r => cardMap.get(r.cardId))
-        .filter(Boolean)
+        .filter((c): c is CardData => c !== undefined)
     }
     
     return { success: true, record, playingCards, sessionResults }

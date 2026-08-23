@@ -4,7 +4,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import PracticeQuizCard from "./PracticeQuizCard"
 import QuizHeader from "./QuizHeader"
-import { XCircle, CheckCircle2, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
+import { XCircle, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { CardData } from "@/types/card"
 import { useT } from "@/hooks/useT"
@@ -19,7 +19,7 @@ interface SessionResult {
 interface ExamResultViewProps {
   playingCards: CardData[]
   sessionResults: SessionResult[]
-  lang: Lang
+  lang?: Lang
   backLink: string
   backLinkText?: string
   originalStats?: {
@@ -34,7 +34,6 @@ interface ExamResultViewProps {
 export default function ExamResultView({
   playingCards,
   sessionResults,
-  lang,
   backLink,
   backLinkText,
   originalStats,
@@ -75,7 +74,7 @@ export default function ExamResultView({
           total={playingCards.length}
           animateProgress={false}
           badge={
-            <div className="text-[10px] sm:text-xs font-bold text-teal-400 uppercase tracking-widest text-center">
+            <div className="text-2xs sm:text-xs font-bold text-teal-400 uppercase tracking-widest text-center">
               {t.quiz.reviewingQuestion(currentNum, playingCards.length)}
             </div>
           }
@@ -164,7 +163,7 @@ export default function ExamResultView({
               onClick={() => setReviewingCard(c)}
               className="flex items-center gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-colors text-left focus-visible:ring-2 focus-visible:ring-teal-500"
             >
-              <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isCorrect ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+              <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isCorrect ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                 {isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
               </div>
               <div className="flex-1 font-medium text-zinc-300 truncate">

@@ -4,9 +4,8 @@ import { useState } from 'react'
 import { Copy, Check } from 'lucide-react'
 import type { TemplateData } from './page'
 import { useT } from '@/hooks/useT'
-import type { Lang } from '@/i18n/types'
 
-export default function DataPreparationClient({ templates, lang }: { templates: TemplateData[], lang: Lang }) {
+export default function DataPreparationClient({ templates }: { templates: TemplateData[] }) {
   const t = useT()
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(templates[0] || null)
   const [copied, setCopied] = useState(false)
@@ -21,7 +20,7 @@ export default function DataPreparationClient({ templates, lang }: { templates: 
 
   return (
     <div className="bg-zinc-950/50 backdrop-blur-xl rounded-3xl p-6 md:p-8 border border-white/5 shadow-2xl relative overflow-hidden group">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 via-purple-500/5 to-transparent pointer-events-none" />
       
       <div className="relative z-10 mb-8">
         <label className="block text-sm font-bold text-zinc-300 mb-4 tracking-wide uppercase">
@@ -70,7 +69,7 @@ export default function DataPreparationClient({ templates, lang }: { templates: 
           </div>
           
           <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-zinc-950 shadow-inner group">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-teal-500/50 opacity-50" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-blue-500/50 via-purple-500/50 to-teal-500/50 opacity-50" />
             <textarea
               readOnly
               value={t.prep.promptFormat(selectedTemplate.content)}

@@ -26,7 +26,7 @@ export default function Header({ lang }: { lang: Lang }) {
   }`
 
   return (
-    <header className="sticky top-0 z-50 flex h-[var(--header-height,4rem)] items-center justify-between border-b border-white/5 bg-zinc-950/80 backdrop-blur-md px-4 md:px-8 shadow-md">
+    <header className="sticky top-0 z-50 flex h-(--header-height) items-center justify-between border-b border-white/5 bg-zinc-950/80 backdrop-blur-md px-4 md:px-8 shadow-md">
       {/* Left: Logo */}
       <div className="flex items-center gap-3">
         <Link href={`/${lang}`} className="group flex items-center gap-3 hover:opacity-90 transition-opacity">

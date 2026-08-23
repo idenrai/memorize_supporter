@@ -175,7 +175,7 @@ export default function CustomSelect<T extends string | number>({
 
   const portalContent = isOpen && typeof document !== 'undefined' ? createPortal(
     <div 
-      className={`absolute z-[100] rounded-xl border border-zinc-700 bg-zinc-800/95 backdrop-blur-xl shadow-xl overflow-hidden ${dropdownClassName}`}
+      className={`absolute z-50 rounded-xl border border-zinc-700 bg-zinc-800/95 backdrop-blur-xl shadow-xl overflow-hidden ${dropdownClassName}`}
       style={{
         ...popupStyle,
         animation: 'customSelectFadeIn 0.15s ease-out forwards'

@@ -12,10 +12,10 @@
 
 - **다양한 학습 모드**: 플래시카드(Flashcards), 4지선다형 연습 퀴즈(Practice Quiz), 단어장(Vocabulary) 지원
 - **Active Recall & SRS (간격 반복)**: 능동적 인출 훈련 및 결과(Hard/Easy)에 따른 에빙하우스 망각 곡선 기반 자동 복습 주기 계산
-- **시험 모드 및 통계 (Exam Mode & Records)**: 퀴즈 풀이 후 점수, 정답률, 카드별 상세 오답 복습 및 역대 시험 이력 통계 제공
+- **시험 모드 및 오답 다시 풀기 (Exam Mode & Retry Incorrect)**: 실전 퀴즈 풀이 후 점수 통계 확인 및 틀린 문제만 골라 즉시 재응시하는 피드백 루프
 - **글로벌 다국어 지원 (i18n)**: 동적 라우팅 기반으로 한국어(KO), 영어(EN), 일본어(JA) 완벽 지원 (Hydration Mismatch 방지)
 - **JSON 기반 데이터 파이프라인**: `input/` 디렉토리에 JSON 파일만 넣으면 `npm run etl`을 통해 기존 학습 기록을 보존하며 스마트 동기화
-- **웹 기반 덱 관리**: 브라우저에서 직접 JSON 업로드, 덱 삭제, 템플릿 다운로드 가능
+- **웹 기반 덱 관리 및 데이터 준비 (Data Management & Preparation)**: 브라우저에서 직접 JSON 덱 업로드, 덱 수정/삭제 및 대화형 덱 빌더/스키마 검증기 제공
 - **인지 부하를 줄인 모던 UI/UX**: Tailwind CSS v4 기반 다크 모드, 글래스모피즘, 마이크로 애니메이션, `tabular-nums` 숫자 정렬
 - **풀 키보드 단축키 지원**: 마우스 없이도 스페이스바, 숫자키(1~4), 방향키로 모든 학습 및 퀴즈 제어 가능
 - **PWA & 모바일 반응형**: 모바일 기기 홈 화면 추가(PWA) 지원 및 완벽한 반응형 레이아웃
@@ -91,10 +91,10 @@ npm run etl
 
 - **Multiple Study Modes**: Flashcards, Practice Quiz (4-choice questions), and Vocabulary.
 - **Active Recall & Spaced Repetition (SRS)**: Promotes proactive knowledge retrieval and automatically schedules optimal review intervals based on difficulty (Hard/Easy).
-- **Exam Mode & History Tracking**: Track accuracy, score distributions, and detailed answer breakdowns per session and view past exam history.
+- **Exam Mode & Retry Incorrect**: Full quiz scoring, question breakdown, and an instant smart feedback loop to re-test only incorrect answers.
 - **Full Internationalization (i18n)**: URL-based routing supporting Korean (KO), English (EN), and Japanese (JA) without hydration mismatch.
 - **JSON-Driven Data Pipeline**: Drop JSON files into the `input/` folder and run `npm run etl` to sync decks while preserving existing user study progress.
-- **Web Data Management**: Upload JSON decks, delete decks, and download templates directly from the browser.
+- **Web Data Management & Preparation**: Upload/edit/delete decks from the browser and compose custom decks with a live interactive schema validator.
 - **Polished Cognitive-Friendly UI/UX**: Dark mode, glassmorphic styling, compositor-optimized micro-animations, and `tabular-nums` alignment powered by Tailwind CSS v4.
 - **Full Keyboard Accessibility**: Control flashcard flips, quiz choices (1-4), and navigation entirely via keyboard.
 - **PWA & Mobile Ready**: Add to Home Screen support with responsive layouts for mobile and desktop.
