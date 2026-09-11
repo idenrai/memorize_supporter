@@ -55,9 +55,11 @@ export const ko: Translations = {
     sampleDecksLoadFailed: "샘플 덱을 불러오지 못했습니다.",
   },
   prep: {
-    aiPrompt: "AI 생성 프롬프트",
-    copied: "클립보드에 복사됨",
+    aiPrompt: "생성용 AI 프롬프트",
+    copied: "복사됨!",
     copyPrompt: "프롬프트 복사하기",
+    promptCopied: "AI 프롬프트가 클립보드에 복사되었습니다.",
+    promptCopyFailed: "클립보드 복사에 실패했습니다.",
     desc: "교재, 필기노트, 단어 목록 등 학습하고 싶은 자료를 AI에게 전달하여 즉시 학습 가능한 덱으로 변환해 보세요. 아래 템플릿 프롬프트를 복사해 ChatGPT나 Claude에 붙여넣기만 하면 됩니다.",
     promptFormat: (content) => `당신은 교육 자료와 노트를 디지털 학습 덱(JSON)으로 정밀하게 변환하는 전문 교육 데이터 엔지니어입니다.
 제시된 학습 내용을 분석하여 아래 [필수 스키마 구조]를 엄격히 따르는 유효한 JSON 배열로 변환해 주세요.

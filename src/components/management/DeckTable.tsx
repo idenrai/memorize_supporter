@@ -23,7 +23,7 @@ import type { Deck } from '@/types/deck'
 type SortKey = keyof Deck | 'cards'
 
 function getDeckSortValue(deck: Deck, key: SortKey): string | number {
-  if (key === 'cards') return deck._count.cards
+  if (key === 'cards') return deck._count?.cards ?? 0
   if (key === 'createdAt') return new Date(deck.createdAt).getTime()
   if (key === 'isHidden') return deck.isHidden ? 1 : 0
   const val = deck[key]
@@ -158,8 +158,8 @@ export default function DeckTable() {
       return <ChevronsUpDown size={14} className="opacity-30 inline-block ml-1" />
     }
     return sortConfig.direction === 'asc' 
-      ? <ChevronUp size={14} className="text-blue-400 inline-block ml-1" />
-      : <ChevronDown size={14} className="text-blue-400 inline-block ml-1" />
+      ? <ChevronUp size={14} className="text-indigo-400 inline-block ml-1" />
+      : <ChevronDown size={14} className="text-indigo-400 inline-block ml-1" />
   }
 
   const handleSortKeyDown = (e: React.KeyboardEvent, key: SortKey) => {
@@ -202,7 +202,7 @@ export default function DeckTable() {
                 onClick={() => requestSort('title')}
                 onKeyDown={(e) => handleSortKeyDown(e, 'title')}
                 tabIndex={0}
-                role="button"
+                aria-sort={sortConfig?.key === 'title' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
                 aria-label={`Sort by ${t.management.thName}`}
               >
                 {t.management.thName} {renderSortIcon('title')}
@@ -212,7 +212,7 @@ export default function DeckTable() {
                 onClick={() => requestSort('series')}
                 onKeyDown={(e) => handleSortKeyDown(e, 'series')}
                 tabIndex={0}
-                role="button"
+                aria-sort={sortConfig?.key === 'series' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
                 aria-label={`Sort by ${t.management.thSeries}`}
               >
                 {t.management.thSeries} {renderSortIcon('series')}
@@ -222,7 +222,7 @@ export default function DeckTable() {
                 onClick={() => requestSort('type')}
                 onKeyDown={(e) => handleSortKeyDown(e, 'type')}
                 tabIndex={0}
-                role="button"
+                aria-sort={sortConfig?.key === 'type' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
                 aria-label={`Sort by ${t.management.thType}`}
               >
                 {t.management.thType} {renderSortIcon('type')}
@@ -232,7 +232,7 @@ export default function DeckTable() {
                 onClick={() => requestSort('cards')}
                 onKeyDown={(e) => handleSortKeyDown(e, 'cards')}
                 tabIndex={0}
-                role="button"
+                aria-sort={sortConfig?.key === 'cards' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
                 aria-label={`Sort by ${t.management.thCards}`}
               >
                 {t.management.thCards} {renderSortIcon('cards')}
@@ -258,7 +258,7 @@ export default function DeckTable() {
                   {deck.type}
                 </td>
                 <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-sm font-medium text-zinc-300 tabular-nums">
-                  {deck._count.cards}
+                  {deck._count?.cards ?? 0}
                 </td>
                 <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end gap-2">

@@ -56,8 +56,10 @@ export const en: Translations = {
   },
   prep: {
     aiPrompt: "AI Generation Prompt",
-    copied: "Copied to Clipboard",
+    copied: "Copied!",
     copyPrompt: "Copy Prompt",
+    promptCopied: "AI prompt copied to clipboard.",
+    promptCopyFailed: "Failed to copy prompt to clipboard.",
     desc: "Convert your notes, textbooks, or vocabulary lists into study-ready decks with AI. Simply copy the prompt template and paste it into ChatGPT or Claude.",
     promptFormat: (content) => `You are an expert educational data engineer specialized in transforming study materials and notes into digital study decks (JSON).
 Analyze the provided content and convert it into a valid JSON array strictly adhering to the [Required Schema] below.

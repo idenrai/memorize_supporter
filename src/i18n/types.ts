@@ -64,6 +64,8 @@ export interface Translations {
     aiPrompt: string;
     copied: string;
     copyPrompt: string;
+    promptCopied: string;
+    promptCopyFailed: string;
     desc: string;
     promptFormat: (content: string) => string;
     selectTemplate: string;

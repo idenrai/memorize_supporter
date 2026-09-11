@@ -56,8 +56,10 @@ export const ja: Translations = {
   },
   prep: {
     aiPrompt: "AI生成プロンプト",
-    copied: "クリップボードにコピーしました",
+    copied: "コピー完了！",
     copyPrompt: "プロンプトをコピー",
+    promptCopied: "AIプロンプトをクリップボードにコピーしました。",
+    promptCopyFailed: "クリップボードへのコピーに失敗しました。",
     desc: "教材やノート、単語リストなど学習したい素材をAIに渡して、すぐに学習できるデッキに変換しましょう。テンプレートをコピーしてChatGPTやClaudeに貼り付けるだけで作成できます。",
     promptFormat: (content) => `あなたは教育素材や講義ノートをデジタル学習デッキ(JSON)に高精度で構造化する専門データエンジニアです。
 提示された学習素材を分析し、以下の【必須スキーマ構造】に厳格に従う有効なJSON配列として出力してください。
