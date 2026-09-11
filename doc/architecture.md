@@ -13,7 +13,7 @@
 - **목적**: 사용자가 플래시카드(핀포인트 팁), 객관식 문제, 영단어 등을 효율적으로 암기할 수 있도록 돕는 범용 암기 애플리케이션입니다. 인지 과학적 원리(Active Recall, Spaced Repetition)와 포커스 모드 디자인을 채택하여 학습 효율을 극대화합니다.
 - **핵심 컴포넌트**:
   - `DeckGallery`: `useDeferredValue`를 활용한 렌더링 최적화와 함께 실시간 덱 검색 및 시리즈 필터링을 담당하는 클라이언트 컴포넌트
-  - `UploadZone`: 서버 전송 없이 브라우저 IndexedDB로 개인 커스텀 덱을 즉시 적재하는 드래그 앤 드롭 파일 임포터 (데이터 관리 페이지)
+  - `UploadZone`: 서버 전송 없이 브라우저 IndexedDB로 개인 커스텀 덱을 단일 또는 복수 일괄(Multi-file Batch)로 즉시 적재하는 드래그 앤 드롭 파일 임포터 (데이터 관리 페이지)
   - `DeckPlayer` 및 세부 카드 컴포넌트들(`Flashcard`, `VocabularyCard`, `PracticeQuizCard`): 프론트엔드 인터랙티브 카드 렌더러 (마이크로 애니메이션, 피드백 처리)
   - `DeckClientLoader`: 로컬 전용 덱 접근 시 IndexedDB로부터 카드를 로드하여 서버와 동일한 SRS 우선순위로 플레이어를 구동하는 클라이언트 로더
   - `ExamResultView`: 문항별 오답 상세 복습, 시각적 선택지 비교 및 '틀린 문제만 다시 풀기'를 지원하는 시험 결과 뷰어
@@ -184,7 +184,7 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **Purpose**: A general-purpose memorization application designed to help users efficiently memorize flashcards (pinpoint tips), multiple-choice questions, and vocabulary. It maximizes learning efficiency by adopting cognitive science principles (Active Recall, Spaced Repetition) and a focus-mode design.
 - **Core Components**:
   - `DeckGallery`: Client-side component for real-time deck search and series filtering, optimized with `useDeferredValue`.
-  - `UploadZone`: Drag & Drop JSON importer in the data management page, allowing users to instantly import private exam decks directly into browser IndexedDB without server transmission.
+  - `UploadZone`: Drag & Drop JSON importer in the data management page, supporting single and multi-file batch uploads directly into browser IndexedDB without server transmission.
   - `DeckPlayer`, `Flashcard`, `VocabularyCard`, `PracticeQuizCard`: Frontend interactive card renderer (handling micro-animations and feedback).
   - `DeckClientLoader`: Client-side deck runner that dynamically retrieves and prioritizes cards from IndexedDB for local-only decks.
   - `ExamResultView`: Comprehensive exam review interface supporting question-by-question replay, visual color-coded answer comparison, and "Retry Incorrect Only" session trigger.
