@@ -146,7 +146,7 @@ export default function PracticeQuizCard({
       ref={containerRef}
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className="w-full max-w-4xl select-none font-sans antialiased focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/50 rounded-2xl"
+      className="w-full max-w-4xl select-none font-sans antialiased focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500/50 rounded-2xl"
     >
       <AnimatePresence initial={false} mode="wait">
         {!isFlipped ? (
@@ -179,7 +179,7 @@ export default function PracticeQuizCard({
                   type="button"
                   aria-pressed={selectedIndices.includes(i)}
                   onClick={() => toggleSelection(i)}
-                  className={`text-left px-5 py-4 rounded-xl border transition duration-200 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 text-sm sm:text-base active:scale-99 ${
+                  className={`text-left px-5 py-4 rounded-xl border transition duration-200 flex items-center gap-3 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-600 text-sm sm:text-base active:scale-99 ${
                     selectedIndices.includes(i) 
                       ? 'border-teal-600 bg-teal-600/10 text-teal-200 shadow-sm shadow-teal-900/10' 
                       : 'border-zinc-800 hover:border-zinc-700 text-zinc-300 bg-zinc-800/30 hover:bg-zinc-800/50'
@@ -305,7 +305,7 @@ export default function PracticeQuizCard({
                 <button
                   type="button"
                   onClick={handleCopyPrompt}
-                  className="px-6 py-3 border border-zinc-600 text-zinc-300 font-medium rounded-full flex items-center justify-center gap-2 hover:bg-zinc-800 hover:border-zinc-500 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition w-full sm:w-auto shadow-sm"
+                  className="px-6 py-3 border border-zinc-600 text-zinc-300 font-medium rounded-full flex items-center justify-center gap-2 hover:bg-zinc-800 hover:border-zinc-500 hover:text-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition w-full sm:w-auto shadow-sm"
                 >
                   <Bot size={18} aria-hidden="true" />
                   <span>{t.quiz.askAi}</span>
@@ -317,7 +317,7 @@ export default function PracticeQuizCard({
                       e.stopPropagation()
                       handleNext()
                     }}
-                    className="px-8 py-3 bg-teal-600 text-white font-medium rounded-full hover:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition shadow-sm w-full sm:w-auto"
+                    className="px-8 py-3 bg-teal-600 text-white font-medium rounded-full hover:bg-teal-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition shadow-sm w-full sm:w-auto"
                   >
                     {t.quiz.next}
                   </button>
@@ -332,7 +332,7 @@ export default function PracticeQuizCard({
                           onPrevReview()
                         }}
                         title={`${t.quiz.prevQuestion} (←)`}
-                        className="px-5 py-3 border border-zinc-700 text-zinc-300 font-medium rounded-full flex items-center justify-center gap-1.5 hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
+                        className="px-5 py-3 border border-zinc-700 text-zinc-300 font-medium rounded-full flex items-center justify-center gap-1.5 hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
                       >
                         <ChevronLeft size={18} aria-hidden="true" />
                         <span>{t.quiz.prevQuestion}</span>
@@ -347,7 +347,7 @@ export default function PracticeQuizCard({
                           onNextReview()
                         }}
                         title={`${t.quiz.nextQuestion} (→ / Enter)`}
-                        className="px-6 py-3 bg-teal-600 text-white font-medium rounded-full flex items-center justify-center gap-1.5 hover:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
+                        className="px-6 py-3 bg-teal-600 text-white font-medium rounded-full flex items-center justify-center gap-1.5 hover:bg-teal-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
                       >
                         <span>{t.quiz.nextQuestion}</span>
                         <ChevronRight size={18} aria-hidden="true" />
@@ -361,7 +361,7 @@ export default function PracticeQuizCard({
                             onClose()
                           }}
                           title={`${t.quiz.closeReview} (Esc)`}
-                          className="px-6 py-3 bg-zinc-700 text-white font-medium rounded-full hover:bg-zinc-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
+                          className="px-6 py-3 bg-zinc-700 text-white font-medium rounded-full hover:bg-zinc-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
                         >
                           {t.quiz.closeReview}
                         </button>

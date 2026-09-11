@@ -129,7 +129,7 @@ export default function LocalExamResultDetail({ examId, lang }: LocalExamResultD
   }
 
   return (
-    <main className="flex-1 w-full max-w-5xl mx-auto flex flex-col">
+    <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-12 pb-16 flex flex-col">
       <ExamResultView
         playingCards={playingCards}
         sessionResults={record.details}

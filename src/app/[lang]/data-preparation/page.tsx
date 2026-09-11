@@ -38,13 +38,17 @@ export default async function DataPreparationPage({ params }: { params: Promise<
   ]
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 md:p-8 pt-8 md:pt-12">
-      <h1 className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-linear-to-r from-zinc-100 to-zinc-400 tracking-tight">{t.prep.title}</h1>
-      <p className="text-zinc-400 mb-10 max-w-3xl font-medium leading-relaxed break-keep text-base">
-        {t.prep.desc}
-      </p>
+    <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-12 pb-16">
+      <div className="mb-8 sm:mb-10">
+        <h1 className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-linear-to-r from-zinc-100 to-zinc-400 tracking-tight break-keep">
+          {t.prep.title}
+        </h1>
+        <p className="text-zinc-400 max-w-3xl font-medium leading-relaxed break-keep text-base">
+          {t.prep.desc}
+        </p>
+      </div>
 
       <DataPreparationClient templates={templates} />
-    </div>
+    </main>
   )
 }

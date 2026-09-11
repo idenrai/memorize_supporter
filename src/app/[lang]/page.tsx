@@ -1,40 +1,31 @@
 import { notFound } from "next/navigation"
 import DeckGallery from "@/components/home/DeckGallery"
-import { getStaticDecks } from "@/lib/static-decks"
 import { getT } from "@/i18n"
 import { locales, type Locale } from "@/i18n/settings"
 import type { Lang } from "@/i18n/types"
 
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
-  const { lang } = await params;
+  const { lang } = await params
 
   if (!locales.includes(lang as Locale)) {
-    notFound();
+    notFound()
   }
 
-  const validLang = lang as Lang;
-
-  // Load static sample decks
-  const decks = getStaticDecks()
-
+  const validLang = lang as Lang
   const t = getT(validLang)
 
   return (
-    <div className="flex flex-col items-center pt-8 md:pt-12 px-4 sm:px-8">
-      {/* Main Content */}
-      <main className="w-full max-w-5xl flex flex-col items-center">
-        <div className="mb-12 w-full text-center">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3 break-keep">
-            {t.home.subtitle}
-          </h2>
-          <p className="text-base sm:text-lg text-zinc-400 max-w-3xl mx-auto leading-relaxed break-keep">
-            {t.home.description}
-          </p>
-        </div>
+    <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-12 pb-16 flex flex-col items-center">
+      <div className="mb-8 sm:mb-10 w-full text-center">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-zinc-100 to-zinc-400 tracking-tight mb-3 break-keep text-balance">
+          {t.home?.subtitle}
+        </h1>
+        <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed break-keep text-balance font-medium">
+          {t.home?.description}
+        </p>
+      </div>
 
-        <DeckGallery decks={decks} lang={lang as Lang} />
-      </main>
-    </div>
+      <DeckGallery lang={validLang} />
+    </main>
   )
 }
-

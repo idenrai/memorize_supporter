@@ -31,7 +31,7 @@ export default function DataPreparationClient({ templates }: { templates: Templa
             <button
               key={template.id}
               onClick={() => setSelectedTemplate(template)}
-              className={`relative p-5 rounded-2xl text-left transition-colors duration-200 border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+              className={`relative p-5 rounded-2xl text-left transition-colors duration-200 border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 ${
                 selectedTemplate?.id === template.id
                   ? 'border-blue-500 bg-blue-500/10 shadow-lg shadow-blue-500/20'
                   : 'border-white/10 bg-white/5 hover:border-zinc-600 hover:bg-white/10'
@@ -57,7 +57,7 @@ export default function DataPreparationClient({ templates }: { templates: Templa
             </h3>
             <button
               onClick={handleCopy}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-colors text-sm font-bold ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors text-sm font-bold ${
                 copied 
                   ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
                   : 'bg-white/10 hover:bg-white/20 text-zinc-200 border border-white/10 hover:border-white/20'
@@ -73,7 +73,7 @@ export default function DataPreparationClient({ templates }: { templates: Templa
             <textarea
               readOnly
               value={t.prep.promptFormat(selectedTemplate.content)}
-              className="w-full h-80 p-6 bg-transparent text-sm text-zinc-300 font-mono resize-none focus:outline-none custom-scrollbar"
+              className="w-full h-80 p-6 bg-transparent text-sm text-zinc-300 font-mono resize-none focus:outline-hidden custom-scrollbar"
             />
           </div>
         </div>

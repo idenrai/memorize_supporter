@@ -43,13 +43,13 @@ export default function ErrorBoundary({
         <div className="flex gap-4">
           <button
             onClick={() => router.push(`/${lang}`)}
-            className="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg transition-colors font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+            className="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg transition-colors font-medium text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500"
           >
             {t.error.goHome}
           </button>
           <button
             onClick={() => reset()}
-            className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+            className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500"
           >
             {t.error.tryAgain}
           </button>

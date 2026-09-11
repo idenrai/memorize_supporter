@@ -35,7 +35,7 @@ export default function LanguageSwitch() {
       value={lang}
       onChange={handleLangChange}
       ariaLabel={t.common.changeLanguage}
-      className="flex h-10 sm:h-9 items-center justify-center gap-1.5 rounded-md border border-transparent px-2.5 sm:px-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-black"
+      className="flex h-10 sm:h-9 items-center justify-center gap-1.5 rounded-md border border-transparent px-2.5 sm:px-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200 focus:outline-hidden focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-black"
       dropdownClassName="min-w-35"
       trigger={
         <>
