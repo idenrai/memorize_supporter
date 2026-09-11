@@ -1,6 +1,6 @@
 import type { Lang } from "@/i18n/types"
 import DeckCard from "@/components/cards/DeckCard"
-import type { Deck } from "./DeckGallery"
+import type { Deck } from "@/types/deck"
 
 interface DeckGridProps {
   decks: Deck[]

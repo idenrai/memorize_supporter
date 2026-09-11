@@ -80,8 +80,19 @@ export async function getLocalExamResults(deckId?: string): Promise<LocalExamRes
       req.onsuccess = () => {
         const rawList = (req.result || []) as Record<string, unknown>[]
         const list: LocalExamResult[] = rawList.map((r) => ({
-          ...(r as unknown as LocalExamResult),
-          createdAt: new Date(r.createdAt as string)
+          id: String(r.id || ""),
+          deckId: String(r.deckId || ""),
+          score: Number(r.score) || 0,
+          total: Number(r.total) || 0,
+          correct: Number(r.correct) || 0,
+          createdAt: r.createdAt ? new Date(r.createdAt as string | number | Date) : new Date(),
+          details: Array.isArray(r.details)
+            ? (r.details as LocalExamResult["details"]).map((d) => ({
+                cardId: String(d.cardId || ""),
+                isCorrect: Boolean(d.isCorrect),
+                ...(d.selectedIndices ? { selectedIndices: d.selectedIndices } : {})
+              }))
+            : []
         }))
         list.sort((a: LocalExamResult, b: LocalExamResult) => b.createdAt.getTime() - a.createdAt.getTime())
         resolve(list)
@@ -108,10 +119,21 @@ export async function getLocalExamResult(resultId: string): Promise<LocalExamRes
 
       req.onsuccess = () => {
         if (!req.result) return resolve(null)
-        const r = req.result
+        const r = req.result as Record<string, unknown>
         resolve({
-          ...r,
-          createdAt: new Date(r.createdAt as string)
+          id: String(r.id || ""),
+          deckId: String(r.deckId || ""),
+          score: Number(r.score) || 0,
+          total: Number(r.total) || 0,
+          correct: Number(r.correct) || 0,
+          createdAt: r.createdAt ? new Date(r.createdAt as string | number | Date) : new Date(),
+          details: Array.isArray(r.details)
+            ? (r.details as LocalExamResult["details"]).map((d) => ({
+                cardId: String(d.cardId || ""),
+                isCorrect: Boolean(d.isCorrect),
+                ...(d.selectedIndices ? { selectedIndices: d.selectedIndices } : {})
+              }))
+            : []
         })
       }
       req.onerror = () => reject(req.error)

@@ -114,6 +114,7 @@ export default function DeckTable() {
     return localDecks.map((d) => ({
       id: d.id,
       title: d.title,
+      description: d.description,
       type: d.type,
       series: d.series || null,
       _count: d._count,

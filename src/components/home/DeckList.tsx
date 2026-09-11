@@ -4,7 +4,7 @@ import Link from "next/link"
 import { History, Trash2 } from "lucide-react"
 import type { Lang, Translations } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
-import type { Deck } from "./DeckGallery"
+import type { Deck } from "@/types/deck"
 
 function DeckListRow({
   deck,
