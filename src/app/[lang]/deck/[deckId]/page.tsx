@@ -1,12 +1,12 @@
 import prisma from "@/lib/prisma"
 import DeckPlayer from "@/components/cards/DeckPlayer"
-import { notFound } from "next/navigation"
+import DeckClientLoader from "@/components/cards/DeckClientLoader"
 import type { CardData } from "@/types/card"
 import type { Metadata } from "next"
 import { parseCardDataList } from "@/lib/card-parser"
 
 type Props = {
-  params: Promise<{ deckId: string }>
+  params: Promise<{ deckId: string; lang: string }>
   searchParams: Promise<{ limit?: string, mode?: string }>
 }
 
@@ -30,7 +30,7 @@ function shuffle<T>(array: T[]): T[] {
 }
 
 export default async function DeckPage({ params, searchParams }: Props) {
-  const { deckId } = await params
+  const { deckId, lang } = await params
   const { limit, mode } = await searchParams
   const takeCount = limit && !isNaN(Number(limit)) ? Number(limit) : undefined
   const isExamMode = mode === 'exam'
@@ -44,7 +44,11 @@ export default async function DeckPage({ params, searchParams }: Props) {
   })
 
   if (rawCards.length === 0) {
-    notFound()
+    return (
+      <main className="flex-1 flex flex-col items-center bg-background w-full">
+        <DeckClientLoader deckId={deckId} limit={takeCount} isExamMode={isExamMode} lang={lang} />
+      </main>
+    )
   }
 
   // Sort logic: 

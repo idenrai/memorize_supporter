@@ -35,12 +35,14 @@
   // 6. cSpell 맞춤법 검사 도메인 사전 등록
   "cSpell.words": [
     "antigravity",
+    "Ebbinghaus",
     "formatjs",
     "glassmorphic",
     "glassmorphism",
     "localematcher",
     "lucide",
     "nums",
+    "OPFS",
     "Supabase",
     "tabular",
     "tailwindcss",

@@ -3,11 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "check:node": "node scripts/check-node.js",
+    "predev": "npm run check:node",
+    "prebuild": "npm run check:node",
+    "prestart": "npm run check:node",
     "dev": "concurrently \"next dev\" \"wait-on http://localhost:3000 && open-cli http://localhost:3000\"",
     "build": "next build",
     "start": "next start",
+    "setup": "node scripts/setup.js",
+    "type-check": "tsc --noEmit",
     "lint": "eslint",
-    "etl": "tsx src/scripts/etl.ts"
+    "etl": "tsx src/scripts/etl.ts",
+    "postinstall": "prisma generate",
+    "check:fast": "npm run check:node && npm run type-check && npm run lint",
+    "check": "npm run check:node && npm run type-check && npm run lint && npm run build"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.10",

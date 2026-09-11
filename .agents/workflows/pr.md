@@ -39,9 +39,13 @@ Section body in English.
 - Tables: header row in English; add a brief Korean caption line above the table if the purpose is not obvious.
 - Code blocks and file/symbol names: always English only.
 
-### 2. Verify Build
-- `run_command` 도구를 사용하여 `npm run build`를 실행합니다.
-- **에러가 발생할 경우:** 즉시 `.agents/workflows/build-guard.md`를 참고하여 에러의 원인을 파악하고 코드를 수정한 뒤 다시 확인하여 0 에러 상태를 만듭니다.
+### 2. Verify Pipeline (Fail Fast, Fail Cheap)
+- **비용 사다리(Verification Ladder)** 순서에 따라 단계별 검증을 수행합니다:
+  1. `npm run type-check` (정적 타입 무결성 검사, 1.5초)
+  2. `npm run lint` (ESLint 0 에러 / 0 경고 검사, 1.5초)
+  3. `npm run build` (앞 단계 모두 통과 시 최종 프로덕션 번들 빌드)
+  *(또는 `npm run check` 명령으로 원터치 체이닝 검증)*
+- **에러가 발생할 경우:** 즉시 `.agents/workflows/build-guard.md`를 참고하여 에러의 원인을 파악하고 코드를 수정한 뒤 해당 단계부터 재검증하여 0 에러 상태를 만듭니다.
 
 ---
 
@@ -71,8 +75,8 @@ Section body in English.
   - **Parameters:**
     - `owner`: (저장소 소유자)
     - `repo`: (저장소 이름)
-    - `title`: PR 제목 (커밋 제목과 유사하게 작성)
-    - `body`: 변경사항 요약, 구현한 기능 등을 작성합니다. 이때, 반드시 **`.agents/workflows/build-check.md`** 의 템플릿(마크다운 표 형식)을 참고하여 빌드/린트 검증 통과 내역을 본문에 포함하십시오.
+    - `title`: PR 제목 (Conventional Commit 태그는 영문 유지 가능하나 핵심 설명은 한국어로 작성, 예: `feat(local-first): BYOD 로컬 모드 구현`)
+    - `body`: `.agents/rules/language-strategies.md` 규칙에 따라 사용자가 읽고 검토할 수 있도록 **100% 한국어**로 상세하게 작성합니다 (코드/파일/심볼명 제외). 변경사항 요약, 구현한 주요 기능, 그리고 반드시 **`.agents/workflows/build-check.md`**의 검증 통과 내역 표를 포함하십시오.
     - `head`: 작업한 브랜치 이름
     - `base`: 병합할 타겟 브랜치 (기본값: `main`)
   - PR이 생성된 직후, 터미널에서 GitHub CLI(`gh`)를 사용하여 해당 PR에 작업자 본인을 Assignee로 할당합니다.

@@ -25,6 +25,7 @@
 | **Backend & Actions** | Next.js Server Actions | `src/actions/` (`safe-action.ts` + Zod 스키마 검증) |
 | **Schema Validation** | Zod | 3.x/4.x (런타임-컴파일타임 일체형 검증) |
 | **Database & ORM** | SQLite / Prisma ORM | Prisma 6.19.x (로컬 `.data/dev.db`) |
+| **Client Storage (BYOD)** | IndexedDB (Native Web API) | Schema v2, Connection Pooling, BroadcastChannel Sync, Anti-Eviction (`navigator.storage.persist`) |
 | **Toast & Feedback** | Sonner | 2.x (비동기 액션 성공/실패 토스트) |
 | **Internationalization** | Next.js Middleware + i18n | `negotiator`, `@formatjs/intl-localematcher`, `useT()` |
 
@@ -33,8 +34,11 @@
 ## 3. Command Reference
 
 - **Development Server:** `npm run dev` (Next.js dev 서버 및 브라우저 자동 오픈)
-- **Build for Production:** `npm run build` (Turbopack + TypeScript 엄격 검증)
+- **Fast Type Check:** `npm run type-check` (`tsc --noEmit`, 1.5초 이내 초고속 정적 타입 검증)
 - **Linting & Code Quality:** `npm run lint` (ESLint 0 errors / 0 warnings 필수)
+- **Fast Dev Check:** `npm run check:fast` (Node 버전 → Type-Check → Lint 정적 분석 3초 만에 완료, 코딩 루프 토큰 절약)
+- **Build for Production:** `npm run build` (Turbopack + Next.js 프로덕션 번들링)
+- **Fail Fast Full Check:** `npm run check` (Node 버전 → Type-Check → Lint → Build 순차적 조기 중단 파이프라인)
 - **Database Push (Schema Sync):** `npx prisma db push`
 - **Prisma Studio (DB GUI):** `npx prisma studio`
 - **ETL Data Import Script:** `npm run etl` (`input/` 폴더 내 JSON 덱을 SQLite DB로 적재)
@@ -119,3 +123,7 @@ memorize_supporter/
 ### 6) 무결성 보장 (Lint & Spellcheck Diagnostics)
 - `npm run lint` 실행 시 **0 error / 0 warning**을 상시 유지합니다.
 - 클래스명이나 도메인 용어에 오탈자가 발생하지 않도록 확인하고, 프로젝트 도메인 단어는 `.vscode/settings.json`의 `cSpell.words`에 체계적으로 등록하여 관리합니다.
+
+### 7) Local-First Architecture & Privacy (BYOD)
+- 사용자 개인 소장 학습 데이터의 프라이버시 보호와 온디바이스 독립 구동을 위해 클라이언트 측 로컬 우선(Local-First) 스토리지를 완벽하게 지원합니다.
+- 브라우저 데이터베이스([`src/lib/client-db.ts`](file:///Users/idenrai/project/memorize_supporter/src/lib/client-db.ts))는 외부 라이브러리 의존성(0 KB) 없이 순수 브라우저 네이티브 IndexedDB를 사용하며, `.agents/skills/local-first/SKILL.md` 가이드라인에 따라 커넥션 싱글톤 풀링(`cachedDbPromise`), Safari ITP 7일 비활성 삭제 방어(`requestPersistentStorage`), `BroadcastChannel` 기반 탭 간 실시간 IPC 동기화, 백업/복원(JSON)을 준수합니다.

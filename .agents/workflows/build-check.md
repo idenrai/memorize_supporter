@@ -14,38 +14,46 @@ Execute the project's build pipeline and post a concise status comment.
 
 ### 1. Check Project Context
 
-- Read `.agents/rules/project-context.md` to discover the exact commands for:
-  1. Installing dependencies
-  2. Running the build process
-  3. Running the linter (if applicable)
+- Discover the exact commands following the **Fail Fast, Fail Cheap** order:
+  - **Iterative Dev Loop (Rapid):** `npm run check:fast` (Node + Type-Check + Lint in ~3s, saves LLM context tokens)
+  - **Pre-PR / Full Verification:** `npm run check` (Node + Type-Check + Lint + Production Build)
+  - Individual steps:
+    1. `npm run type-check` (Static Type Check, 1.5s)
+    2. `npm run lint` (ESLint Quality & Style, 1.5s)
+    3. `npm run build` (Next.js Production Build, 10-12s)
 
 ### 2. Execute Pipeline
 
-Run the commands discovered in step 1 sequentially in the shell.
+Run the commands discovered in step 1 sequentially (or via `npm run check` / `npm run check:fast`).
+**Short-Circuit Rule:** If any step fails, stop immediately and do not execute subsequent steps.
 
 ### 3. Report Results
 
+**Token Optimization Rule (Prompt Engineering):**
+Do NOT copy-paste raw multiline Next.js route dumps or hundreds of compiler lines into your report. Extract ONLY the pinpoint error message on failure, or the concise summary table on success.
+
 Post a comment using this format:
 
-**If build passes:**
+**If all pass:**
 
 ```markdown
-## ✅ Build Check Passed
+## ✅ Build & Quality Check Passed
 
-| Step | Result |
-|------|--------|
-| Lint | ✅ Passed |
-| Build | ✅ Built successfully |
+| Step | Result | Time / Cost |
+|------|--------|-------------|
+| Type Check (`tsc`) | ✅ Passed | ~1.5s (Ultra-cheap) |
+| Lint (`eslint`) | ✅ Passed | ~1.5s (Cheap) |
+| Build (`next build`) | ✅ Built successfully | ~12s |
 ```
 
-**If build fails:**
+**If a step fails:**
 
 ```markdown
-## ❌ Build Check Failed
+## ❌ Verification Failed (Short-Circuited)
 
 | Step | Result |
 |------|--------|
-| Lint / Build | ❌ Failed |
+| Type Check / Lint / Build | ❌ Failed at [Failed Step Name] |
 
 ### Errors
 

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Layers, History } from "lucide-react"
+import { Layers, History, Trash2 } from "lucide-react"
 import { useT } from "@/hooks/useT"
 
 interface DeckCardProps {
@@ -13,6 +13,8 @@ interface DeckCardProps {
   lang: string
   globalLimit: number
   globalIsExamMode: boolean
+  isLocal?: boolean
+  onDelete?: (deckId: string) => void
 }
 
 const typeConfig: Record<string, { label: string, color: string, bg: string }> = {
@@ -21,7 +23,7 @@ const typeConfig: Record<string, { label: string, color: string, bg: string }> =
   vocabulary: { label: 'Vocabulary', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
 }
 
-export default function DeckCard({ deck, deckName, description, type = 'flashcard', count, lang, globalLimit, globalIsExamMode }: DeckCardProps) {
+export default function DeckCard({ deck, deckName, description, type = 'flashcard', count, lang, globalLimit, globalIsExamMode, isLocal, onDelete }: DeckCardProps) {
   const t = useT()
 
   const config = typeConfig[type] || typeConfig['flashcard']
@@ -40,8 +42,15 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
         
         <div className="flex-1 relative z-10">
           <div className="flex justify-between items-start mb-4">
-            <div className={`text-2xs font-bold px-2.5 py-1 rounded-full uppercase tracking-widest ${config.color} bg-white/5 border border-white/10 shadow-inner backdrop-blur-md`}>
-              {type === 'practice_quiz' ? t.quiz.practiceQuiz : type === 'vocabulary' ? t.quiz.vocabulary : t.quiz.flashcard}
+            <div className="flex items-center gap-2">
+              <div className={`text-2xs font-bold px-2.5 py-1 rounded-full uppercase tracking-widest ${config.color} bg-white/5 border border-white/10 shadow-inner backdrop-blur-md`}>
+                {type === 'practice_quiz' ? t.quiz.practiceQuiz : type === 'vocabulary' ? t.quiz.vocabulary : t.quiz.flashcard}
+              </div>
+              {isLocal && (
+                <div className="text-2xs font-semibold px-2 py-0.5 rounded-full text-indigo-300 bg-indigo-500/20 border border-indigo-500/30">
+                  {t.local.badge}
+                </div>
+              )}
             </div>
             
             <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300 bg-white/5 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 shadow-inner tabular-nums">
@@ -60,6 +69,18 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
       <div className="w-full mt-auto relative z-10 pt-4 border-t border-zinc-800/80 flex items-center justify-end">
 
         <div className="flex items-center bg-zinc-950 border border-zinc-800 rounded-full p-1 shadow-sm relative shrink-0 ml-auto">
+
+          {isLocal && onDelete && (
+            <button
+              type="button"
+              onClick={() => onDelete(deck)}
+              className="flex items-center justify-center p-2 rounded-full text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors mr-1"
+              title={t.management.delete}
+              aria-label={t.management.delete}
+            >
+              <Trash2 size={16} aria-hidden="true" />
+            </button>
+          )}
 
           <Link
             href={`/${lang}/records?deckId=${deck}`}

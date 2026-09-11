@@ -1,0 +1,298 @@
+"use client"
+
+import { useEffect, useState, useRef } from "react"
+import {
+  getLocalExamResults,
+  deleteLocalExamResult,
+  exportLocalDataJson,
+  importBackupJson,
+  onLocalDbChange,
+  getStorageEstimate,
+  type LocalExamResult,
+  type StorageEstimateResult
+} from "@/lib/client-db"
+import { Trophy, Calendar, ArrowRight, Trash2, Download, Upload, HardDrive } from "lucide-react"
+import Link from "next/link"
+import type { Lang } from "@/i18n/types"
+import { useT } from "@/hooks/useT"
+import { toast } from "sonner"
+
+export default function LocalRecordsView({
+  deckId,
+  lang,
+  hideEmptyState = false
+}: {
+  deckId?: string
+  lang: Lang
+  hideEmptyState?: boolean
+}) {
+  const t = useT()
+  const [localRecords, setLocalRecords] = useState<LocalExamResult[]>([])
+  const [loading, setLoading] = useState(true)
+  const [storageInfo, setStorageInfo] = useState<StorageEstimateResult | null>(null)
+  const restoreInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    let isCancelled = false
+
+    async function load() {
+      try {
+        const results = await getLocalExamResults(deckId)
+        if (!isCancelled) setLocalRecords(results)
+        const estimate = await getStorageEstimate()
+        if (!isCancelled) setStorageInfo(estimate)
+      } catch (e) {
+        console.warn("Failed to load local exam results", e)
+      } finally {
+        if (!isCancelled) setLoading(false)
+      }
+    }
+    load()
+
+    const unsubscribe = onLocalDbChange((event) => {
+      if (event === "exam_saved" || event === "exam_deleted" || event === "backup_restored") {
+        getLocalExamResults(deckId).then((results) => {
+          if (!isCancelled) setLocalRecords(results)
+        })
+        getStorageEstimate().then((estimate) => {
+          if (!isCancelled) setStorageInfo(estimate)
+        })
+      }
+    })
+
+    return () => {
+      isCancelled = true
+      unsubscribe()
+    }
+  }, [deckId])
+
+  const handleDeleteRecord = async (id: string) => {
+    if (!window.confirm(t.local.confirmDeleteRecord)) return
+    try {
+      const ok = await deleteLocalExamResult(id)
+      if (ok) {
+        setLocalRecords((prev) => prev.filter((r) => r.id !== id))
+        toast.success(t.local.deleteRecordSuccess)
+      }
+    } catch {
+      toast.error(t.records.deleteFailed)
+    }
+  }
+
+  const handleExportBackup = async () => {
+    try {
+      const json = await exportLocalDataJson()
+      const blob = new Blob([json], { type: "application/json" })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `memorize_supporter_backup_${new Date().toISOString().slice(0, 10)}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      toast.success(t.local.exportBackup)
+    } catch (e) {
+      console.error("Backup failed", e)
+      toast.error(t.common.error)
+    }
+  }
+
+  const handleRestoreFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!window.confirm(t.local.confirmRestore)) {
+      if (restoreInputRef.current) restoreInputRef.current.value = ""
+      return
+    }
+
+    try {
+      const text = await file.text()
+      const res = await importBackupJson(text)
+      if (res.success && res.restoredCount) {
+        toast.success(t.local.restoreSuccess(res.restoredCount.decks, res.restoredCount.examResults))
+        const updated = await getLocalExamResults(deckId)
+        setLocalRecords(updated)
+      } else {
+        toast.error(res.error || t.local.restoreFailed)
+      }
+    } catch {
+      toast.error(t.local.restoreFailed)
+    } finally {
+      if (restoreInputRef.current) restoreInputRef.current.value = ""
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center p-12">
+        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  if (localRecords.length === 0) {
+    if (hideEmptyState) return null
+
+    return (
+      <div className="bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-12 text-center flex flex-col items-center justify-center max-w-xl mx-auto">
+        <input
+          ref={restoreInputRef}
+          type="file"
+          accept=".json,application/json"
+          onChange={handleRestoreFile}
+          className="hidden"
+        />
+        <div className="w-16 h-16 bg-zinc-800/50 text-zinc-500 rounded-full flex items-center justify-center mb-4">
+          <Trophy size={28} />
+        </div>
+        <h3 className="text-xl font-bold text-zinc-300 mb-2">{t.records.empty}</h3>
+        <p className="text-sm text-zinc-500 max-w-sm mb-6 leading-relaxed">
+          {t.local.emptyRecordsDesc}
+        </p>
+        <div className="flex items-center gap-3 flex-wrap justify-center">
+          <Link
+            href={`/${lang}`}
+            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-full shadow-md transition-colors"
+          >
+            {t.common.study}
+          </Link>
+          <button
+            type="button"
+            onClick={() => restoreInputRef.current?.click()}
+            className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium rounded-full border border-zinc-700 transition-colors inline-flex items-center gap-1.5"
+          >
+            <Upload size={14} />
+            <span>{t.local.restoreBackup}</span>
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const PASS_MARK = 80
+
+  return (
+    <div className="flex flex-col gap-4">
+      <input
+        ref={restoreInputRef}
+        type="file"
+        accept=".json,application/json"
+        onChange={handleRestoreFile}
+        className="hidden"
+      />
+      <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full text-indigo-300 bg-indigo-500/20 border border-indigo-500/30">
+            {t.local.recordsHeader(localRecords.length)}
+          </span>
+          {storageInfo && storageInfo.usageMB > 0 && (
+            <span
+              className="text-2xs text-zinc-400 font-medium bg-zinc-800/60 hover:bg-zinc-800 px-2.5 py-1 rounded-full border border-zinc-700/40 inline-flex items-center gap-1.5 cursor-help transition-colors"
+              title={storageInfo.persisted ? t.local.persistentStorageDesc : t.local.temporaryStorageDesc}
+            >
+              <HardDrive size={12} className={storageInfo.persisted ? "text-emerald-400" : "text-zinc-500"} />
+              <span>{t.local.storageEstimate(`${storageInfo.usageMB} MB`, storageInfo.persisted)}</span>
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => restoreInputRef.current?.click()}
+            className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-zinc-400 hover:text-zinc-200 bg-zinc-800/60 hover:bg-zinc-700/60 border border-zinc-700/50 rounded-full transition-colors"
+            title={t.local.restoreBackup}
+          >
+            <Upload size={13} />
+            <span>{t.local.restoreBackup}</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleExportBackup}
+            className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-zinc-400 hover:text-zinc-200 bg-zinc-800/60 hover:bg-zinc-700/60 border border-zinc-700/50 rounded-full transition-colors"
+            title={t.local.exportBackup}
+          >
+            <Download size={13} />
+            <span>{t.local.exportBackup}</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {localRecords.map((record) => {
+          const isPassed = record.score >= PASS_MARK
+          return (
+            <div
+              key={record.id}
+              className="bg-zinc-900/50 hover:bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700/80 rounded-2xl p-6 transition-all flex flex-col justify-between gap-4 shadow-sm"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs text-zinc-400 flex items-center gap-1.5 font-medium">
+                    <Calendar size={14} className="text-zinc-500" />
+                    {new Date(record.createdAt).toLocaleString(lang, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit"
+                    })}
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${
+                        isPassed
+                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                          : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                      }`}
+                    >
+                      {isPassed ? t.local.passedBadge : t.local.needsReviewBadge}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteRecord(record.id)}
+                      className="text-zinc-500 hover:text-rose-400 p-1 rounded-md transition-colors"
+                      title={t.management.delete}
+                      aria-label={t.management.delete}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span
+                    className={`text-4xl font-extrabold tracking-tight tabular-nums ${
+                      isPassed ? "text-emerald-400" : "text-amber-400"
+                    }`}
+                  >
+                    {record.score}%
+                  </span>
+                  <span className="text-sm font-medium text-zinc-400 tabular-nums">
+                    {t.local.scoreDetail(record.correct, record.total)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-zinc-800/60 flex items-center justify-between">
+                <span className="text-xs text-zinc-500 truncate max-w-[200px]">
+                  {t.local.deckIdLabel}: {record.deckId}
+                </span>
+                <Link
+                  href={`/${lang}/deck/${record.deckId}?mode=exam`}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+                >
+                  <span>{t.local.retake}</span>
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
