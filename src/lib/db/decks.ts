@@ -167,7 +167,7 @@ export async function deleteLocalDeck(deckId: string): Promise<boolean> {
 export async function importJsonToLocalDb(
   jsonData: string,
   fileName: string,
-  options?: { targetDeckId?: string }
+  options?: { targetDeckId?: string; skipBroadcast?: boolean }
 ): Promise<{ success: boolean; deckId?: string; error?: string }> {
   try {
     let sanitized = jsonData.trim()
@@ -277,7 +277,9 @@ export async function importJsonToLocalDb(
 
     return new Promise((resolve, reject) => {
       tx.oncomplete = () => {
-        notifyLocalDbChange("deck_created")
+        if (!options?.skipBroadcast) {
+          notifyLocalDbChange("deck_created")
+        }
         resolve({ success: true, deckId })
       }
       tx.onerror = () => reject(tx.error)
@@ -287,5 +289,81 @@ export async function importJsonToLocalDb(
       return { success: false, error: "Validation error: " + err.issues.map(e => e.message).join(", ") }
     }
     return { success: false, error: (err as Error)?.message || "Failed to import deck" }
+  }
+}
+
+export interface BatchImportItem {
+  content: string
+  fileName: string
+  options?: { targetDeckId?: string }
+}
+
+export interface BatchImportResult {
+  total: number
+  successCount: number
+  failedCount: number
+  results: Array<{
+    fileName: string
+    success: boolean
+    deckId?: string
+    error?: string
+  }>
+}
+
+/**
+ * Import multiple deck JSON files in sequence.
+ * Collects results per file and broadcasts 'deck_created' once if any deck succeeded.
+ */
+export async function importMultipleJsonToLocalDb(
+  items: BatchImportItem[],
+  onProgress?: (current: number, total: number) => void
+): Promise<BatchImportResult> {
+  const results: BatchImportResult['results'] = []
+  let successCount = 0
+  let failedCount = 0
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i]
+    try {
+      const res = await importJsonToLocalDb(item.content, item.fileName, {
+        ...item.options,
+        skipBroadcast: true,
+      })
+
+      if (res.success) {
+        successCount++
+        results.push({
+          fileName: item.fileName,
+          success: true,
+          deckId: res.deckId,
+        })
+      } else {
+        failedCount++
+        results.push({
+          fileName: item.fileName,
+          success: false,
+          error: res.error,
+        })
+      }
+    } catch (e) {
+      failedCount++
+      results.push({
+        fileName: item.fileName,
+        success: false,
+        error: (e as Error)?.message || "Failed to process deck file",
+      })
+    }
+    onProgress?.(i + 1, items.length)
+  }
+
+  if (successCount > 0) {
+    notifyLocalDbChange("deck_created")
+  }
+
+  return {
+    total: items.length,
+    successCount,
+    failedCount,
+    results,
   }
 }
