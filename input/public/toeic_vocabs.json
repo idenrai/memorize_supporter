@@ -1,6 +1,6 @@
 {
   "title": "Toeic Vocabs",
-  "description": "토익 빈출 영단어 기출 모음",
+  "description": "실무 및 어학 시험 대비 필수 비즈니스 영단어 100선",
   "type": "vocabulary",
   "cards": [
     { "word": "accommodate", "meaning": "수용하다, 편의를 도모하다", "example": "The new hotel can accommodate up to 500 guests." },
