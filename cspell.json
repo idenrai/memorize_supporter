@@ -1,0 +1,42 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en,en-US",
+  "words": [
+    "antigravity",
+    "bradlc",
+    "dbaeumer",
+    "Ebbinghaus",
+    "formatjs",
+    "glassmorphic",
+    "glassmorphism",
+    "localematcher",
+    "lucide",
+    "maxage",
+    "nums",
+    "OPFS",
+    "precache",
+    "precaching",
+    "serwist",
+    "sonner",
+    "tabular",
+    "tailwindcss",
+    "Turbopack",
+    "turbopack",
+    "turborepo",
+    "typesync",
+    "viewports",
+    "zustand"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    ".next/**",
+    ".git/**",
+    "package-lock.json",
+    "skills-lock.json",
+    "tsconfig.tsbuildinfo",
+    "input/**",
+    "**/*.svg",
+    ".agents/**"
+  ]
+}
