@@ -54,8 +54,6 @@ cp .env.example .env
 | :--- | :--- | :--- |
 | `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB` | `5` | JSON 덱 파일 1개당 최대 업로드 허용 크기(MB) |
 | `NEXT_PUBLIC_PASS_MARK_PERCENT` | `80` | 시험 모드 합격 커트라인 백분율 (기본 80%) |
-| `MAX_SESSION_RESULTS` | `2000` | 단일 세션에 유지할 최대 시험 결과 수 |
-| `FAILED_REVIEW_INTERVAL_MINUTES` | `10` | 오답 복습 권장 인터벌 시간(분) |
 
 ### 5. 품질 검증 파이프라인 (Verification & Fail Fast Pipeline)
 
@@ -134,8 +132,6 @@ cp .env.example .env
 | :--- | :--- | :--- |
 | `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB` | `5` | Maximum per-file upload size limit in MB for custom JSON decks |
 | `NEXT_PUBLIC_PASS_MARK_PERCENT` | `80` | Minimum score percentage for passing exam mode |
-| `MAX_SESSION_RESULTS` | `2000` | Maximum number of exam results retained per session |
-| `FAILED_REVIEW_INTERVAL_MINUTES` | `10` | Recommended interval in minutes for reviewing failed questions |
 
 ### 5. Verification & Quality Pipeline
 

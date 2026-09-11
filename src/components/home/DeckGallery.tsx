@@ -153,8 +153,6 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
       title: d.title,
       type: d.type,
       series: d.series || null,
-      isSystem: false,
-      isHidden: false,
       _count: d._count,
       createdAt: d.createdAt,
       isLocal: true

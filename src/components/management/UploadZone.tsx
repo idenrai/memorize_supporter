@@ -10,7 +10,7 @@ import {
 import { useT } from "@/hooks/useT"
 import { toast } from "sonner"
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB per deck file
+const MAX_FILE_SIZE = (parseInt(process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB || '5', 10)) * 1024 * 1024
 
 interface UploadZoneProps {
   onUploadSuccess?: () => void

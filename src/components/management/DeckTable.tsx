@@ -25,7 +25,6 @@ type SortKey = keyof Deck | 'cards'
 function getDeckSortValue(deck: Deck, key: SortKey): string | number {
   if (key === 'cards') return deck._count?.cards ?? 0
   if (key === 'createdAt') return new Date(deck.createdAt).getTime()
-  if (key === 'isHidden') return deck.isHidden ? 1 : 0
   const val = deck[key]
   if (typeof val === 'string') return val
   if (typeof val === 'number') return val
@@ -117,8 +116,6 @@ export default function DeckTable() {
       title: d.title,
       type: d.type,
       series: d.series || null,
-      isSystem: false,
-      isHidden: false,
       _count: d._count,
       createdAt: d.createdAt,
       isLocal: true

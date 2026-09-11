@@ -22,7 +22,7 @@
 | **Styling** | Tailwind CSS v4 | `@tailwindcss/postcss`, `@theme` 토큰 기반 CSS 변수 바인딩 |
 | **Animations & Icons** | Framer Motion / Lucide React | 12.x / 최신 아이콘 세트 |
 | **State Management** | RSC / React Hooks / Zustand | 5.x (클라이언트 전역 상태 보조) |
-| **Backend & Actions** | Next.js Server Actions / API Routes | `src/actions/` (`safe-action.ts` + Zod 스키마 검증) |
+| **Backend & Actions** | Next.js Server Actions / API Routes | `src/actions/` (쿠키 동기화 및 `/api/sample-decks` 정적 제공) |
 | **Schema Validation** | Zod | 3.x/4.x (런타임-컴파일타임 일체형 검증) |
 | **Database & Client Storage** | IndexedDB (Native Web API) | 100% Local-First 영구 보관 (Zero-Server Database, Schema v2, Connection Pooling, BroadcastChannel Sync) |
 | **Toast & Feedback** | Sonner | 2.x (비동기 액션 성공/실패 토스트) |
@@ -82,8 +82,9 @@ memorize_supporter/
 │   │   ├── card-parser.ts      # Zod 기반 도메인 파서 (단일 진실 공급원)
 │   │   ├── client-db.ts        # IndexedDB 클라이언트 저장소 파사드
 │   │   ├── db/                 # 도메인별 DB 서브모듈 (deck, card, progress, exams, backup)
-│   │   ├── safe-action.ts      # 타입 안전 Server Action 래퍼
-│   │   └── schemas.ts          # Zod 콘텐츠 스키마 (Flashcard, PracticeQuiz, Vocabulary)
+│   │   ├── format.ts           # 텍스트 포맷터 유틸리티
+│   │   ├── schemas.ts          # Zod 콘텐츠 스키마 (Flashcard, PracticeQuiz, Vocabulary)
+│   │   └── static-decks.ts     # 공개 샘플 덱 파일시스템 로더
 │   ├── types/                  # 공통 도메인 타입 정의 (card.ts, deck.ts, record.ts)
 │   └── proxy.ts (middleware)  # 다국어 로캘 감지 및 리다이렉트 미들웨어
 ├── package.json
@@ -99,9 +100,8 @@ memorize_supporter/
 - JSON 덱 및 데이터베이스의 원시 직렬화 필드(`Card.content: string`)는 컴포넌트나 액션에서 임의로 형변환하거나 `as unknown as CardData` 같은 강제 단언을 절대 사용하지 않습니다.
 - 반드시 `src/lib/card-parser.ts`의 `parseCardData(card)` 및 `parseCardDataList(cards)`를 통해 Zod 런타임 검증을 통과한 데이터만 `CardData` 판별 유니온 타입으로 승격시킵니다.
 
-### 2) Safe Server Actions & Client Isolation
-- 민감한 서버 로직은 `src/actions/` 내 격리하고, `src/lib/safe-action.ts`의 `actionClient`를 활용하여 Zod 스키마로 입력을 무결하게 검증합니다.
-- 사용자 개인 데이터는 서버로 전송하지 않고 브라우저 IndexedDB에만 보관하는 Local-First BYOD 원칙을 엄격히 준수합니다.
+### 2) Zero-Server Backend & Client Isolation
+- 서버 액션(`src/actions/`)은 상태가 없는 시스템 유틸리티(로캘 쿠키 설정 등)에 한정하며, 모든 사용자 데이터는 서버로 전송하지 않고 브라우저 IndexedDB에만 보관하는 Local-First BYOD 원칙을 엄격히 준수합니다.
 
 ### 3) Server Components (RSC) vs Client Components 분리
 - 메타데이터 생성 및 정적 레이아웃은 서버 컴포넌트(`page.tsx`)에서 최우선으로 처리합니다.

@@ -4,25 +4,26 @@ applyTo: "**"
 
 # Security Standards
 
-This project is a **privacy-first** portfolio app. All user financial data is stored in `localStorage` only — it is never sent to any server. Market data is fetched client-side via proxies.
+This project is a **privacy-first, Local-First** study application. All user study data (flashcards, custom decks, study progress, and exam score histories) is stored in client-side storage (`IndexedDB`) only — it is never transmitted to or persisted on any server.
 
-## Data Privacy (by design)
+## Data Privacy & Client-First Isolation (by design)
 
-- Never add server-side storage, database calls, or API endpoints that accept user portfolio data.
-- If a feature would require transmitting holdings or transaction data off-device, raise it for explicit review before implementing.
-- When using `localStorage`, store only the minimum required data. Never persist sensitive tokens or credentials.
+- **Zero-Server Database**: Never add server-side persistent databases (Prisma, SQLite, PostgreSQL, etc.) or API endpoints that accept, store, or log user study data.
+- **Client Storage Boundary**: User decks, cards, progress, and exam history must strictly remain within the browser's `IndexedDB` (`src/lib/client-db.ts`).
+- If a future feature would require transmitting study notes, custom decks, or exam records off-device, raise it for explicit user review before implementing.
 
 ## API Keys and Secrets
 
 - Never hardcode API keys, tokens, or credentials in source files (including `.env.example`).
-- Secrets needed at runtime (e.g., `GOOGLE_CLIENT_ID`) must be accessed via environment variables only.
+- Secrets needed at runtime must be accessed via environment variables only.
 - Vercel Function environment variables must be configured in the Vercel dashboard, not committed to the repository.
 
 ## Input Validation (OWASP A03 — Injection)
 
-- Validate and sanitise all external inputs at system boundaries: form fields, CSV imports, URL query parameters.
-- When building URLs dynamically, use `URL` / `URLSearchParams` constructors — never string concatenation.
-- Never use `dangerouslySetInnerHTML` without explicit sanitisation.
+- **Zero-Trust Boundary Validation**: Validate and sanitize all external inputs at system boundaries: uploaded JSON deck files, form fields, and URL query parameters.
+- All imported deck payloads must pass runtime Zod validation (`src/lib/card-parser.ts`, `src/schemas/deck.ts`) before being written to IndexedDB.
+- When building URLs dynamically, use `URL` / `URLSearchParams` constructors — never unsafe string concatenation.
+- Never use `dangerouslySetInnerHTML` without explicit sanitization.
 
 ## Dependency Safety (OWASP A06 — Vulnerable Components)
 
@@ -30,14 +31,15 @@ This project is a **privacy-first** portfolio app. All user financial data is st
 - Run `npm audit` periodically and address high/critical vulnerabilities before merging.
 - Pin GitHub Actions to immutable SHA hashes in `.github/workflows/` (already enforced in `ci.yml`).
 
-## Vercel API Routes
+## Next.js API Routes & Server Actions
 
-- Vercel Serverless Functions in `api/` act as proxies only — they must not accept arbitrary user data and forward it onward.
-- Set `Cache-Control` headers appropriately; do not cache responses that include user-specific data.
-- Validate the `origin` or use CORS headers to restrict which domains can call the proxy functions.
+- Serverless Route Handlers in `src/app/api/` act strictly as read-only static sample deck providers (`/api/sample-decks`) — they must never accept arbitrary user data to store on the server.
+- Server Actions (`src/actions/`) are restricted to stateless system utilities (such as `setLanguageCookie` for locale cookies).
+- Always validate request parameters with Zod before processing.
 
 ## Content Security
 
 - Do not use `eval()`, `new Function()`, or dynamic `import()` with user-supplied strings.
-- All external URLs (Yahoo Finance, FRED, Google APIs) must be explicitly allowed and documented.
-- Avoid `window.location = userInput` — always validate redirect targets against an allowlist.
+- Validate and sanitize custom JSON imports to prevent Prototype Pollution (`__proto__`, `constructor`).
+- Avoid `window.location = userInput` — always validate redirect targets against an internal route allowlist.
+
