@@ -13,7 +13,7 @@ description: 백엔드 아키텍처 설계, API 개발 및 리팩토링
 - 특정 언어나 프레임워크(예: Node.js, Express)를 암묵적으로 가정하지 않으며, 지정된 스택에 최적화된 아키텍처 패턴을 따릅니다.
 - **Next.js & TypeScript 스킬 참조:**
   - Next.js의 Server Actions나 API Routes(Route Handlers)를 작성/수정할 때는 반드시 `.agents/skills/nextjs-best-practices/SKILL.md`를 참고하여 최적의 패턴을 적용합니다.
-  - 백엔드 비즈니스 로직, 데이터베이스(Prisma) 타입 추론 및 복잡한 최적화 작업 시 `.agents/skills/typescript-expert/SKILL.md`를 활용합니다.
+  - 백엔드 비즈니스 로직, 데이터 스키마 타입 추론 및 복잡한 최적화 작업 시 `.agents/skills/typescript-expert/SKILL.md`를 활용합니다.
   - API 동작 및 서버 로그 검증을 위해 개발 환경에서 `.agents/skills/next-dev-loop/SKILL.md`를 참고하여 테스트합니다.
   - **로컬 퍼스트 & 클라이언트 DB 아키텍처 스킬 참조:** 오프라인 우선(Local-First) 설계, 브라우저 저장소(IndexedDB, OPFS) 아키텍처, 커넥션 풀링 싱글톤, 다중 탭 동기화(`BroadcastChannel`), Safari ITP 스토리지 증발 방어(`requestPersistentStorage`) 및 클라이언트/서버 데이터 동기화 구현 시 `.agents/skills/local-first/SKILL.md`를 필수로 참조합니다.
 

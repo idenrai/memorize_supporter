@@ -1,6 +1,6 @@
 import { getT } from "@/i18n"
 import type { Lang } from "@/i18n/types"
-import { Trophy, Target } from "lucide-react"
+import { Target } from "lucide-react"
 import Link from "next/link"
 import LocalRecordsView from "@/components/records/LocalRecordsView"
 
@@ -17,19 +17,17 @@ export default async function RecordsPage({
   const t = getT(validLang)
 
   return (
-    <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-8 md:py-12">
-      <div className="flex flex-col gap-1 mb-8">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-linear-to-br from-indigo-500/20 to-teal-500/20 text-teal-400 rounded-xl flex items-center justify-center ring-1 ring-teal-500/30">
-            <Trophy size={24} aria-hidden="true" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">{t.records?.title || "Exam Records"}</h1>
-          </div>
-        </div>
+    <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-12 pb-16">
+      <div className="mb-8 sm:mb-10">
+        <h1 className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-linear-to-r from-zinc-100 to-zinc-400 tracking-tight break-keep">
+          {t.records?.title || "Exam Records"}
+        </h1>
+        <p className="text-zinc-400 max-w-3xl font-medium leading-relaxed break-keep text-base">
+          {t.records?.desc || "Review your past exam scores and analyze your performance on each question."}
+        </p>
 
         {deckId && (
-          <div className="flex items-center gap-2 mt-4 ml-1">
+          <div className="flex items-center gap-2 mt-4">
             <div className="px-3 py-1.5 bg-zinc-800/80 border border-zinc-700/50 rounded-full flex items-center gap-2 text-zinc-300 text-sm font-medium">
               <Target size={14} className="text-blue-400" />
               <span>{deckId}</span>

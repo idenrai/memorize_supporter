@@ -178,7 +178,7 @@ export default function ExamResultView({
         {incorrectIds.length > 0 && onRetryIncorrect && (
           <button 
             onClick={onRetryIncorrect}
-            className="px-8 py-3 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+            className="px-8 py-3 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500"
           >
             {t.quiz.retryIncorrect(incorrectIds.length)}
           </button>
@@ -186,14 +186,14 @@ export default function ExamResultView({
         {onStudyNewSession && (
           <button 
             onClick={onStudyNewSession}
-            className="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+            className="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-medium transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500"
           >
             {t.quiz.studyNewSession}
           </button>
         )}
       </div>
       
-      <Link href={backLink} className="text-zinc-500 hover:text-zinc-300 transition-colors mt-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded px-2">
+      <Link href={backLink} className="text-zinc-500 hover:text-zinc-300 transition-colors mt-4 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500 rounded px-2">
         {backLinkText || t.quiz.backToDashboard}
       </Link>
     </motion.div>

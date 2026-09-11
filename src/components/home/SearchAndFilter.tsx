@@ -51,7 +51,7 @@ export default function SearchAndFilter({
             spellCheck={false}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="relative z-10 w-full bg-zinc-950/80 backdrop-blur-xl border border-white/10 focus:border-indigo-500/50 transition-colors duration-300 rounded-2xl py-3.5 pl-14 pr-6 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 shadow-lg text-base"
+            className="relative z-10 w-full bg-zinc-950/80 backdrop-blur-xl border border-white/10 focus:border-indigo-500/50 transition-colors duration-300 rounded-2xl py-3.5 pl-14 pr-6 text-zinc-100 placeholder:text-zinc-500 focus:outline-hidden focus:ring-4 focus:ring-indigo-500/10 shadow-lg text-base"
           />
         </div>
 
@@ -83,7 +83,7 @@ export default function SearchAndFilter({
             <button
               onClick={() => setGlobalIsExamMode(false)}
               aria-pressed={!globalIsExamMode}
-              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                 !globalIsExamMode 
                   ? 'bg-zinc-800 text-white shadow-sm ring-1 ring-white/5' 
                   : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
@@ -94,7 +94,7 @@ export default function SearchAndFilter({
             <button
               onClick={() => setGlobalIsExamMode(true)}
               aria-pressed={globalIsExamMode}
-              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 ${
+              className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-purple-500/50 ${
                 globalIsExamMode 
                   ? 'bg-purple-600/90 text-white shadow-sm ring-1 ring-purple-500/50' 
                   : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
@@ -115,7 +115,7 @@ export default function SearchAndFilter({
               title={t.home.viewModeGrid}
               aria-label={t.home.viewModeGrid}
               aria-pressed={viewMode === "grid"}
-              className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+              className={`p-2 rounded-xl transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                 viewMode === "grid" 
                   ? 'bg-zinc-800 text-indigo-400 shadow-sm ring-1 ring-white/5' 
                   : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
@@ -128,7 +128,7 @@ export default function SearchAndFilter({
               title={t.home.viewModeList}
               aria-label={t.home.viewModeList}
               aria-pressed={viewMode === "list"}
-              className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+              className={`p-2 rounded-xl transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                 viewMode === "list" 
                   ? 'bg-zinc-800 text-indigo-400 shadow-sm ring-1 ring-white/5' 
                   : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
@@ -146,7 +146,7 @@ export default function SearchAndFilter({
           <button
             onClick={() => setSelectedSeries("all")}
             aria-pressed={selectedSeries === "all"}
-            className={`whitespace-nowrap px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 border-b-2 ${
+            className={`whitespace-nowrap px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 border-b-2 ${
               selectedSeries === "all" 
                 ? "border-indigo-500 text-indigo-400 bg-indigo-500/10" 
                 : "border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
@@ -159,7 +159,7 @@ export default function SearchAndFilter({
               key={series}
               onClick={() => setSelectedSeries(series)}
               aria-pressed={selectedSeries === series}
-              className={`whitespace-nowrap px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 border-b-2 ${
+              className={`whitespace-nowrap px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 border-b-2 ${
                 selectedSeries === series 
                   ? "border-indigo-500 text-indigo-400 bg-indigo-500/10" 
                   : "border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/5"

@@ -13,16 +13,14 @@
 - **목적**: 사용자가 플래시카드(핀포인트 팁), 객관식 문제, 영단어 등을 효율적으로 암기할 수 있도록 돕는 범용 암기 애플리케이션입니다. 인지 과학적 원리(Active Recall, Spaced Repetition)와 포커스 모드 디자인을 채택하여 학습 효율을 극대화합니다.
 - **핵심 컴포넌트**:
   - `DeckGallery`: `useDeferredValue`를 활용한 렌더링 최적화와 함께 실시간 덱 검색 및 시리즈 필터링을 담당하는 클라이언트 컴포넌트
-  - `ClientDeckDropzone`: 서버 전송 없이 브라우저 IndexedDB로 개인 커스텀 덱을 즉시 적재하는 드래그 앤 드롭 파일 임포터
+  - `UploadZone`: 서버 전송 없이 브라우저 IndexedDB로 개인 커스텀 덱을 단일 또는 복수 일괄(Multi-file Batch)로 즉시 적재하는 드래그 앤 드롭 파일 임포터 (데이터 관리 페이지)
   - `DeckPlayer` 및 세부 카드 컴포넌트들(`Flashcard`, `VocabularyCard`, `PracticeQuizCard`): 프론트엔드 인터랙티브 카드 렌더러 (마이크로 애니메이션, 피드백 처리)
   - `DeckClientLoader`: 로컬 전용 덱 접근 시 IndexedDB로부터 카드를 로드하여 서버와 동일한 SRS 우선순위로 플레이어를 구동하는 클라이언트 로더
   - `ExamResultView`: 문항별 오답 상세 복습, 시각적 선택지 비교 및 '틀린 문제만 다시 풀기'를 지원하는 시험 결과 뷰어
   - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어
   - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 템플릿을 생성/검증하는 관리 도구
   - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
-  - `SQLite & Prisma`: 오프라인(로컬 파일) 환경에서 동작하는 경량 데이터 레이어
-  - `ETL Script`: 원본 문서(JSON)를 읽고 파싱하여 DB에 밀어넣는(Upsert) 데이터 파이프라인 스크립트
-  - `CardParser` (`src/lib/card-parser.ts`): DB 원시 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
+  - `CardParser` (`src/lib/card-parser.ts`): 원시 JSON 및 카드 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
 
 ### 2. 프론트엔드 (Frontend)
 
@@ -59,20 +57,18 @@
 - **PWA 및 메타데이터 전략**:
   - Progressive Web App (PWA) 표준인 `manifest.ts`를 구현하여 네이티브 디바이스 환경(테마 색상 동기화, Standalone 디스플레이 등)에 자연스럽게 녹아들도록 구성했습니다.
   - 동적 파비콘(`icon.tsx`) 및 고해상도 애플 아이콘(`apple-icon.tsx`) 생성 시, Satori 엔진의 중첩 SVG 렌더링 한계를 회피하기 위해 순수 SVG `<linearGradient>` 코드를 단일 레이아웃과 조합하여 크로스 브라우징 렌더링 안정성을 확보했습니다.
-  - **브랜드 아이덴티티 및 아이콘(Synaptic Recall Deck)**: 3D 입체 카드 덱 레이어와 능동 인출 시냅스 불꽃을 융합한 도메인 특화 심볼을 구현했습니다. 초소형 탭 파비콘(`icon.tsx`, 32x32)의 고대비 최적화와 고해상도 앱 아이콘(`apple-icon.tsx`, 180x180), 그리고 재사용 가능한 `<BrandLogo />` 컴포넌트를 통해 앱 전반에 걸쳐 일관된 브랜드 정체성을 제공합니다.
+  - **브랜드 아이덴티티 및 아이콘 (The Deck)**: 두 장의 플래시카드가 부채꼴로 살짝 펼쳐진 미니멀 픽토리얼 마크로, 학습 카드 덱이라는 제품 본질을 직관적으로 표현합니다. 뒷장은 -8° 회전하여 '복사 아이콘'이 아닌 '카드 덱'으로 인식되며, 단 2색(`#a5b4fc` + `#0f172a`)의 스트로크 전용 디자인으로 파비콘(32px)에서도 선명하게 렌더링됩니다. `icon.tsx`(32×32), `apple-icon.tsx`(180×180), `<BrandLogo />` 컴포넌트를 통해 앱 전반에 걸쳐 일관된 브랜드 정체성을 제공합니다.
 
 ### 3. 백엔드 및 타입 아키텍처 (Backend & Type Architecture)
 
 - **API 및 데이터 통신**:
-  - 별도의 외부 REST API 서버 없이 Next.js의 Server Actions 또는 Prisma Client 직접 호출을 통해 데이터를 클라이언트에 공급합니다.
-  - **보안 격리 정책**: 비즈니스 로직(Server Actions)은 라우터 공간인 `app/` 내부가 아닌, 완전히 분리된 `src/actions/` 디렉토리에 격리하여 보관합니다. 이를 통해 내부 함수가 외부의 퍼블릭 API 엔드포인트로 예기치 않게 노출되는 보안 위험을 원천 차단합니다.
+  - 클라이언트 IndexedDB 및 정적 샘플 덱 엔드포인트를 통해 데이터를 공급합니다.
 
 - **도메인 타입 아키텍처 ("Parse, Don't Validate")**:
   - **중앙화된 도메인 파서 (`src/lib/card-parser.ts`)**: DB에 저장된 원시 카드 문자열은 컴포넌트나 액션에서 `as unknown as CardData`와 같은 위험한 타입 단언으로 임의 캐스팅되지 않습니다. 모든 레코드는 `parseCardData(card)` 및 `parseCardDataList(cards)`를 통해 Zod 스키마로 런타임 검증된 후 정식 `CardData` 판별 유니온 타입으로 승격됩니다.
   - **강제 단언 0% 유지**: 코드베이스 전반에서 `as any` 및 `as unknown as`를 완전히 배제하여 컴파일 타임 및 런타임 무결성을 100% 보장합니다.
 
 - **데이터 검증 및 에러 처리 (Zero-Trust)**:
-  - **액션 래퍼 (`safe-action.ts`)**: 모든 Server Actions는 중앙화된 HOC(High-Order Component)로 감싸져 내부 `try/catch` 에러를 일괄 처리합니다. 이를 통해 모든 비즈니스 로직에서 에러 핸들링 코드를 제거하고, 애플리케이션 전체에 일관된 `{ success, message, data }` 형태의 응답을 보장합니다.
   - **공유 스키마 (Zod)**: 클라이언트의 입력값은 절대 신뢰하지 않습니다. 5MB 용량 제한 검사부터 미식별 필드 제거까지, 모든 페이로드는 비즈니스 로직에 도달하기 전 반드시 재사용 가능한 Zod 스키마(`src/lib/schemas.ts`, `src/schemas/deck.ts`)를 통해 엄격하게 검증됩니다.
 
 - **데이터베이스 아키텍처 (100% Zero-Database & Local-First)**:
@@ -133,11 +129,11 @@ sequenceDiagram
 ### 6. 인프라 및 배포 (Infrastructure & Deployment)
 
 - **배포 환경**:
-  - 기본적으로는 로컬(Self-hosted)에서 `npm run build`로 구동되지만, Vercel 등의 서버리스 호스팅 플랫폼 배포도 완벽하게 지원합니다. (서버리스 배포 시 Turso, Supabase 등 외부 프로덕션 데이터베이스 사용 권장)
+  - 로컬(Self-hosted) 환경뿐만 아니라 Vercel 등의 서버리스 호스팅 플랫폼 배포도 완벽하게 지원합니다. 100% Zero-Database(Local-First) 구조이므로 외부 데이터베이스 커넥션 설정이나 DB 호스팅 비용 없이 정적/서버리스 환경에 즉시 배포 가능합니다.
 - **CI/CD 파이프라인**:
-  - GitHub Actions를 구성하여 Type Check 및 Linting(`npm run lint`)을 수행하고, `input/public/` 폴더에 JSON 파일 푸시 시 자동으로 DB 프로덕션 환경에 `npm run etl`을 수행하는 자동화 파이프라인을 연동할 수 있습니다.
+  - GitHub Actions를 통해 Node 버전 검사, 정적 타입 검사(`npm run type-check`), ESLint 검사(`npm run lint`), Next.js 프로덕션 빌드(`npm run build`)를 자동 수행하여 무결성을 검증합니다.
 - **환경 변수 관리**:
-  - `.env` 파일을 통해 `DATABASE_URL` 등 핵심 변수를 주입받습니다.
+  - `.env` 파일을 통해 업로드 크기 상한(`NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB`), 합격 점수(`NEXT_PUBLIC_PASS_MARK_PERCENT`) 등의 앱 정책 변수를 주입받습니다.
 
 ### 7. 검증 및 Fail Fast 파이프라인 (Verification & Fail Fast Pipeline)
 
@@ -184,15 +180,13 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **Purpose**: A general-purpose memorization application designed to help users efficiently memorize flashcards (pinpoint tips), multiple-choice questions, and vocabulary. It maximizes learning efficiency by adopting cognitive science principles (Active Recall, Spaced Repetition) and a focus-mode design.
 - **Core Components**:
   - `DeckGallery`: Client-side component for real-time deck search and series filtering, optimized with `useDeferredValue`.
-  - `ClientDeckDropzone`: Drag & Drop JSON importer allowing users to instantly import private exam decks directly into browser IndexedDB without server transmission.
+  - `UploadZone`: Drag & Drop JSON importer in the data management page, supporting single and multi-file batch uploads directly into browser IndexedDB without server transmission.
   - `DeckPlayer`, `Flashcard`, `VocabularyCard`, `PracticeQuizCard`: Frontend interactive card renderer (handling micro-animations and feedback).
   - `DeckClientLoader`: Client-side deck runner that dynamically retrieves and prioritizes cards from IndexedDB for local-only decks.
   - `ExamResultView`: Comprehensive exam review interface supporting question-by-question replay, visual color-coded answer comparison, and "Retry Incorrect Only" session trigger.
   - `LocalRecordsView`: Unified exam records interface for on-device quiz history, featuring local record deletion and one-click JSON backup export.
   - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, and real-time schema validation.
   - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private user study materials, forgetting curves, and quiz scores.
-  - `SQLite & Prisma`: Lightweight data layer operating in an offline (local file) environment.
-  - `ETL Script`: Data pipeline script that reads original documents (JSON), parses them, and pushes them (Upsert) into the DB.
   - `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
 
 ### 2. Frontend
@@ -230,50 +224,46 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **PWA & Metadata Strategy**:
   - Implements a Progressive Web App (PWA) standard `manifest.ts` to seamlessly integrate with native device environments (e.g., theme color matching, standalone display).
   - Ensures cross-browser rendering reliability by using pure SVG `<linearGradient>` code for dynamic favicons (`icon.tsx`) and high-resolution Apple icons (`apple-icon.tsx`), bypassing Satori's nested SVG rendering limitations.
-  - **Brand Identity & Iconography (Synaptic Recall Deck)**: Replaces generic star templates with a custom geometric symbol featuring 3D stacked flashcard layers and an active recall spark core. Scaled and contrasted specifically for small browser tab favicons (`icon.tsx`, 32x32) and high-resolution mobile app icons (`apple-icon.tsx`, 180x180), complemented by a reusable `<BrandLogo />` component.
+  - **Brand Identity & Iconography (The Deck)**: A minimal pictorial mark of two fanned flashcards representing a study deck. The back card is rotated -8° to distinguish it from a generic "copy" icon. Uses a strict 2-color palette (`#a5b4fc` stroke on `#0f172a` background) with no gradients, ensuring clarity even at favicon size (32px). Rendered consistently across `icon.tsx` (32×32), `apple-icon.tsx` (180×180), and the reusable `<BrandLogo />` component.
 
 ### 3. Backend & Type Architecture
 
 - **API and Data Communication**:
-  - Supplies data to the client through Next.js Server Actions or direct Prisma Client calls without a separate external REST API server.
-  - **Security Isolation**: Server Actions are explicitly isolated in the `src/actions/` directory, outside of the Next.js `app/` routing directory. This prevents accidental exposure of backend business logic as public endpoints.
+  - Supplies data directly through client-side IndexedDB and static sample deck endpoints without an external database server.
 
 - **Domain Type Architecture: "Parse, Don't Validate"**:
   - **Centralized Domain Parser (`src/lib/card-parser.ts`)**: Raw card strings stored in the database are never blindly cast using unsafe assertions like `as unknown as CardData`. All records are validated at runtime against Zod schemas and promoted to the strictly-typed `CardData` discriminated union.
   - **Zero Unsafe Assertions**: Ensures 0% `as any` or `as unknown as` assertions across the entire codebase.
 
 - **Data Validation & Error Handling (Zero-Trust)**:
-  - **Action Wrapper (`safe-action.ts`)**: All Server Actions are strictly wrapped by a centralized High-Order Component (HOC) that handles `try/catch` logic. This ensures a consistent `{ success, message, data }` response format across the entire application without duplicating error handling logic in every action.
   - **Shared Schema (Zod)**: Client inputs are never trusted. Every payload (e.g., 5MB limit check, unknown field stripping) is strictly parsed through reusable Zod schemas (`src/lib/schemas.ts`, `src/schemas/deck.ts`) *before* reaching the business logic.
 
-- **Database and ORM Integration**:
-  - **SQLite (Default)**: Built locally at `.data/memorize.sqlite`. This file is excluded from Git tracking (`.gitignore`).
-  - **PostgreSQL (Optional)**: Supported for production or serverless environments.
-  - **Prisma ORM**: Generates type-safe queries and manages the database schema. Maintains a singleton connection in `src/lib/prisma.ts`.
-  - **Exam History Tracking**: Records detailed exam sessions using `ExamResult` and `ExamResultDetail` tables, enabling users to review previous quizzes question-by-question (including chosen incorrect answers and accurate scores).
+- **Database Architecture (100% Zero-Database & Local-First)**:
+  - **Zero-Server Database**: Does not use any server-side database (Prisma, SQLite, PostgreSQL, etc.), eliminating 100% of serverless DB connection errors and 500 rendering crashes.
+  - **Browser Persistent Storage (IndexedDB)**: All data (`decks`, `cards`, `progress`, `exam_results`) is stored in the browser's client storage (`src/lib/client-db.ts`).
+  - **Static Sample Decks**: Pre-packaged public sample decks are loaded statically from `input/public/*.json` or via `/api/sample-decks`.
+  - **Detailed Exam History Tracking**: Question-by-question exam results (including chosen incorrect options) are stored permanently in the `exam_results` IndexedDB object store, providing detailed review and backup/restore entirely client-side.
 
 ### 4. Data Pipeline
 
-- **Custom ETL Pipeline (`src/scripts/etl.ts` & Web Upload)**:
-  - Parses original JSON data and loads it into the DB via Prisma Client. Web UI drag & drop upload shares the exact same integrity logic.
-  - **Data Integrity Guarantee (Stable ID & Upsert)**: Uses the `crypto` module to generate a unique MD5 hash identifier based on the text content of the question/front. Through this, even if cards are added or deleted, the unique ID of existing cards is maintained, so the user's forgetting curve review record (`learningProgress`) is not destroyed and is safely preserved (Upsert).
-  - Execution command: `npm run etl` (TypeScript script execution via tsx).
+- **Client-Side Unified Import (`src/lib/client-db.ts` & Web Upload)**:
+  - When users drag & drop custom JSON study materials into the Web UI (Upload Zone on the Data Management page), files are decoded and validated in memory using Zod schemas with 0 bytes transmitted to any server.
+  - **Data Integrity Guarantee (Stable ID & Upsert)**: Generates a deterministic MD5 hash identifier based on question/front text content. Even if cards are reorganized or updated, card IDs remain stable, safely preserving Ebbinghaus forgetting curve progress (`progress`).
+  - **Multi-Tab Real-time Synchronization**: The `BroadcastChannel` API (`memorize_db_events`) immediately propagates deck creations, deletions, and exam completions to all open browser tabs without manual page reloads.
 
 ```mermaid
 sequenceDiagram
-    participant J as JSON Files (input/)
-    participant E as ETL Script (etl.ts)
-    participant C as Crypto Module
-    participant DB as SQLite DB
+    participant U as User (Browser)
+    participant UI as Drag & Drop Upload Zone
+    participant IDB as IndexedDB (Client Storage)
+    participant BC as BroadcastChannel
     
-    E->>J: 1. Read JSON Data
-    J-->>E: Return Cards Array
-    loop For each card
-        E->>C: 2. Generate MD5 Hash based on Text
-        C-->>E: Return Stable Hash ID
-        E->>DB: 3. Upsert Card with Hash ID
-        DB-->>E: Success (Preserves Learning Progress)
-    end
+    U->>UI: 1. Drop custom JSON file(s)
+    UI->>UI: 2. Validate with Zod Schema
+    UI->>IDB: 3. Upsert Deck & Cards (Stable Hash ID)
+    IDB-->>UI: 4. Storage Complete
+    UI->>BC: 5. Broadcast "deck_created" Event
+    BC-->>U: 6. All Open Tabs Instantly Updated
 ```
 
 ### 5. Local-First BYOD Architecture & Privacy Protection
@@ -306,11 +296,11 @@ sequenceDiagram
 ### 6. Infrastructure & Deployment
 
 - **Deployment Environment**:
-  - By default, it runs locally (Self-hosted) via `npm run build`, but it fully supports deployment on serverless hosting platforms like Vercel. (When deploying serverless, using an external production database such as Turso or Supabase is recommended).
+  - Runs locally (Self-hosted) via `npm run build` as well as on serverless hosting platforms like Vercel. Because the application adopts a 100% Zero-Database (Local-First) architecture, it requires zero external database connections or DB hosting overhead.
 - **CI/CD Pipeline**:
-  - GitHub Actions can be configured to perform Type Check and Linting (`npm run lint`), as well as automate the ETL pipeline when JSON files are pushed to `input/public/`.
+  - GitHub Actions automates Node version verification, TypeScript checking (`npm run type-check`), ESLint analysis (`npm run lint`), and Next.js production builds (`npm run build`) to ensure repository integrity on every push and pull request.
 - **Environment Variable Management**:
-  - Core variables like `DATABASE_URL` are injected through the `.env` file.
+  - Application limits and policies (such as `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB` and `NEXT_PUBLIC_PASS_MARK_PERCENT`) are configured via `.env`.
 
 ### 7. Verification & Fail Fast Pipeline
 

@@ -56,7 +56,7 @@
 }
 
 @utility btn-indigo {
-  @apply inline-flex items-center justify-center bg-indigo-600 text-white hover:bg-indigo-500 transition-[background-color,transform,box-shadow] duration-200 font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 shadow-lg shadow-indigo-900/30 active:scale-95;
+  @apply inline-flex items-center justify-center bg-indigo-600 text-white hover:bg-indigo-500 transition-[background-color,transform,box-shadow] duration-200 font-bold focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500/50 shadow-lg shadow-indigo-900/30 active:scale-95;
 }
 
 @utility btn-blue-outline {

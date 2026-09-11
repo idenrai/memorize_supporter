@@ -126,7 +126,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
         aria-live="polite"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex-1 flex flex-col items-center justify-center space-y-6"
+        className="flex-1 flex flex-col items-center justify-center gap-6"
       >
         <div className={`w-24 h-24 rounded-full flex items-center justify-center text-4xl mb-4 ${
           accuracy >= PASS_MARK ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'
@@ -134,7 +134,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
           {accuracy >= PASS_MARK ? '🎉' : '🎯'}
         </div>
         <h2 className="text-3xl font-bold text-white text-balance">{t.quiz.quizCompleted}</h2>
-        <div className="bg-zinc-900/50 rounded-2xl p-8 border border-zinc-800 text-center space-y-2">
+        <div className="bg-zinc-900/50 rounded-2xl p-8 border border-zinc-800 text-center flex flex-col gap-2">
           <p className="text-4xl font-black text-white">{accuracy}%</p>
           <p className="text-zinc-400">{t.quiz.youScored(correctCount, playingCards.length)}</p>
         </div>
@@ -143,20 +143,20 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
           {incorrectIds.length > 0 && (
             <button 
               onClick={handleRetryIncorrect}
-              className="px-8 py-3 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+              className="px-8 py-3 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500"
             >
               {t.quiz.retryIncorrect(incorrectIds.length)}
             </button>
           )}
           <button 
             onClick={() => window.location.reload()}
-            className="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+            className="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-medium transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500"
           >
             {t.quiz.studyNewSession}
           </button>
         </div>
         
-        <Link href={`/${lang}`} className="text-zinc-500 hover:text-zinc-300 transition-colors mt-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded px-2">
+        <Link href={`/${lang}`} className="text-zinc-500 hover:text-zinc-300 transition-colors mt-4 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500 rounded px-2">
           {t.quiz.backToDashboard}
         </Link>
       </motion.div>

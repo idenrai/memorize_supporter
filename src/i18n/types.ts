@@ -44,11 +44,28 @@ export interface Translations {
     welcomeDesc: string;
     welcomeTitle: string;
     yourDecks: string;
+    step1Title: string;
+    step1Desc: string;
+    step2Title: string;
+    step2Desc: string;
+    step3Title: string;
+    step3Desc: string;
+    trySampleDecks: string;
+    sampleDecksAdded: string;
+    goToDataPrep: string;
+    goToDataManagement: string;
+    manageDecks: string;
+    loadingSamples: string;
+    alreadyHaveJson: string;
+    sampleDecksAlreadyAdded: string;
+    sampleDecksLoadFailed: string;
   };
   prep: {
     aiPrompt: string;
     copied: string;
     copyPrompt: string;
+    promptCopied: string;
+    promptCopyFailed: string;
     desc: string;
     promptFormat: (content: string) => string;
     selectTemplate: string;
@@ -85,11 +102,31 @@ export interface Translations {
     thType: string;
     title: string;
     uploadData: string;
+    uploadDropzoneDesc: string;
+    uploadDropzoneTitle: string;
     uploadFailed: string;
     uploadSizeLimitError: string;
     uploadSuccess: string;
+    multiUploadSuccess: (count: number) => string;
+    multiUploadPartial: (success: number, total: number) => string;
+    uploadingProgress: (current: number, total: number) => string;
+    nonJsonSkipped: (count: number) => string;
     uploading: string;
     visible: string;
+    addSampleDecks: string;
+    sampleDecksAdded: string;
+    privacyBadge: string;
+    totalDecks: (count: number) => string;
+    sampleDecksAlreadyAdded: string;
+    sampleDecksLoadFailed: string;
+    emptyDecksTitle: string;
+    emptyDecksDesc: string;
+    aiPromptGenerator: string;
+    backupSectionTitle: string;
+    backupSectionDesc: string;
+    backupDownload: string;
+    backupRestore: string;
+    storageStatus: (usage: string, persisted: boolean) => string;
   };
   quiz: {
     askAi: string;
@@ -138,8 +175,10 @@ export interface Translations {
   };
   records: {
     title: string;
+    desc: string;
     viewAll: string;
     empty: string;
+    emptyDesc: string;
     thDate: string;
     thDeck: string;
     thScore: string;
@@ -151,6 +190,7 @@ export interface Translations {
     confirmDeleteRecord: string;
     deleteSuccess: string;
     deleteFailed: string;
+    manageBackupLink: string;
   };
   local: {
     badge: string;
@@ -175,6 +215,7 @@ export interface Translations {
     importSuccess: string;
     importFailed: string;
     confirmDeleteDeck: string;
+    confirmDeleteDeckWithName: (title: string) => string;
     deleteDeckSuccess: string;
     deleteDeckFailed: string;
     confirmDeleteRecord: string;

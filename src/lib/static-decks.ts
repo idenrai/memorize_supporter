@@ -1,6 +1,6 @@
 import fs from "fs"
 import path from "path"
-import type { Deck } from "@/components/home/DeckGallery"
+import type { Deck } from "@/types/deck"
 
 export type StaticCard = {
   id: string

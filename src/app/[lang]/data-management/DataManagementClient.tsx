@@ -2,27 +2,22 @@
 
 import UploadZone from '@/components/management/UploadZone'
 import DeckTable from '@/components/management/DeckTable'
+import BackupRestoreCard from '@/components/management/BackupRestoreCard'
 
-interface DataManagementClientProps {
-  staticDecks: {
-    id: string
-    title: string
-    type: string
-    series: string | null
-    _count: { cards: number }
-  }[]
-}
-
-export default function DataManagementClient({ staticDecks }: DataManagementClientProps) {
+export default function DataManagementClient() {
   return (
-    <div className="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden">
-      <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 via-purple-500/5 to-transparent pointer-events-none" />
-      
-      {/* Upload Section */}
+    <div className="flex flex-col gap-8">
+      {/* Upload Zone */}
       <UploadZone />
 
-      {/* Table Section */}
-      <DeckTable staticDecks={staticDecks} />
+      {/* Deck Management Table Container */}
+      <div className="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 via-purple-500/5 to-transparent pointer-events-none" />
+        <DeckTable />
+      </div>
+
+      {/* Full Device Data Backup & Restore */}
+      <BackupRestoreCard />
     </div>
   )
 }

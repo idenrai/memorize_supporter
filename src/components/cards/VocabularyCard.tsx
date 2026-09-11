@@ -71,7 +71,7 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
       ref={containerRef}
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className="w-full max-w-2xl h-80 perspective-1000 select-none font-sans antialiased focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/50 rounded-2xl"
+      className="w-full max-w-2xl h-80 perspective-1000 select-none font-sans antialiased focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500/50 rounded-2xl"
     >
       <motion.div
         className="w-full h-full relative preserve-3d cursor-pointer"
@@ -118,7 +118,7 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
                 e.stopPropagation()
                 handleFeedback("incorrect")
               }}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 font-medium"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-rose-500 font-medium"
             >
               <X size={18} aria-hidden="true" />
               <span>{t.quiz.hard}</span>
@@ -130,7 +130,7 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
                 e.stopPropagation()
                 handleFeedback("correct")
               }}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 font-medium"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 font-medium"
             >
               <Check size={18} aria-hidden="true" />
               <span>{t.quiz.easy}</span>

@@ -244,7 +244,7 @@ export default function CustomSelect<T extends string | number>({
             setIsOpen(false)
           }
         }}
-        className={className || "flex items-center gap-2 bg-zinc-800/50 hover:bg-zinc-800 text-sm font-bold text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 py-1.5 pl-3 pr-2.5 rounded-xl transition-colors"}
+        className={className || "flex items-center gap-2 bg-zinc-800/50 hover:bg-zinc-800 text-sm font-bold text-zinc-200 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/50 py-1.5 pl-3 pr-2.5 rounded-xl transition-colors"}
       >
         {trigger ? trigger : (
           <>

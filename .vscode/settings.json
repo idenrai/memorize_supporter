@@ -17,22 +17,16 @@
     "package.json": "package-lock.json, tsconfig.json, tsconfig.*.json, next.config.*, postcss.config.*, eslint.config.*, skills-lock.json, .env*",
     "README.md": "AGENTS.md, CLAUDE.md, GEMINI.md, .markdownlint*"
   },
-  // 4. 불필요한 빌드/DB 캐시 파일 검색 및 감시 제외 (성능 향상)
+  // 4. 불필요한 빌드 캐시 파일 검색 및 감시 제외 (성능 향상)
   "search.exclude": {
     "**/.next": true,
-    "**/.data": true,
     "**/node_modules": true
   },
   "files.watcherExclude": {
     "**/.next/**": true,
-    "**/.data/**": true,
     "**/node_modules/**": true
   },
-  // 5. Prisma 포맷팅 지원
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  },
-  // 6. cSpell 맞춤법 검사 도메인 사전 등록
+  // 5. cSpell 맞춤법 검사 도메인 사전 등록
   "cSpell.words": [
     "antigravity",
     "Ebbinghaus",
@@ -43,12 +37,10 @@
     "lucide",
     "nums",
     "OPFS",
-    "Supabase",
     "tabular",
     "tailwindcss",
     "turbopack",
     "turborepo",
-    "Turso",
     "typesync",
     "viewports"
   ]

@@ -1,5 +1,10 @@
 # Memorize Supporter
 
+[![Live Demo](https://img.shields.io/badge/demo-online-brightgreen.svg)](https://memorize-supporter.vercel.app/)
+[![Vercel Deployment](https://img.shields.io/badge/deployed_on-Vercel-black.svg?logo=vercel)](https://memorize-supporter.vercel.app/)
+
+> 🌐 **Live Demo (라이브 데모):** [https://memorize-supporter.vercel.app/](https://memorize-supporter.vercel.app/)
+
 [🇰🇷 한국어](#-한국어) | [🇺🇸 English](#-english)
 
 ---
@@ -15,7 +20,7 @@
 - **브라우저 로컬 저장 모드 (BYOD: Bring Your Own Data)**: 개인 소장 학습 데이터(JSON)를 드래그&드롭하여 서버 전송 없이 브라우저(IndexedDB)에만 안전하게 저장하고 학습
 - **로컬 데이터 백업/복원 및 관리 (Backup, Restore & Delete)**: 기기에 저장된 시험 기록 및 덱을 개별/일괄 삭제하고, 원클릭으로 종합 JSON 백업 파일 다운로드 및 복원(Restore)
 - **글로벌 다국어 지원 (i18n)**: 동적 라우팅 기반으로 한국어(KO), 영어(EN), 일본어(JA) 완벽 지원 (Hydration Mismatch 방지)
-- **JSON 기반 데이터 파이프라인**: `input/` 디렉토리에 JSON 파일만 넣으면 `npm run etl`을 통해 기존 학습 기록을 보존하며 스마트 동기화
+- **JSON 기반 덱 가져오기 및 샘플 덱 제공**: 기본 샘플 덱(정적 서빙)을 즉시 체험하거나, 개인 소장 JSON 덱을 업로드하여 학습 기록 손실 없이 브라우저에 안전하게 병합
 - **웹 기반 덱 관리 및 데이터 준비 (Data Management & Preparation)**: 브라우저에서 직접 JSON 덱 업로드, 덱 수정/삭제 및 대화형 덱 빌더/스키마 검증기 제공
 - **인지 부하를 줄인 모던 UI/UX**: Tailwind CSS v4 기반 다크 모드, 글래스모피즘, 마이크로 애니메이션, `tabular-nums` 숫자 정렬
 - **풀 키보드 단축키 지원**: 마우스 없이도 스페이스바, 숫자키(1~4), 방향키로 모든 학습 및 퀴즈 제어 가능
@@ -51,22 +56,21 @@
 
 ### 🚀 시작하기
 
-#### ⚡ 초간단 1초 실행 (권장)
-복잡한 명령어 입력 없이, 운영체제에 맞는 실행 파일을 **더블 클릭**하기만 하면 의존성 설치, 환경 설정 및 서버 실행이 한 번에 완료됩니다.
-
-* **Windows**: [`start.bat`](file:///Users/idenrai/project/memorize_supporter/start.bat) 더블 클릭
-* **macOS / Linux**: [`start.sh`](file:///Users/idenrai/project/memorize_supporter/start.sh) 더블 클릭 (또는 터미널에서 `./start.sh` 실행)
+#### 🌐 웹에서 바로 사용하기 (추천)
+별도의 설치나 복제 없이 브라우저에서 바로 플래시카드를 학습하고 커스텀 덱을 가져올 수 있습니다:
+👉 **[라이브 데모 바로가기 (Live Demo)](https://memorize-supporter.vercel.app/)**
 
 ---
 
-#### 💻 터미널 명령어로 실행하기
-터미널을 선호하시는 경우 단 두 줄의 명령어로 시작할 수 있습니다:
+#### 💻 로컬 개발 환경 실행
+저장소를 클론하여 로컬에서 개발 및 기동할 경우 단 두 줄의 명령어로 시작할 수 있습니다:
 ```bash
 git clone <repository-url>
 cd memorize_supporter
-npm install && npm run setup   # 환경 초기화
+npm install
 npm run dev                    # 개발 서버 및 브라우저 자동 실행
 ```
+*(환경 변수 커스터마이징이 필요한 경우 `cp .env.example .env` 후 수정하실 수 있습니다.)*
 
 ---
 
@@ -75,18 +79,17 @@ npm run dev                    # 개발 서버 및 브라우저 자동 실행
 
 1. **Vercel 웹 배포**: GitHub 저장소를 Vercel에 연결하여 정적/서버리스 웹 애플리케이션으로 배포합니다. (서버에는 사용자 개인 데이터가 일체 저장되지 않습니다.)
 2. **커스텀 덱 준비**: 본인이 학습할 문제나 단어장이 담긴 JSON 파일(예: `custom_deck.json`)을 준비합니다.
-3. **브라우저에서 즉시 실행**: 배포된 Vercel 웹사이트에 접속한 뒤, 홈 화면의 **"📥 덱 파일(JSON) 가져오기"** 영역에 해당 파일을 드래그&드롭하기만 하면 끝납니다!
+3. **브라우저에서 즉시 실행**: 배포된 Vercel 웹사이트([라이브 데모](https://memorize-supporter.vercel.app/))에 접속한 뒤, 상단 네비게이션의 **[데이터 관리]** 페이지에서 해당 파일을 드래그&드롭하거나 탐색기로 선택하여 업로드하기만 하면 끝납니다!
    * 파일이 서버로 전송되지 않고 **사용자 본인의 브라우저(IndexedDB)**에 안전하게 저장됩니다.
    * 브라우저를 껐다 켜도 학습 진도와 시험 기록이 영구적으로 보존됩니다.
 
 ---
 
-#### 🛠 고급/수동 설치 절차 (상세)
+#### 🛠 수동 설치 절차 (상세)
 직접 단계를 하나씩 수행하고 싶은 경우:
 1. `nvm use`
 2. `npm install`
-3. `npm run setup`
-4. `npm run dev`
+3. `npm run dev`
 
 ---
 
@@ -113,7 +116,7 @@ npm run build       # Next.js Turbopack 프로덕션 빌드
 - **Local-First BYOD Mode (Bring Your Own Data)**: Drag-and-drop custom study JSON files directly into browser IndexedDB without sending data to servers.
 - **On-Device Data Backup, Restore & Deletion**: Clean deletion of local decks/records and one-click JSON backup export and restoration.
 - **Full Internationalization (i18n)**: URL-based routing supporting Korean (KO), English (EN), and Japanese (JA) without hydration mismatch.
-- **JSON-Driven Data Pipeline**: Drop JSON files into the `input/` folder and run `npm run etl` to sync decks while preserving existing user study progress.
+- **JSON-Driven Deck Import & Static Sample Decks**: Explore pre-packaged sample decks instantly, or import custom JSON decks directly into browser storage without losing study progress.
 - **Web Data Management & Preparation**: Upload/edit/delete decks from the browser and compose custom decks with a live interactive schema validator.
 - **Polished Cognitive-Friendly UI/UX**: Dark mode, glassmorphic styling, compositor-optimized micro-animations, and `tabular-nums` alignment powered by Tailwind CSS v4.
 - **Full Keyboard Accessibility**: Control flashcard flips, quiz choices (1-4), and navigation entirely via keyboard.
@@ -129,7 +132,7 @@ npm run build       # Next.js Turbopack 프로덕션 빌드
 | **Language** | [TypeScript 5](https://www.typescriptlang.org/) |
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) (`@tailwindcss/postcss`) |
 | **State & Animation** | [Zustand 5](https://zustand-demo.pmnd.rs/), [Framer Motion 12](https://www.framer.com/motion/) |
-| **Database & ORM** | [SQLite](https://www.sqlite.org/) (Local file-based), [Prisma ORM 6](https://www.prisma.io/) |
+| **Client Storage** | [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) (100% Local-First Persistent Storage), Zero-Server Database |
 | **Icons & Toast** | [Lucide React](https://lucide.dev/), [Sonner](https://sonner.emilkowal.ski/) |
 | **Data Validation** | [Zod](https://zod.dev/) |
 
@@ -149,21 +152,21 @@ npm run build       # Next.js Turbopack 프로덕션 빌드
 
 ### 🚀 Getting Started
 
-#### ⚡ 1-Click Launch (Recommended)
-No terminal setup needed. Simply double-click the launcher script for your operating system to automatically install dependencies, initialize the database, and start the application:
-
-* **Windows**: Double-click [`start.bat`](file:///Users/idenrai/project/memorize_supporter/start.bat)
-* **macOS / Linux**: Double-click [`start.sh`](file:///Users/idenrai/project/memorize_supporter/start.sh) (or run `./start.sh` in terminal)
+#### 🌐 Try It Live (Recommended)
+No local installation required. Study flashcards and import custom decks instantly in your browser:
+👉 **[Launch Live Demo](https://memorize-supporter.vercel.app/)**
 
 ---
 
-#### 💻 Launch via Terminal
+#### 💻 Local Development Setup
+Clone the repository and run the local development server in two simple commands:
 ```bash
 git clone <repository-url>
 cd memorize_supporter
-npm install && npm run setup   # Automatically sets up .env, database, and initial ETL
+npm install
 npm run dev                    # Starts development server and opens browser
 ```
+*(To customize environment variables, copy `.env.example` via `cp .env.example .env`)*
 
 ---
 
@@ -172,7 +175,7 @@ Private study materials and custom flashcards can be studied with complete priva
 
 1. **Deploy to Vercel**: Connect your GitHub repository to Vercel to host the web client. (The server contains zero user data, guaranteeing complete privacy and zero data liability).
 2. **Prepare Custom Decks**: Prepare your study questions or vocabulary in JSON format (e.g., `custom_deck.json`).
-3. **Import & Run in Browser**: Navigate to your deployed web app and drag-and-drop the JSON file into the **"Import Deck (JSON)"** dropzone on the home screen.
+3. **Import & Run in Browser**: Navigate to your deployed web app ([Live Demo](https://memorize-supporter.vercel.app/)) and drag-and-drop the JSON files into the **Upload Zone** on the **Data Management** page.
    * Cards are stored securely inside the **user's local browser (IndexedDB)**.
    * Study progress, review schedules, and exam scores persist permanently across browser restarts without ever uploading to any cloud server.
 
@@ -182,8 +185,7 @@ Private study materials and custom flashcards can be studied with complete priva
 If you prefer running steps manually:
 1. `nvm use`
 2. `npm install`
-3. `npm run setup` (or `cp .env.example .env` followed by `npx prisma db push && npm run etl`)
-4. `npm run dev`
+3. `npm run dev`
 
 ---
 
