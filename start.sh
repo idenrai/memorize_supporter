@@ -25,8 +25,8 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-# Run setup if .env or db is missing
-if [ ! -f ".env" ] || [ ! -f ".data/memorize.sqlite" ]; then
+# Run setup if .env is missing
+if [ ! -f ".env" ]; then
     echo "⚙️ Running one-time setup..."
     npm run setup
 fi

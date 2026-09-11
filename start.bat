@@ -24,11 +24,6 @@ if not exist "node_modules" (
 if not exist ".env" (
     echo [Info] Running initial setup...
     call npm run setup
-) else (
-    if not exist ".data\memorize.sqlite" (
-        echo [Info] Running initial setup...
-        call npm run setup
-    )
 )
 
 echo.
