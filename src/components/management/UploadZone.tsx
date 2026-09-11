@@ -10,6 +10,8 @@ import {
 import { useT } from "@/hooks/useT"
 import { toast } from "sonner"
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB per deck file
+
 interface UploadZoneProps {
   onUploadSuccess?: () => void
 }
@@ -27,12 +29,15 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
 
     const jsonFiles: File[] = []
     let nonJsonCount = 0
+    let oversizedCount = 0
 
     for (const file of files) {
-      if (file.name.toLowerCase().endsWith(".json")) {
-        jsonFiles.push(file)
-      } else {
+      if (!file.name.toLowerCase().endsWith(".json")) {
         nonJsonCount++
+      } else if (file.size > MAX_FILE_SIZE) {
+        oversizedCount++
+      } else {
+        jsonFiles.push(file)
       }
     }
 
@@ -40,8 +45,12 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
       toast.info(t.management.nonJsonSkipped(nonJsonCount))
     }
 
+    if (oversizedCount > 0) {
+      toast.error(t.management.uploadSizeLimitError)
+    }
+
     if (jsonFiles.length === 0) {
-      if (nonJsonCount > 0) {
+      if (nonJsonCount > 0 && oversizedCount === 0) {
         toast.error(t.local.jsonOnlyError)
       }
       if (fileInputRef.current) fileInputRef.current.value = ""
@@ -52,18 +61,16 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
     setProgress({ current: 0, total: jsonFiles.length })
 
     try {
-      const items: BatchImportItem[] = []
-      for (const file of jsonFiles) {
-        try {
-          const text = await file.text()
-          items.push({
-            content: text,
-            fileName: file.name
-          })
-        } catch (readErr) {
-          console.warn(`Failed to read file ${file.name}:`, readErr)
-        }
-      }
+      const readResults = await Promise.allSettled(
+        jsonFiles.map(async (file) => ({
+          content: await file.text(),
+          fileName: file.name
+        }))
+      )
+
+      const items: BatchImportItem[] = readResults
+        .filter((r): r is PromiseFulfilledResult<BatchImportItem> => r.status === "fulfilled")
+        .map((r) => r.value)
 
       if (items.length === 0) {
         toast.error(t.local.fileReadError)
