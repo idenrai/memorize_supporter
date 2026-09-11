@@ -1,5 +1,5 @@
 import { openDB, notifyLocalDbChange } from "./core"
-import { importJsonToLocalDb } from "./decks"
+import { importJsonToLocalDb, getLocalDecks } from "./decks"
 
 export interface RestoreBackupResult {
   success: boolean
@@ -167,15 +167,30 @@ export async function importSampleDecks(): Promise<{ success: boolean; count: nu
     const data = await res.json()
     const decks: Array<{ filename: string; content: string }> = data.decks || []
 
+    const existingDecks = await getLocalDecks()
+    const existingTitles = new Set(existingDecks.map((d) => d.title.trim().toLowerCase()))
+    const existingIds = new Set(existingDecks.map((d) => d.id))
+
     let count = 0
     for (const item of decks) {
-      const result = await importJsonToLocalDb(item.content, item.filename)
+      const baseName = item.filename.replace(/\.json$/i, "").trim()
+      const deterministicDeckId = `sample_${baseName.toLowerCase().replace(/[^a-zA-Z0-9_-]/g, "_")}`
+
+      if (existingIds.has(deterministicDeckId) || existingTitles.has(baseName.toLowerCase())) {
+        continue
+      }
+
+      const result = await importJsonToLocalDb(item.content, item.filename, { targetDeckId: deterministicDeckId })
       if (result.success) {
         count++
+        existingIds.add(deterministicDeckId)
+        existingTitles.add(baseName.toLowerCase())
       }
     }
 
-    notifyLocalDbChange('deck_created')
+    if (count > 0) {
+      notifyLocalDbChange('deck_created')
+    }
     return { success: true, count }
   } catch (err) {
     console.error('Failed to import sample decks:', err)

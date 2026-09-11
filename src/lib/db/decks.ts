@@ -166,7 +166,8 @@ export async function deleteLocalDeck(deckId: string): Promise<boolean> {
  */
 export async function importJsonToLocalDb(
   jsonData: string,
-  fileName: string
+  fileName: string,
+  options?: { targetDeckId?: string }
 ): Promise<{ success: boolean; deckId?: string; error?: string }> {
   try {
     let sanitized = jsonData.trim()
@@ -185,7 +186,7 @@ export async function importJsonToLocalDb(
     const safeSlug = baseName
       .replace(/[^a-zA-Z0-9\uAC00-\uD7A3\u3040-\u30FF\u4E00-\u9FFF_-]/g, "_")
       .toLowerCase()
-    const deckId = `local_${safeSlug || "deck"}_${generateSimpleId(baseName)}`
+    const deckId = options?.targetDeckId || `local_${safeSlug || "deck"}_${generateSimpleId(baseName)}`
 
     let rawData: Record<string, unknown>
     if (Array.isArray(parsedData)) {
