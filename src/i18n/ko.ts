@@ -35,26 +35,46 @@ export const ko: Translations = {
     uncategorized: "기타 (미분류)",
     viewModeGrid: "그리드 뷰",
     viewModeList: "리스트 뷰",
-    welcomeDesc: "AI를 활용해 손쉽게 첫 번째 학습 덱을 만들어 보세요.",
-    welcomeTitle: "등록된 학습 덱이 없습니다",
+    welcomeDesc: "나만의 학습 자료를 AI로 플래시카드와 퀴즈로 변환하고, 효과적인 간격 반복으로 완벽히 암기하세요.",
+    welcomeTitle: "Memorize Supporter에 오신 것을 환영합니다",
     yourDecks: "학습 덱 목록",
+    step1Title: "자료 준비",
+    step1Desc: "암기하고 싶은 교재나 강의자료, 요약본 텍스트를 준비합니다.",
+    step2Title: "AI 프롬프트 변환",
+    step2Desc: "템플릿 프롬프트를 복사하여 ChatGPT나 Claude에서 JSON으로 변환합니다.",
+    step3Title: "데이터 등록 및 학습",
+    step3Desc: "데이터 관리에서 등록하고 플래시카드와 퀴즈로 바로 암기를 시작합니다.",
+    trySampleDecks: "샘플 덱 체험해보기",
+    sampleDecksAdded: "샘플 덱이 추가되었습니다! 지금 바로 학습을 시작해 보세요.",
+    goToDataPrep: "AI 프롬프트로 덱 만들기",
+    goToDataManagement: "데이터 관리로 이동",
+    manageDecks: "덱 관리",
+    loadingSamples: "샘플 덱을 불러오는 중…",
+    alreadyHaveJson: "이미 준비된 JSON 파일이 있으신가요? 덱 관리로 이동",
+    sampleDecksAlreadyAdded: "이미 모든 샘플 덱이 등록되어 있습니다.",
+    sampleDecksLoadFailed: "샘플 덱을 불러오지 못했습니다.",
   },
   prep: {
     aiPrompt: "AI 생성 프롬프트",
     copied: "클립보드에 복사됨",
     copyPrompt: "프롬프트 복사하기",
     desc: "교재, 필기노트, 단어 목록 등 학습하고 싶은 자료를 AI에게 전달하여 즉시 학습 가능한 덱으로 변환해 보세요. 아래 템플릿 프롬프트를 복사해 ChatGPT나 Claude에 붙여넣기만 하면 됩니다.",
-    promptFormat: (content) => `내용을 유효한 JSON 배열 형식으로 변환해줘.
-엄격한 규칙:
-1. 오직 유효한 JSON 형식만 출력할 것.
-2. 마크다운(\`\`\`json)이나 앞뒤 설명 문구를 절대 포함하지 말 것.
-3. 모든 항목은 반드시 아래 제공된 스키마 구조를 따를 것.
-4. 내용이 없는 필드는 적절한 기본값이나 빈 문자열을 사용할 것.
+    promptFormat: (content) => `당신은 교육 자료와 노트를 디지털 학습 덱(JSON)으로 정밀하게 변환하는 전문 교육 데이터 엔지니어입니다.
+제시된 학습 내용을 분석하여 아래 [필수 스키마 구조]를 엄격히 따르는 유효한 JSON 배열로 변환해 주세요.
 
-필수 스키마 구조:
+[규칙]
+1. 오직 유효한 JSON 배열([ ... ])만 출력할 것.
+2. 마크다운 코드 블록(\`\`\`json)이나 서두/결론 문구를 일절 포함하지 말고 '[' 문자로 시작해 ']' 문자로 끝낼 것.
+3. 모든 객체는 반드시 아래 제공된 스키마의 필드 구조를 준수할 것.
+4. 내용이 없는 필드는 생략하지 말고 null 또는 적절한 기본값을 사용할 것.
+
+[필수 스키마 및 예시 구조]
 ${content}
 
-변환할 내용:`,
+[변환할 학습 내용]
+(여기에 교재 내용, 단어 목록 또는 필기 노트를 붙여넣으세요)
+
+※ 주의: 설명 문구 없이 오직 '[' 로 시작하는 순수 JSON 데이터만 출력하세요.`,
     selectTemplate: "학습 유형 선택",
     templateFlashcardDesc: "질문과 정답을 빠르게 뒤집어 확인하는 기본 암기 카드",
     templateQuizDesc: "보기 중 정답을 고르고 해설을 확인할 수 있는 객관식 문제",
@@ -68,7 +88,7 @@ ${content}
     delete: "삭제",
     deleteFailed: "삭제에 실패했습니다.",
     deleteSuccess: "성공적으로 삭제되었습니다.",
-    desc: "준비한 학습 덱(JSON)을 업로드하거나, 덱의 제목 및 시리즈 수정, 불필요한 덱의 숨김/삭제를 관리할 수 있습니다.",
+    desc: "준비한 학습 덱(JSON)을 업로드 및 관리하고, 시험 응시 기록과 학습 진도를 포함한 기기 전체 데이터를 안전하게 백업하거나 복원할 수 있습니다.",
     edit: "수정",
     editFailed: "수정에 실패했습니다.",
     editSuccess: "성공적으로 수정되었습니다.",
@@ -92,13 +112,29 @@ ${content}
     uploadFailed: "업로드에 실패했습니다.",
     uploadSizeLimitError: "파일 크기는 5MB를 초과할 수 없습니다.",
     uploadSuccess: "성공적으로 업로드되었습니다!",
-    uploading: "업로드 중...",
+    uploading: "업로드 중…",
     visible: "표시",
+    addSampleDecks: "체험용 샘플 덱 추가",
+    sampleDecksAdded: "샘플 덱이 성공적으로 추가되었습니다.",
+    uploadDropzoneTitle: "새로운 학습 덱(JSON) 가져오기",
+    uploadDropzoneDesc: "여기로 JSON 파일을 드래그하여 놓거나 클릭하여 선택하세요.",
+    privacyBadge: "데이터는 외부 서버로 전송되지 않고 브라우저에만 안전하게 보관됩니다.",
+    totalDecks: (count: number) => `총 ${count}개의 학습 덱`,
+    sampleDecksAlreadyAdded: "이미 모든 샘플 덱이 등록되어 있습니다.",
+    sampleDecksLoadFailed: "샘플 덱을 불러오지 못했습니다.",
+    emptyDecksTitle: "등록된 학습 덱이 없습니다",
+    emptyDecksDesc: "상단 업로드 영역에 새 JSON 덱을 등록하거나, 상단 툴바의 '체험용 샘플 덱 추가'를 이용해 보세요.",
+    aiPromptGenerator: "AI 프롬프트 생성기",
+    backupSectionTitle: "전체 데이터 백업 및 복원 (통합 아카이브)",
+    backupSectionDesc: "현재 기기의 브라우저(IndexedDB)에 저장된 모든 학습 덱, 문제 카드, 개별 진도율, 시험 응시 기록 전체를 하나의 JSON 파일로 안전하게 백업하거나 이전 백업 파일로부터 복원합니다.",
+    backupDownload: "기기 전체 데이터 백업(JSON)",
+    backupRestore: "백업 파일 복원(JSON)",
+    storageStatus: (usage, persisted) => `기기 저장소 사용량: ${usage} (${persisted ? "영구 보관 허용됨" : "임시 보관"})`,
   },
   quiz: {
     askAi: "AI에게 심층 해설 요청하기",
-    aiDeepPrompt: (question, options, explanation) => `아래 객관식 문제에 대해 깊이 있는 해설과 분석을 부탁합니다.
-단순히 정답을 알려주는 것을 넘어, 정답인 이유와 오답들이 왜 오답인지, 그리고 이 문제와 관련된 핵심 개념(아키텍처, 서비스 등)은 무엇인지 상세히 설명해 주세요.
+    aiDeepPrompt: (question, options, explanation) => `당신은 수험생의 완벽한 이해를 돕는 전문 교수자입니다.
+아래 객관식 문제에 대해 깊이 있는 해설과 체계적인 분석을 부탁합니다.
 
 [문제]
 ${question}
@@ -109,7 +145,11 @@ ${options}
 [기존 해설 요약]
 ${explanation || '없음'}
 
-위 정보를 바탕으로, 제가 이 개념을 완벽하게 이해할 수 있도록 알기 쉽게 설명해 주세요.`,
+다음 4단계 구조에 맞추어 명쾌하게 설명해 주세요:
+1. [출제 의도 및 문제 분석]: 이 문제가 평가하고자 하는 핵심 개념과 배경 설명
+2. [정답 상세 분석]: 정답이 되는 핵심 이유와 공식 표준/모범 사례 기반 근거
+3. [오답 보기별 분석]: 오답 보기들이 각각 왜 틀렸는지, 어떤 상황에서 쓰이는 개념인지 설명
+4. [실전 암기 요약]: 시험 직전 복습을 위한 1줄 핵심 암기 공식/포인트`,
     promptCopied: "AI에게 질문할 프롬프트가 복사되었습니다! Gemini나 ChatGPT에 붙여넣어 보세요.",
     promptCopyFailed: "클립보드 복사에 실패했습니다.",
     selectOne: "1개 선택",
@@ -153,13 +193,15 @@ ${explanation || '없음'}
     tryAgain: "다시 시도하기",
   },
   records: {
-    empty: "아직 응시한 시험 기록이 없습니다. 연습 문제 덱에서 시험 모드를 시작해 보세요!",
+    title: "시험 응시 기록",
+    desc: "응시한 시험의 점수 내역과 문항별 분석 기록을 확인하고 복습할 수 있습니다.",
     viewAll: "전체 덱 기록 보기",
+    empty: "아직 응시한 시험 기록이 없습니다",
+    emptyDesc: "연습 문제 덱에서 시험 모드에 도전하여 점수와 오답 분석을 기록해 보세요.",
     thCorrect: "정답 수 (정답/전체)",
     thDate: "응시 일시",
     thDeck: "덱 이름",
     thScore: "점수",
-    title: "시험 응시 기록",
     backToRecords: "기록 목록으로 돌아가기",
     details: "상세 결과 보기",
     detailsNotAvailable: "상세 기록을 제공할 수 없습니다.",
@@ -167,18 +209,19 @@ ${explanation || '없음'}
     confirmDeleteRecord: "정말로 이 시험 기록을 삭제하시겠습니까?",
     deleteSuccess: "기록이 삭제되었습니다.",
     deleteFailed: "기록 삭제에 실패했습니다.",
+    manageBackupLink: "전체 데이터 백업 및 복원 관리",
   },
   local: {
     badge: "내 기기 저장",
     importButton: "덱 파일(JSON) 가져오기",
     dropPrompt: "덱 파일(JSON)을 드래그하거나 클릭하여 선택",
-    savingPrompt: "브라우저에 저장 중...",
+    savingPrompt: "브라우저에 저장 중…",
     privacyNotice: "서버로 전송되지 않고 본인 브라우저(내 기기)에 안전하게 저장됩니다.",
     securityTag: "개인 학습 데이터·커스텀 덱 완벽 보호 (Local-Only)",
     jsonOnlyError: "JSON 파일만 업로드할 수 있습니다.",
     fileReadError: "파일을 읽는 중 오류가 발생했습니다.",
     close: "닫기",
-    loadingDeck: "로컬 덱 데이터를 불러오는 중...",
+    loadingDeck: "로컬 덱 데이터를 불러오는 중…",
     notFoundTitle: "덱을 찾을 수 없습니다",
     notFoundDesc: "이 덱은 서버에 등록되어 있지 않거나, 브라우저 로컬 저장소에 아직 추가되지 않았습니다. 홈 화면에서 JSON 파일을 먼저 가져와 주세요.",
     recordsHeader: (count: number) => `내 기기 저장 기록 (${count})`,
@@ -191,6 +234,7 @@ ${explanation || '없음'}
     importSuccess: "로컬 덱을 성공적으로 가져왔습니다.",
     importFailed: "덱 가져오기에 실패했습니다.",
     confirmDeleteDeck: "정말 이 로컬 덱을 삭제하시겠습니까? 기기에 저장된 학습 진도와 시험 기록도 함께 삭제됩니다.",
+    confirmDeleteDeckWithName: (title: string) => `${title} 덱을 삭제하시겠습니까?`,
     deleteDeckSuccess: "로컬 덱이 삭제되었습니다.",
     deleteDeckFailed: "로컬 덱 삭제에 실패했습니다.",
     confirmDeleteRecord: "이 로컬 시험 기록을 삭제하시겠습니까?",

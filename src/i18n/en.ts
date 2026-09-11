@@ -35,26 +35,46 @@ export const en: Translations = {
     uncategorized: "General (Uncategorized)",
     viewModeGrid: "Grid View",
     viewModeList: "List View",
-    welcomeDesc: "Create your first study deck easily with the help of AI.",
-    welcomeTitle: "No Study Decks Available",
+    welcomeDesc: "Transform your learning materials into flashcards and quizzes with AI, and master them through spaced repetition.",
+    welcomeTitle: "Welcome to Memorize Supporter",
     yourDecks: "Study Decks",
+    step1Title: "Prepare Material",
+    step1Desc: "Prepare lecture notes, textbook summaries, or word lists you want to memorize.",
+    step2Title: "Convert with AI",
+    step2Desc: "Copy the template prompt and let ChatGPT or Claude generate structured JSON.",
+    step3Title: "Import & Study",
+    step3Desc: "Import your JSON in Data Management and start active recall with flashcards and quizzes.",
+    trySampleDecks: "Try Sample Decks",
+    sampleDecksAdded: "Sample decks have been added! Start studying right away.",
+    goToDataPrep: "Create Deck with AI Prompt",
+    goToDataManagement: "Go to Data Management",
+    manageDecks: "Manage Decks",
+    loadingSamples: "Loading sample decks…",
+    alreadyHaveJson: "Already have a JSON file? Go to Data Management",
+    sampleDecksAlreadyAdded: "All sample decks are already added.",
+    sampleDecksLoadFailed: "Failed to load sample decks.",
   },
   prep: {
     aiPrompt: "AI Generation Prompt",
     copied: "Copied to Clipboard",
     copyPrompt: "Copy Prompt",
     desc: "Convert your notes, textbooks, or vocabulary lists into study-ready decks with AI. Simply copy the prompt template and paste it into ChatGPT or Claude.",
-    promptFormat: (content) => `Convert my content into a valid JSON array format.
-Strict rules:
-1. Output ONLY valid JSON.
-2. NO markdown formatting, NO \`\`\`json blocks, NO explanations before or after.
-3. Every item must strictly follow the schema structure below.
-4. If a field is not provided in my content, use a logical default or empty string.
+    promptFormat: (content) => `You are an expert educational data engineer specialized in transforming study materials and notes into digital study decks (JSON).
+Analyze the provided content and convert it into a valid JSON array strictly adhering to the [Required Schema] below.
 
-Required Schema:
+[Rules]
+1. Output ONLY a valid JSON array ([ ... ]).
+2. Do NOT use markdown code blocks (\`\`\`json) or any conversational text before or after. Start directly with '[' and end with ']'.
+3. Every object must strictly adhere to the schema's field structure.
+4. If information is missing, do not omit fields; use null or an appropriate default value.
+
+[Required Schema and Example Structure]
 ${content}
 
-My content to convert:`,
+[Content to Convert]
+(Paste your textbook excerpt, word list, or lecture notes here)
+
+※ Important: Output ONLY the raw JSON array starting with '[' without any introductory or concluding text.`,
     selectTemplate: "Select Study Type",
     templateFlashcardDesc: "Standard front/back cards for quick active recall",
     templateQuizDesc: "Multiple-choice questions with options and explanations",
@@ -68,7 +88,7 @@ My content to convert:`,
     delete: "Delete",
     deleteFailed: "Failed to delete deck.",
     deleteSuccess: "Deck deleted successfully.",
-    desc: "Upload your JSON study decks, edit titles and series, or manage visibility settings.",
+    desc: "Upload and manage study decks, and securely backup or restore all local data including exam history and learning progress.",
     edit: "Edit",
     editFailed: "Failed to update deck.",
     editSuccess: "Deck updated successfully.",
@@ -92,13 +112,29 @@ My content to convert:`,
     uploadFailed: "Upload failed.",
     uploadSizeLimitError: "File size cannot exceed 5MB.",
     uploadSuccess: "Deck uploaded successfully!",
-    uploading: "Uploading...",
+    uploading: "Uploading…",
     visible: "Visible",
+    addSampleDecks: "Add Sample Decks",
+    sampleDecksAdded: "Sample decks have been successfully added.",
+    uploadDropzoneTitle: "Import Study Deck (JSON)",
+    uploadDropzoneDesc: "Drag & drop your JSON file here, or click to browse.",
+    privacyBadge: "All data stays securely in your browser's local storage and is never sent to external servers.",
+    totalDecks: (count: number) => `Total ${count} study deck${count === 1 ? '' : 's'}`,
+    sampleDecksAlreadyAdded: "All sample decks are already added.",
+    sampleDecksLoadFailed: "Failed to load sample decks.",
+    emptyDecksTitle: "No study decks registered",
+    emptyDecksDesc: "Drop a new JSON deck into the upload area above, or use 'Add Sample Decks' from the toolbar.",
+    aiPromptGenerator: "AI Prompt Generator",
+    backupSectionTitle: "Full Data Backup & Restore (Archive)",
+    backupSectionDesc: "Securely export all decks, cards, learning progress, and exam history stored in your browser (IndexedDB) as a single JSON file, or restore from a previous backup.",
+    backupDownload: "Backup All Device Data (JSON)",
+    backupRestore: "Restore from Backup File (JSON)",
+    storageStatus: (usage, persisted) => `Device Storage: ${usage} (${persisted ? "Persistent Storage Active" : "Temporary Storage"})`,
   },
   quiz: {
     askAi: "Ask AI for In-Depth Explanation",
-    aiDeepPrompt: (question, options, explanation) => `Please provide an in-depth explanation and analysis for the following multiple-choice question.
-Beyond simply giving the correct answer, explain why the correct option is right, why the incorrect options are wrong, and detail the core concepts (architecture, services, etc.) related to this question.
+    aiDeepPrompt: (question, options, explanation) => `You are an expert tutor dedicated to ensuring complete conceptual understanding for students.
+Please provide an in-depth, structured explanation for the following multiple-choice question.
 
 [Question]
 ${question}
@@ -109,7 +145,11 @@ ${options}
 [Existing Explanation Summary]
 ${explanation || 'None'}
 
-Based on the above information, please explain clearly so that I can thoroughly understand this concept.`,
+Please structure your response across the following 4 steps:
+1. [Question Intent & Context Analysis]: Core concepts being tested and situational background
+2. [Correct Option Detailed Breakdown]: Exact reason why the correct answer is right, backed by official standards/best practices
+3. [Distractor Analysis]: Why each incorrect option is flawed and in what context it would otherwise be used
+4. [One-Line Exam Takeaway]: High-yield mnemonic or summary rule for fast recall during the actual exam`,
     promptCopied: "Prompt copied to clipboard! Paste it into Gemini or ChatGPT.",
     promptCopyFailed: "Failed to copy to clipboard.",
     selectOne: "Select 1",
@@ -153,13 +193,15 @@ Based on the above information, please explain clearly so that I can thoroughly 
     tryAgain: "Try again",
   },
   records: {
-    empty: "No exam records yet. Take a practice quiz in Exam Mode to see your results here!",
+    title: "Exam History & Results",
+    desc: "Review your past exam scores and analyze your performance on each question.",
     viewAll: "View All Decks",
+    empty: "No exam records yet",
+    emptyDesc: "Take an exam in practice mode to record your scores and review mistakes.",
     thCorrect: "Correct / Total",
     thDate: "Date & Time",
     thDeck: "Deck Name",
     thScore: "Score",
-    title: "Exam History & Results",
     backToRecords: "Back to Records",
     details: "View Details",
     detailsNotAvailable: "Details not available",
@@ -167,18 +209,19 @@ Based on the above information, please explain clearly so that I can thoroughly 
     confirmDeleteRecord: "Are you sure you want to permanently delete this exam record?",
     deleteSuccess: "Exam record deleted successfully.",
     deleteFailed: "Failed to delete exam record.",
+    manageBackupLink: "Manage Full Data Backup & Restore",
   },
   local: {
     badge: "Saved on Device",
     importButton: "Import Deck (JSON)",
     dropPrompt: "Drag & drop JSON deck file or click to browse",
-    savingPrompt: "Saving to browser...",
+    savingPrompt: "Saving to browser…",
     privacyNotice: "Stored securely in your local browser without uploading to any server.",
     securityTag: "100% Private (Local-Only)",
     jsonOnlyError: "Only JSON files are supported.",
     fileReadError: "Failed to read file.",
     close: "Close",
-    loadingDeck: "Loading local deck data...",
+    loadingDeck: "Loading local deck data…",
     notFoundTitle: "Deck Not Found",
     notFoundDesc: "This deck is not on the server and hasn't been added to your browser yet. Please import the JSON file on the home page first.",
     recordsHeader: (count: number) => `Device Records (${count})`,
@@ -191,7 +234,8 @@ Based on the above information, please explain clearly so that I can thoroughly 
     importSuccess: "Successfully imported local deck.",
     importFailed: "Failed to import deck.",
     confirmDeleteDeck: "Are you sure you want to delete this local deck? Study progress and exam records stored on this device will also be deleted.",
-    deleteDeckSuccess: "Local deck deleted successfully.",
+    confirmDeleteDeckWithName: (title: string) => `Are you sure you want to delete "${title}"?`,
+    deleteDeckSuccess: "Local deck has been deleted successfully.",
     deleteDeckFailed: "Failed to delete local deck.",
     confirmDeleteRecord: "Are you sure you want to delete this local exam record?",
     deleteRecordSuccess: "Exam record deleted successfully.",
