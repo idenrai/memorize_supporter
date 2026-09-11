@@ -20,7 +20,7 @@ export default function Header({ lang }: { lang: Lang }) {
     return pathname.startsWith(path)
   }
 
-  const navItemClass = (path: string) => `flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+  const navItemClass = (path: string) => `flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
     isActive(path)
       ? 'text-white bg-blue-500/20 ring-1 ring-blue-500/50 shadow-inner'
       : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'

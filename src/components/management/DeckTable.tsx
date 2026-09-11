@@ -192,11 +192,11 @@ export default function DeckTable() {
 
       {/* Table Section */}
       <div className="relative z-10 overflow-x-auto rounded-2xl border border-white/10 bg-zinc-950/50 shadow-inner">
-        <table className="min-w-full divide-y divide-white/10">
+        <table className="min-w-[540px] w-full divide-y divide-white/10">
           <thead className="bg-white/5">
             <tr>
               <th 
-                className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors focus-visible:outline-hidden focus-visible:bg-white/10"
+                className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-white/10"
                 onClick={() => requestSort('title')}
                 onKeyDown={(e) => handleSortKeyDown(e, 'title')}
                 tabIndex={0}
@@ -206,7 +206,7 @@ export default function DeckTable() {
                 {t.management.thName} {renderSortIcon('title')}
               </th>
               <th 
-                className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors focus-visible:outline-hidden focus-visible:bg-white/10"
+                className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-white/10"
                 onClick={() => requestSort('series')}
                 onKeyDown={(e) => handleSortKeyDown(e, 'series')}
                 tabIndex={0}
@@ -216,7 +216,7 @@ export default function DeckTable() {
                 {t.management.thSeries} {renderSortIcon('series')}
               </th>
               <th 
-                className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors focus-visible:outline-hidden focus-visible:bg-white/10"
+                className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-white/10"
                 onClick={() => requestSort('type')}
                 onKeyDown={(e) => handleSortKeyDown(e, 'type')}
                 tabIndex={0}
@@ -226,7 +226,7 @@ export default function DeckTable() {
                 {t.management.thType} {renderSortIcon('type')}
               </th>
               <th 
-                className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors focus-visible:outline-hidden focus-visible:bg-white/10"
+                className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-white/10"
                 onClick={() => requestSort('cards')}
                 onKeyDown={(e) => handleSortKeyDown(e, 'cards')}
                 tabIndex={0}
@@ -235,7 +235,7 @@ export default function DeckTable() {
               >
                 {t.management.thCards} {renderSortIcon('cards')}
               </th>
-              <th className="px-4 py-3 sm:px-6 sm:py-4 text-right text-xs font-bold text-zinc-400 uppercase tracking-wider select-none">
+              <th className="px-4 py-3 sm:px-6 sm:py-4 text-right text-xs font-bold text-zinc-400 uppercase tracking-wider select-none whitespace-nowrap">
                 {t.management.thActions}
               </th>
             </tr>

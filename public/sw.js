@@ -162,7 +162,17 @@ self.addEventListener('fetch', (event) => {
         .then((networkResponse) => {
           if (networkResponse && networkResponse.ok) {
             const copy = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+            caches.open(CACHE_NAME).then(async (cache) => {
+              await cache.put(request, copy);
+              // Limit dynamic runtime cache size to prevent storage quota issues
+              const keys = await cache.keys();
+              if (keys.length > 60) {
+                const dynamicKeys = keys.filter((k) => !PRECACHE_ASSETS.includes(new URL(k.url).pathname));
+                if (dynamicKeys.length > 30) {
+                  await cache.delete(dynamicKeys[0]);
+                }
+              }
+            });
           }
           return networkResponse;
         })
