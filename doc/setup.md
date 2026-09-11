@@ -18,21 +18,17 @@
 - **패키지 매니저**: `npm >= 10.0.0` (`.npmrc`의 `engine-strict=true` 설정을 통해 요구 버전을 엄격히 강제합니다).
 - **운영 체제**: macOS, Windows, Linux 무관 (브라우저 네이티브 클라이언트 저장소인 IndexedDB를 사용하므로 별도의 외부 DB 설치 불필요).
 
-### 2. 원클릭 간편 실행 (One-Click Launchers)
+### 2. 빠른 시작 (Quick Start)
 
-터미널 명령어 없이 간편하게 실행하려는 사용자를 위해, 운영체제별 원클릭 더블클릭 런처 스크립트를 제공합니다:
+일반 사용자는 설치 없이 브라우저에서 바로 학습을 진행할 수 있습니다:
+- **라이브 데모 바로가기**: [https://memorize-supporter.vercel.app/](https://memorize-supporter.vercel.app/)
 
-- **Windows**: [`start.bat`](file:///Users/idenrai/project/memorize_supporter/start.bat) 더블 클릭
-- **macOS / Linux**: [`start.sh`](file:///Users/idenrai/project/memorize_supporter/start.sh) 더블 클릭 (또는 터미널에서 `./start.sh` 실행)
+### 3. 로컬 개발 환경 설치 (Local Development Setup)
 
-런처 스크립트는 의존성 설치(`npm install`), 환경 변수 초기화(`npm run setup`), 개발 서버 실행 및 브라우저 오픈(`npm run dev`)을 원터치로 자동 수행합니다.
-
-### 3. 터미널 수동 설치 (Command-Line Setup)
-
-터미널 환경에서 설치 및 실행할 경우 아래 명령어를 순서대로 실행하세요:
+터미널 환경에서 프로젝트를 클론하여 실행할 경우 아래 명령어를 실행하세요:
 
 ```bash
-# 1. 저장소 복제
+# 1. 저장소 복제 및 디렉토리 이동
 git clone <repository-url>
 cd memorize_supporter
 
@@ -42,16 +38,13 @@ nvm use
 # 3. 의존성 설치
 npm install
 
-# 4. 원스톱 자동 설정 (.env 복사 및 환경 초기화)
-npm run setup
-
-# 5. 개발 서버 기동 및 브라우저 자동 오픈
+# 4. 개발 서버 기동 및 브라우저 자동 오픈
 npm run dev
 ```
 
 ### 4. 환경 변수 (Environment Variables)
 
-앱 설정 및 정책은 `.env` 파일에 정의됩니다. 자동 셋업 스크립트(`npm run setup`)가 실행 시 파일이 없을 경우 `.env.example`로부터 자동 생성합니다.
+애플리케이션 설정 및 정책은 `.env` 파일에 정의할 수 있습니다. 코드에 안전한 기본값이 내장되어 있어 `.env` 없이도 즉시 실행 가능하며, 설정을 변경하려는 경우 `.env.example`을 복사하여 사용합니다:
 
 ```bash
 cp .env.example .env
@@ -105,21 +98,17 @@ This document provides comprehensive guides for setting up, installing, running,
 - **Package Manager**: `npm >= 10.0.0` (Enforced strictly by `.npmrc` via `engine-strict=true`).
 - **Operating System**: macOS, Windows, Linux (Uses browser-native IndexedDB client storage; no external database server like MySQL or PostgreSQL required).
 
-### 2. One-Click Launchers
+### 2. Quick Start
 
-For non-developers or quick runs without manual command-line typing, double-click the launcher script for your platform:
+For general users, no local installation is needed. You can use the app immediately in your browser:
+- **Live Demo**: [https://memorize-supporter.vercel.app/](https://memorize-supporter.vercel.app/)
 
-- **Windows**: Double-click [`start.bat`](file:///Users/idenrai/project/memorize_supporter/start.bat)
-- **macOS / Linux**: Double-click [`start.sh`](file:///Users/idenrai/project/memorize_supporter/start.sh) (or execute `./start.sh` in terminal)
+### 3. Local Development Setup
 
-The launcher script automatically installs dependencies (`npm install`), executes initial environment setup (`npm run setup`), and starts the development server (`npm run dev`) while opening your default browser.
-
-### 3. Command-Line Setup
-
-If running from the terminal, follow these steps:
+To clone and run the application locally:
 
 ```bash
-# 1. Clone repository
+# 1. Clone repository and change directory
 git clone <repository-url>
 cd memorize_supporter
 
@@ -129,16 +118,13 @@ nvm use
 # 3. Install dependencies
 npm install
 
-# 4. Run automated setup (.env initialization)
-npm run setup
-
-# 5. Start development server & open browser
+# 4. Start development server & open browser
 npm run dev
 ```
 
 ### 4. Environment Variables
 
-Application configuration and policies are stored in `.env`. The automated setup script creates this file from `.env.example` if it does not already exist.
+Application configuration and policies can be customized via `.env`. Safe default fallbacks are built directly into the codebase so the app runs without a `.env` file. To customize limits or pass marks, create a `.env` from the example template:
 
 ```bash
 cp .env.example .env

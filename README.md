@@ -56,22 +56,21 @@
 
 ### 🚀 시작하기
 
-#### ⚡ 초간단 1초 실행 (권장)
-복잡한 명령어 입력 없이, 운영체제에 맞는 실행 파일을 **더블 클릭**하기만 하면 의존성 설치, 환경 설정 및 서버 실행이 한 번에 완료됩니다.
-
-* **Windows**: [`start.bat`](file:///Users/idenrai/project/memorize_supporter/start.bat) 더블 클릭
-* **macOS / Linux**: [`start.sh`](file:///Users/idenrai/project/memorize_supporter/start.sh) 더블 클릭 (또는 터미널에서 `./start.sh` 실행)
+#### 🌐 웹에서 바로 사용하기 (추천)
+별도의 설치나 복제 없이 브라우저에서 바로 플래시카드를 학습하고 커스텀 덱을 가져올 수 있습니다:
+👉 **[라이브 데모 바로가기 (Live Demo)](https://memorize-supporter.vercel.app/)**
 
 ---
 
-#### 💻 터미널 명령어로 실행하기
-터미널을 선호하시는 경우 단 두 줄의 명령어로 시작할 수 있습니다:
+#### 💻 로컬 개발 환경 실행
+저장소를 클론하여 로컬에서 개발 및 기동할 경우 단 두 줄의 명령어로 시작할 수 있습니다:
 ```bash
 git clone <repository-url>
 cd memorize_supporter
-npm install && npm run setup   # 환경 초기화
+npm install
 npm run dev                    # 개발 서버 및 브라우저 자동 실행
 ```
+*(환경 변수 커스터마이징이 필요한 경우 `cp .env.example .env` 후 수정하실 수 있습니다.)*
 
 ---
 
@@ -86,12 +85,11 @@ npm run dev                    # 개발 서버 및 브라우저 자동 실행
 
 ---
 
-#### 🛠 고급/수동 설치 절차 (상세)
+#### 🛠 수동 설치 절차 (상세)
 직접 단계를 하나씩 수행하고 싶은 경우:
 1. `nvm use`
 2. `npm install`
-3. `npm run setup`
-4. `npm run dev`
+3. `npm run dev`
 
 ---
 
@@ -154,21 +152,21 @@ npm run build       # Next.js Turbopack 프로덕션 빌드
 
 ### 🚀 Getting Started
 
-#### ⚡ 1-Click Launch (Recommended)
-No terminal setup needed. Simply double-click the launcher script for your operating system to automatically install dependencies, initialize the environment, and start the application:
-
-* **Windows**: Double-click [`start.bat`](file:///Users/idenrai/project/memorize_supporter/start.bat)
-* **macOS / Linux**: Double-click [`start.sh`](file:///Users/idenrai/project/memorize_supporter/start.sh) (or run `./start.sh` in terminal)
+#### 🌐 Try It Live (Recommended)
+No local installation required. Study flashcards and import custom decks instantly in your browser:
+👉 **[Launch Live Demo](https://memorize-supporter.vercel.app/)**
 
 ---
 
-#### 💻 Launch via Terminal
+#### 💻 Local Development Setup
+Clone the repository and run the local development server in two simple commands:
 ```bash
 git clone <repository-url>
 cd memorize_supporter
-npm install && npm run setup   # Automatically sets up .env and environment
+npm install
 npm run dev                    # Starts development server and opens browser
 ```
+*(To customize environment variables, copy `.env.example` via `cp .env.example .env`)*
 
 ---
 
@@ -187,8 +185,7 @@ Private study materials and custom flashcards can be studied with complete priva
 If you prefer running steps manually:
 1. `nvm use`
 2. `npm install`
-3. `npm run setup` (or `cp .env.example .env`)
-4. `npm run dev`
+3. `npm run dev`
 
 ---
 
