@@ -28,11 +28,7 @@
     "**/.data/**": true,
     "**/node_modules/**": true
   },
-  // 5. Prisma 포맷팅 지원
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  },
-  // 6. cSpell 맞춤법 검사 도메인 사전 등록
+  // 5. cSpell 맞춤법 검사 도메인 사전 등록
   "cSpell.words": [
     "antigravity",
     "Ebbinghaus",

@@ -22,10 +22,9 @@
 | **Styling** | Tailwind CSS v4 | `@tailwindcss/postcss`, `@theme` 토큰 기반 CSS 변수 바인딩 |
 | **Animations & Icons** | Framer Motion / Lucide React | 12.x / 최신 아이콘 세트 |
 | **State Management** | RSC / React Hooks / Zustand | 5.x (클라이언트 전역 상태 보조) |
-| **Backend & Actions** | Next.js Server Actions | `src/actions/` (`safe-action.ts` + Zod 스키마 검증) |
+| **Backend & Actions** | Next.js Server Actions / API Routes | `src/actions/` (`safe-action.ts` + Zod 스키마 검증) |
 | **Schema Validation** | Zod | 3.x/4.x (런타임-컴파일타임 일체형 검증) |
-| **Database & ORM** | SQLite / Prisma ORM | Prisma 6.19.x (로컬 `.data/dev.db`) |
-| **Client Storage (BYOD)** | IndexedDB (Native Web API) | Schema v2, Connection Pooling, BroadcastChannel Sync, Anti-Eviction (`navigator.storage.persist`) |
+| **Database & Client Storage** | IndexedDB (Native Web API) | 100% Local-First 영구 보관 (Zero-Server Database, Schema v2, Connection Pooling, BroadcastChannel Sync) |
 | **Toast & Feedback** | Sonner | 2.x (비동기 액션 성공/실패 토스트) |
 | **Internationalization** | Next.js Middleware + i18n | `negotiator`, `@formatjs/intl-localematcher`, `useT()` |
 
@@ -39,9 +38,6 @@
 - **Fast Dev Check:** `npm run check:fast` (Node 버전 → Type-Check → Lint 정적 분석 3초 만에 완료, 코딩 루프 토큰 절약)
 - **Build for Production:** `npm run build` (Turbopack + Next.js 프로덕션 번들링)
 - **Fail Fast Full Check:** `npm run check` (Node 버전 → Type-Check → Lint → Build 순차적 조기 중단 파이프라인)
-- **Database Push (Schema Sync):** `npx prisma db push`
-- **Prisma Studio (DB GUI):** `npx prisma studio`
-- **ETL Data Import Script:** `npm run etl` (`input/` 폴더 내 JSON 덱을 SQLite DB로 적재)
 
 ---
 
@@ -56,10 +52,10 @@ memorize_supporter/
 ├── .vscode/
 │   └── settings.json           # ESLint 자동 포맷팅, 파일 네스팅, cSpell 사전 관리
 ├── input/                      # 오프라인 JSON 덱 데이터 및 템플릿 파일
-├── prisma/
-│   └── schema.prisma           # Prisma 스키마 (Deck, Card, LearningProgress, ExamResult, ExamResultDetail)
+│   ├── public/                 # 공개 샘플 덱
+│   └── templates/              # 덱 생성 템플릿
 ├── src/
-│   ├── actions/                # Next.js Server Actions (deck.ts, progress.ts, records.ts)
+│   ├── actions/                # Next.js Server Actions (i18n 등)
 │   ├── app/                    # Next.js App Router
 │   │   ├── [lang]/             # 다국어 동적 라우트 세그먼트 (ko, en, ja)
 │   │   │   ├── data-management/    # 덱 업로드/수정/삭제 관리 페이지
@@ -71,25 +67,25 @@ memorize_supporter/
 │   │   │   ├── loading.tsx         # 전역 로딩 스켈레톤
 │   │   │   └── page.tsx            # 메인 대시보드 (덱 갤러리)
 │   │   ├── globals.css         # Tailwind CSS v4 테마 및 커스텀 유틸리티
-│   │   └── icon.png            # 파비콘 및 앱 아이콘
+│   │   ├── icon.tsx            # 동적 파비콘 및 앱 아이콘
+│   │   └── apple-icon.tsx      # 애플 터치 아이콘
 │   ├── components/             # 프레젠테이션 및 인터랙티브 UI 컴포넌트
-│   │   ├── cards/              # DeckPlayer, QuizHeader, ExamResultView, PracticeQuizCard 등
-│   │   ├── home/               # DeckGallery, DeckList, SearchAndFilter
+│   │   ├── cards/              # DeckPlayer, DeckClientLoader, QuizHeader, ExamResultView 등
+│   │   ├── home/               # DeckGallery, SearchAndFilter
 │   │   ├── layout/             # Header, Navigation
-│   │   ├── management/         # DeckTable, UploadZone
+│   │   ├── management/         # DeckTable, UploadZone, BackupRestoreCard
 │   │   ├── preparation/        # DataPreparationClient, JsonEditor, TemplateSelector
 │   │   └── ui/                 # CustomSelect 등 공통 UI 요소
 │   ├── hooks/                  # 커스텀 리액트 훅 (useT.ts 등)
-│   ├── i18n/                   # 다국어 딕셔너리 (ko.json, en.json, ja.json) 및 타입
+│   ├── i18n/                   # 다국어 딕셔너리 (ko.ts, en.ts, ja.ts) 및 타입
 │   ├── lib/                    # 핵심 인프라 및 도메인 파서
 │   │   ├── card-parser.ts      # Zod 기반 도메인 파서 (단일 진실 공급원)
-│   │   ├── prisma.ts           # 전역 Prisma Client 싱글톤
+│   │   ├── client-db.ts        # IndexedDB 클라이언트 저장소 파사드
+│   │   ├── db/                 # 도메인별 DB 서브모듈 (deck, card, progress, exams, backup)
 │   │   ├── safe-action.ts      # 타입 안전 Server Action 래퍼
 │   │   └── schemas.ts          # Zod 콘텐츠 스키마 (Flashcard, PracticeQuiz, Vocabulary)
-│   ├── scripts/                # 백그라운드 ETL 스크립트 (etl.ts)
 │   ├── types/                  # 공통 도메인 타입 정의 (card.ts, deck.ts, record.ts)
 │   └── proxy.ts (middleware)  # 다국어 로캘 감지 및 리다이렉트 미들웨어
-├── .data/                      # 로컬 SQLite DB 디렉토리 (Git 추적 제외)
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -100,16 +96,16 @@ memorize_supporter/
 ## 5. Core Architectural Principles (아키텍처 핵심 원칙)
 
 ### 1) Type Safety: "Parse, Don't Validate"
-- 데이터베이스(Prisma)의 원시 직렬화 필드(`Card.content: string`)는 컴포넌트나 액션에서 임의로 형변환하거나 `as unknown as CardData` 같은 강제 단언을 절대 사용하지 않습니다.
+- JSON 덱 및 데이터베이스의 원시 직렬화 필드(`Card.content: string`)는 컴포넌트나 액션에서 임의로 형변환하거나 `as unknown as CardData` 같은 강제 단언을 절대 사용하지 않습니다.
 - 반드시 `src/lib/card-parser.ts`의 `parseCardData(card)` 및 `parseCardDataList(cards)`를 통해 Zod 런타임 검증을 통과한 데이터만 `CardData` 판별 유니온 타입으로 승격시킵니다.
 
-### 2) Safe Server Actions
-- 모든 백엔드 비즈니스 로직 및 뮤테이션은 `src/actions/` 내 Server Actions로 구현합니다.
-- `src/lib/safe-action.ts`의 `actionClient`를 활용하여 진입점에서 Zod 스키마로 입력을 무결하게 검증하고, 구조화된 `ActionState<T>` 형태로 클라이언트에 안전하게 결과를 전달합니다.
+### 2) Safe Server Actions & Client Isolation
+- 민감한 서버 로직은 `src/actions/` 내 격리하고, `src/lib/safe-action.ts`의 `actionClient`를 활용하여 Zod 스키마로 입력을 무결하게 검증합니다.
+- 사용자 개인 데이터는 서버로 전송하지 않고 브라우저 IndexedDB에만 보관하는 Local-First BYOD 원칙을 엄격히 준수합니다.
 
 ### 3) Server Components (RSC) vs Client Components 분리
-- 데이터 패칭(Prisma 직접 조회) 및 메타데이터 생성은 서버 컴포넌트(`page.tsx`)에서 최우선으로 처리합니다.
-- 클라이언트 컴포넌트(`"use client"`)는 브라우저 이벤트(클릭, 입력), `framer-motion` 애니메이션, React 19 `useTransition` 비동기 상태 관리가 필요한 경우에만 한정하여 작성합니다.
+- 메타데이터 생성 및 정적 레이아웃은 서버 컴포넌트(`page.tsx`)에서 최우선으로 처리합니다.
+- 브라우저 IndexedDB 쿼리, 상태 기반 상호작용, `framer-motion` 애니메이션, React 19 `useTransition` 비동기 상태 관리는 클라이언트 컴포넌트(`DeckClientLoader`, `UploadZone` 등)에서 수행합니다.
 
 ### 4) Tailwind CSS v4 캐노니컬 스타일링 표준
 - 그라디언트는 `bg-gradient-to-*` 대신 **`bg-linear-to-*`**를 사용합니다.
