@@ -13,13 +13,13 @@
 - **목적**: 사용자가 플래시카드(핀포인트 팁), 객관식 문제, 영단어 등을 효율적으로 암기할 수 있도록 돕는 범용 암기 애플리케이션입니다. 인지 과학적 원리(Active Recall, Spaced Repetition)와 포커스 모드 디자인을 채택하여 학습 효율을 극대화합니다.
 - **핵심 컴포넌트**:
   - `DeckGallery`: `useDeferredValue`를 활용한 렌더링 최적화와 함께 실시간 덱 검색 및 시리즈 필터링을 담당하는 클라이언트 컴포넌트
-  - `ClientDeckDropzone`: 서버 전송 없이 브라우저 IndexedDB로 개인 비공개 덱을 즉시 적재하는 드래그 앤 드롭 파일 임포터
+  - `ClientDeckDropzone`: 서버 전송 없이 브라우저 IndexedDB로 개인 커스텀 덱을 즉시 적재하는 드래그 앤 드롭 파일 임포터
   - `DeckPlayer` 및 세부 카드 컴포넌트들(`Flashcard`, `VocabularyCard`, `PracticeQuizCard`): 프론트엔드 인터랙티브 카드 렌더러 (마이크로 애니메이션, 피드백 처리)
   - `DeckClientLoader`: 로컬 전용 덱 접근 시 IndexedDB로부터 카드를 로드하여 서버와 동일한 SRS 우선순위로 플레이어를 구동하는 클라이언트 로더
   - `ExamResultView`: 문항별 오답 상세 복습, 시각적 선택지 비교 및 '틀린 문제만 다시 풀기'를 지원하는 시험 결과 뷰어
   - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어
   - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 템플릿을 생성/검증하는 관리 도구
-  - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 비공개 기출문제, 망각 곡선 진도 및 모의고사 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
+  - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
   - `SQLite & Prisma`: 오프라인(로컬 파일) 환경에서 동작하는 경량 데이터 레이어
   - `ETL Script`: 원본 문서(JSON)를 읽고 파싱하여 DB에 밀어넣는(Upsert) 데이터 파이프라인 스크립트
   - `CardParser` (`src/lib/card-parser.ts`): DB 원시 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
@@ -108,8 +108,8 @@ sequenceDiagram
 ### 5. Local-First BYOD 아키텍처 및 개인정보 보호 (BYOD Architecture)
 
 - **제로 서버 BYOD(Bring Your Own Data) 원칙**:
-  - 저작권이 있는 자격증 기출문제나 비공개 문제집은 웹 서버에 배포할 수 없습니다.
-  - 본 애플리케이션은 사용자가 직접 준비한 JSON 덱을 드래그 앤 드롭하여 브라우저 로컬 IndexedDB에 직접 적재하는 Local-First BYOD 아키텍처를 제공하며, 서버로는 단 1바이트의 문제 데이터도 전송되지 않습니다.
+  - 사용자의 개인 소장 학습 데이터, 비공개 노트 및 맞춤형 문제집은 중앙 웹 서버에 업로드하지 않고도 온디바이스에서 완전히 독립적으로 동작해야 합니다.
+  - 본 애플리케이션은 사용자가 직접 준비한 JSON 덱을 드래그 앤 드롭하여 브라우저 로컬 IndexedDB에 직접 적재하는 Local-First BYOD 아키텍처를 제공하며, 서버로는 단 1바이트의 사용자 학습 데이터도 전송되지 않습니다.
 
 - **IndexedDB 스토리지 계층 (`src/lib/client-db.ts`)**:
   - **오브젝트 스토어 구성**: `decks`(덱 메타데이터), `cards`(카드 내용), `progress`(에빙하우스 SRS 진도), `exam_results`(모의고사 점수 및 풀이 기록).
@@ -192,7 +192,7 @@ This document defines the system architecture of the `memorize_supporter` projec
   - `ExamResultView`: Comprehensive exam review interface supporting question-by-question replay, visual color-coded answer comparison, and "Retry Incorrect Only" session trigger.
   - `LocalRecordsView`: Unified exam records interface for on-device quiz history, featuring local record deletion and one-click JSON backup export.
   - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, and real-time schema validation.
-  - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private proprietary exams, forgetting curves, and quiz scores.
+  - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private user study materials, forgetting curves, and quiz scores.
   - `SQLite & Prisma`: Lightweight data layer operating in an offline (local file) environment.
   - `ETL Script`: Data pipeline script that reads original documents (JSON), parses them, and pushes them (Upsert) into the DB.
   - `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
@@ -281,8 +281,8 @@ sequenceDiagram
 ### 5. Local-First BYOD Architecture & Privacy Protection
 
 - **Zero-Server BYOD (Bring Your Own Data) Principle**:
-  - Proprietary certification questions (dumps, copyrighted study material) cannot be legally published on public web servers.
-  - The application solves this by providing a Local-First BYOD architecture where decks and cards are imported directly into the user's browser IndexedDB via drag-and-drop, with 0 bytes transmitted to any server.
+  - User study materials, private notes, and custom flashcards must remain completely private and operable on-device without remote cloud transmission.
+  - The application provides a Local-First BYOD architecture where decks and cards are imported directly into the user's browser IndexedDB via drag-and-drop, with 0 bytes transmitted to any server.
 
 - **IndexedDB Storage Layer (`src/lib/client-db.ts`)**:
   - **Object Stores**: `decks` (deck metadata), `cards` (card contents), `progress` (Ebbinghaus SRS state), `exam_results` (quiz scores and answers).
@@ -291,7 +291,7 @@ sequenceDiagram
   - **Schema Validation**: All imported JSON strings are validated at runtime against Zod `DeckSchema` before being persisted.
 
 - **Storage Persistence & Diagnostics (Anti-Eviction & Diagnostics)**:
-  - **Persistence Guard (`requestPersistentStorage`)**: Integrates `navigator.storage.persist()` to protect proprietary study material from Safari ITP 7-day inactivity eviction and browser storage pressure wiping.
+  - **Persistence Guard (`requestPersistentStorage`)**: Integrates `navigator.storage.persist()` to protect user study material and quiz progress from Safari ITP 7-day inactivity eviction and browser storage pressure wiping.
   - **Quota Diagnostics (`getStorageEstimate`)**: Leverages `navigator.storage.estimate()` to inspect storage usage (MB) and persistence status directly in the user interface.
 
 - **Multi-Tab Reactive Synchronization (`BroadcastChannel`)**:

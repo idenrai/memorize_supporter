@@ -12,8 +12,7 @@
 
 - **다양한 학습 모드**: 플래시카드(Flashcards), 4지선다형 연습 퀴즈(Practice Quiz), 단어장(Vocabulary) 지원
 - **Active Recall & SRS (간격 반복)**: 능동적 인출 훈련 및 결과(Hard/Easy)에 따른 에빙하우스 망각 곡선 기반 자동 복습 주기 계산
-- **시험 모드 및 오답 다시 풀기 (Exam Mode & Retry Incorrect)**: 실전 퀴즈 풀이 후 점수 통계 확인 및 틀린 문제만 골라 즉시 재응시하는 피드백 루프
-- **브라우저 로컬 저장 모드 (BYOD: Bring Your Own Data)**: 저작권 있는 비공개 기출문제를 드래그&드롭하여 서버 전송 없이 브라우저(IndexedDB)에만 안전하게 저장하고 학습
+- **브라우저 로컬 저장 모드 (BYOD: Bring Your Own Data)**: 개인 소장 학습 데이터(JSON)를 드래그&드롭하여 서버 전송 없이 브라우저(IndexedDB)에만 안전하게 저장하고 학습
 - **로컬 데이터 백업/복원 및 관리 (Backup, Restore & Delete)**: 기기에 저장된 시험 기록 및 덱을 개별/일괄 삭제하고, 원클릭으로 종합 JSON 백업 파일 다운로드 및 복원(Restore)
 - **글로벌 다국어 지원 (i18n)**: 동적 라우팅 기반으로 한국어(KO), 영어(EN), 일본어(JA) 완벽 지원 (Hydration Mismatch 방지)
 - **JSON 기반 데이터 파이프라인**: `input/` 디렉토리에 JSON 파일만 넣으면 `npm run etl`을 통해 기존 학습 기록을 보존하며 스마트 동기화
@@ -71,14 +70,14 @@ npm run dev                    # 개발 서버 및 브라우저 자동 실행
 
 ---
 
-#### 🔒 자격증 비공개 기출문제 공유 & Vercel 배포 가이드 (BYOD)
-자격증 기출문제(덤프, 상용 문제 등)는 저작권상 웹 서버에 공개할 수 없습니다. 본 어플리케이션은 **브라우저 로컬 저장(BYOD: Bring Your Own Data)** 모드를 지원하므로, 지인들에게 안전하고 간편하게 배포할 수 있습니다.
+#### 🔒 개인 학습 데이터 프라이버시 & BYOD 배포 가이드
+개인 소장 학습 데이터나 비공개 메모는 웹 서버에 업로드하지 않고도 안전하게 학습할 수 있어야 합니다. 본 애플리케이션은 **브라우저 로컬 저장(BYOD: Bring Your Own Data) Local-First** 모드를 지원하므로, 서버에 민감한 데이터를 저장하지 않고도 지인이나 스터디원과 함께 웹 앱을 활용할 수 있습니다.
 
-1. **Vercel 웹 배포**: GitHub 저장소를 Vercel에 연결하여 배포합니다. (서버에는 기출문제가 전혀 없으므로 100% 안전합니다.)
-2. **기출문제 전달**: 지인/스터디원에게 카카오톡이나 이메일로 비공개 기출문제 JSON 파일(예: `aws_sap.json`)을 전달합니다.
-3. **브라우저에서 즉시 실행**: 지인은 배포된 Vercel 웹사이트에 접속한 뒤, 홈 화면의 **"📥 덱 파일(JSON) 가져오기"** 영역에 해당 파일을 드래그&드롭하기만 하면 끝납니다!
-   * 파일이 서버로 전송되지 않고 **지인 본인의 브라우저(IndexedDB)**에 안전하게 저장됩니다.
-   * 브라우저를 껐다 켜도 학습 진도와 모의고사 오답 기록이 영구적으로 보존됩니다.
+1. **Vercel 웹 배포**: GitHub 저장소를 Vercel에 연결하여 정적/서버리스 웹 애플리케이션으로 배포합니다. (서버에는 사용자 개인 데이터가 일체 저장되지 않습니다.)
+2. **커스텀 덱 준비**: 본인이 학습할 문제나 단어장이 담긴 JSON 파일(예: `custom_deck.json`)을 준비합니다.
+3. **브라우저에서 즉시 실행**: 배포된 Vercel 웹사이트에 접속한 뒤, 홈 화면의 **"📥 덱 파일(JSON) 가져오기"** 영역에 해당 파일을 드래그&드롭하기만 하면 끝납니다!
+   * 파일이 서버로 전송되지 않고 **사용자 본인의 브라우저(IndexedDB)**에 안전하게 저장됩니다.
+   * 브라우저를 껐다 켜도 학습 진도와 시험 기록이 영구적으로 보존됩니다.
 
 ---
 
@@ -111,8 +110,7 @@ npm run build       # Next.js Turbopack 프로덕션 빌드
 
 - **Multiple Study Modes**: Flashcards, Practice Quiz (4-choice questions), and Vocabulary.
 - **Active Recall & Spaced Repetition (SRS)**: Promotes proactive knowledge retrieval and automatically schedules optimal review intervals based on difficulty (Hard/Easy).
-- **Exam Mode & Retry Incorrect**: Full quiz scoring, question breakdown, and an instant smart feedback loop to re-test only incorrect answers.
-- **Local-First BYOD Mode (Bring Your Own Data)**: Drag-and-drop proprietary exam JSON files directly into browser IndexedDB without sending data to servers.
+- **Local-First BYOD Mode (Bring Your Own Data)**: Drag-and-drop custom study JSON files directly into browser IndexedDB without sending data to servers.
 - **On-Device Data Backup, Restore & Deletion**: Clean deletion of local decks/records and one-click JSON backup export and restoration.
 - **Full Internationalization (i18n)**: URL-based routing supporting Korean (KO), English (EN), and Japanese (JA) without hydration mismatch.
 - **JSON-Driven Data Pipeline**: Drop JSON files into the `input/` folder and run `npm run etl` to sync decks while preserving existing user study progress.
@@ -169,14 +167,14 @@ npm run dev                    # Starts development server and opens browser
 
 ---
 
-#### 🔒 Private Certification Exam Sharing & Vercel Deployment (BYOD)
-Proprietary certification questions (dumps, copyrighted exams) cannot be publicly hosted on cloud servers. This application supports **BYOD (Bring Your Own Data)** browser local storage mode:
+#### 🔒 User Privacy & BYOD Deployment Guide (Local-First)
+Private study materials and custom flashcards can be studied with complete privacy without uploading to any remote cloud server. This application supports **BYOD (Bring Your Own Data) Local-First** mode:
 
-1. **Deploy to Vercel**: Connect your GitHub repository to Vercel. (The server contains zero private exam data, ensuring 100% legal compliance).
-2. **Distribute Exam Files**: Share your private exam JSON file (e.g., `aws_sap.json`) with peers/study group members directly via private messenger or email.
-3. **Import & Run in Browser**: Users navigate to your deployed web app and drag-and-drop the JSON file into the **"Import Deck (JSON)"** dropzone on the home screen.
+1. **Deploy to Vercel**: Connect your GitHub repository to Vercel to host the web client. (The server contains zero user data, guaranteeing complete privacy and zero data liability).
+2. **Prepare Custom Decks**: Prepare your study questions or vocabulary in JSON format (e.g., `custom_deck.json`).
+3. **Import & Run in Browser**: Navigate to your deployed web app and drag-and-drop the JSON file into the **"Import Deck (JSON)"** dropzone on the home screen.
    * Cards are stored securely inside the **user's local browser (IndexedDB)**.
-   * Study progress, forgetting curves, and exam scores persist permanently across browser restarts without ever uploading to any cloud server.
+   * Study progress, review schedules, and exam scores persist permanently across browser restarts without ever uploading to any cloud server.
 
 ---
 

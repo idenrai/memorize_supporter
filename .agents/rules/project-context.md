@@ -125,5 +125,5 @@ memorize_supporter/
 - 클래스명이나 도메인 용어에 오탈자가 발생하지 않도록 확인하고, 프로젝트 도메인 단어는 `.vscode/settings.json`의 `cSpell.words`에 체계적으로 등록하여 관리합니다.
 
 ### 7) Local-First Architecture & Privacy (BYOD)
-- 비공개 기출문제 등 민감 데이터의 저작권 및 프라이버시 보호를 위해 클라이언트 측 로컬 우선(Local-First) 스토리지를 완벽하게 지원합니다.
+- 사용자 개인 소장 학습 데이터의 프라이버시 보호와 온디바이스 독립 구동을 위해 클라이언트 측 로컬 우선(Local-First) 스토리지를 완벽하게 지원합니다.
 - 브라우저 데이터베이스([`src/lib/client-db.ts`](file:///Users/idenrai/project/memorize_supporter/src/lib/client-db.ts))는 외부 라이브러리 의존성(0 KB) 없이 순수 브라우저 네이티브 IndexedDB를 사용하며, `.agents/skills/local-first/SKILL.md` 가이드라인에 따라 커넥션 싱글톤 풀링(`cachedDbPromise`), Safari ITP 7일 비활성 삭제 방어(`requestPersistentStorage`), `BroadcastChannel` 기반 탭 간 실시간 IPC 동기화, 백업/복원(JSON)을 준수합니다.

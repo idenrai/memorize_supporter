@@ -174,7 +174,7 @@ ${explanation || 'なし'}
     dropPrompt: "JSONデッキファイルをドラッグまたはクリックして選択",
     savingPrompt: "ブラウザに保存中...",
     privacyNotice: "サーバーには送信されず、お使いの端末ブラウザに安全に保存されます。",
-    securityTag: "個人問題・非公開デッキを保護 (ローカル専用)",
+    securityTag: "個人学習データ・非公開デッキを保護 (ローカル専用)",
     jsonOnlyError: "JSONファイルのみアップロード可能です。",
     fileReadError: "ファイルの読み込み中にエラーが発生しました。",
     close: "閉じる",

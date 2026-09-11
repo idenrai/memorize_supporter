@@ -174,7 +174,7 @@ ${explanation || '없음'}
     dropPrompt: "덱 파일(JSON)을 드래그하거나 클릭하여 선택",
     savingPrompt: "브라우저에 저장 중...",
     privacyNotice: "서버로 전송되지 않고 본인 브라우저(내 기기)에 안전하게 저장됩니다.",
-    securityTag: "개인 기출문제·비공개 덱 완벽 보호 (Local-Only)",
+    securityTag: "개인 학습 데이터·커스텀 덱 완벽 보호 (Local-Only)",
     jsonOnlyError: "JSON 파일만 업로드할 수 있습니다.",
     fileReadError: "파일을 읽는 중 오류가 발생했습니다.",
     close: "닫기",
