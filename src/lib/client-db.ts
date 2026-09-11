@@ -662,6 +662,34 @@ export async function getLocalExamResults(deckId?: string): Promise<LocalExamRes
 }
 
 /**
+ * Get a single local exam result by ID
+ */
+export async function getLocalExamResult(resultId: string): Promise<LocalExamResult | null> {
+  if (typeof window === "undefined") return null
+  try {
+    const db = await openDB()
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("exam_results", "readonly")
+      const store = tx.objectStore("exam_results")
+      const req = store.get(resultId)
+
+      req.onsuccess = () => {
+        if (!req.result) return resolve(null)
+        const r = req.result
+        resolve({
+          ...r,
+          createdAt: new Date(r.createdAt as string)
+        })
+      }
+      req.onerror = () => reject(req.error)
+    })
+  } catch (err) {
+    console.warn("Failed to get local exam result:", err)
+    return null
+  }
+}
+
+/**
  * Delete a single local exam result by ID
  */
 export async function deleteLocalExamResult(resultId: string): Promise<boolean> {

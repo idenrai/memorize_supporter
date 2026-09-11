@@ -31,7 +31,7 @@
 | **Language** | [TypeScript 5](https://www.typescriptlang.org/) |
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) (`@tailwindcss/postcss`) |
 | **State & Animation** | [Zustand 5](https://zustand-demo.pmnd.rs/), [Framer Motion 12](https://www.framer.com/motion/) |
-| **Database & ORM** | [SQLite](https://www.sqlite.org/) (로컬 파일 기반), [Prisma ORM 6](https://www.prisma.io/) |
+| **Client Storage** | [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) (100% Local-First 영구 보관), Zero-Server Database |
 | **Icons & Toast** | [Lucide React](https://lucide.dev/), [Sonner](https://sonner.emilkowal.ski/) |
 | **Data Validation** | [Zod](https://zod.dev/) |
 
@@ -52,7 +52,7 @@
 ### 🚀 시작하기
 
 #### ⚡ 초간단 1초 실행 (권장)
-복잡한 명령어 입력 없이, 운영체제에 맞는 실행 파일을 **더블 클릭**하기만 하면 의존성 설치, 환경 설정, 데이터베이스 초기화 및 서버 실행이 한 번에 완료됩니다.
+복잡한 명령어 입력 없이, 운영체제에 맞는 실행 파일을 **더블 클릭**하기만 하면 의존성 설치, 환경 설정 및 서버 실행이 한 번에 완료됩니다.
 
 * **Windows**: [`start.bat`](file:///Users/idenrai/project/memorize_supporter/start.bat) 더블 클릭
 * **macOS / Linux**: [`start.sh`](file:///Users/idenrai/project/memorize_supporter/start.sh) 더블 클릭 (또는 터미널에서 `./start.sh` 실행)
@@ -64,14 +64,14 @@
 ```bash
 git clone <repository-url>
 cd memorize_supporter
-npm install && npm run setup   # .env 복사, DB 생성, ETL 자동 완결
+npm install && npm run setup   # 환경 초기화
 npm run dev                    # 개발 서버 및 브라우저 자동 실행
 ```
 
 ---
 
 #### 🔒 개인 학습 데이터 프라이버시 & BYOD 배포 가이드
-개인 소장 학습 데이터나 비공개 메모는 웹 서버에 업로드하지 않고도 안전하게 학습할 수 있어야 합니다. 본 애플리케이션은 **브라우저 로컬 저장(BYOD: Bring Your Own Data) Local-First** 모드를 지원하므로, 서버에 민감한 데이터를 저장하지 않고도 지인이나 스터디원과 함께 웹 앱을 활용할 수 있습니다.
+개인 소장 학습 데이터나 비공개 메모는 웹 서버에 업로드하지 않고도 안전하게 학습할 수 있어야 합니다. 본 애플리케이션은 **100% 브라우저 로컬 저장(BYOD: Bring Your Own Data) Local-First** 모드로 동작하므로, 서버에 민감한 데이터를 저장하지 않고도 지인이나 스터디원과 함께 웹 앱을 활용할 수 있습니다.
 
 1. **Vercel 웹 배포**: GitHub 저장소를 Vercel에 연결하여 정적/서버리스 웹 애플리케이션으로 배포합니다. (서버에는 사용자 개인 데이터가 일체 저장되지 않습니다.)
 2. **커스텀 덱 준비**: 본인이 학습할 문제나 단어장이 담긴 JSON 파일(예: `custom_deck.json`)을 준비합니다.
@@ -85,7 +85,7 @@ npm run dev                    # 개발 서버 및 브라우저 자동 실행
 직접 단계를 하나씩 수행하고 싶은 경우:
 1. `nvm use`
 2. `npm install`
-3. `npm run setup` (또는 `cp .env.example .env` 후 `npx prisma db push && npm run etl`)
+3. `npm run setup`
 4. `npm run dev`
 
 ---

@@ -75,34 +75,32 @@
   - **액션 래퍼 (`safe-action.ts`)**: 모든 Server Actions는 중앙화된 HOC(High-Order Component)로 감싸져 내부 `try/catch` 에러를 일괄 처리합니다. 이를 통해 모든 비즈니스 로직에서 에러 핸들링 코드를 제거하고, 애플리케이션 전체에 일관된 `{ success, message, data }` 형태의 응답을 보장합니다.
   - **공유 스키마 (Zod)**: 클라이언트의 입력값은 절대 신뢰하지 않습니다. 5MB 용량 제한 검사부터 미식별 필드 제거까지, 모든 페이로드는 비즈니스 로직에 도달하기 전 반드시 재사용 가능한 Zod 스키마(`src/lib/schemas.ts`, `src/schemas/deck.ts`)를 통해 엄격하게 검증됩니다.
 
-- **데이터베이스 및 ORM 연동 방식**:
-  - **SQLite (기본값)**: `.data/memorize.sqlite`에 로컬로 구축되며, 이 파일은 Git 추적에서 제외(`.gitignore`)됩니다.
-  - **PostgreSQL (선택 사항)**: 프로덕션 또는 서버리스 환경을 위해 완벽히 지원됩니다.
-  - **Prisma ORM**: 타입 안정성이 보장된 쿼리를 생성하며, 데이터베이스 스키마 관리를 담당합니다. `src/lib/prisma.ts`에 싱글톤 패턴으로 연결을 유지합니다.
-  - **상세 시험 기록 추적**: `ExamResult` 및 `ExamResultDetail` 테이블을 사용하여 각 세션의 문제별 정오답 기록(사용자가 선택한 오답 포함)을 영구 보존하며, 이후 오답 노트 형태의 리뷰 기능을 제공합니다.
+- **데이터베이스 아키텍처 (100% Zero-Database & Local-First)**:
+  - **Zero-Server Database**: 서버 측 데이터베이스(Prisma, SQLite, PostgreSQL 등)를 일체 사용하지 않으며, 서버리스 환경(Vercel 등)에서의 DB 연결 오류나 500 렌더링 충돌 위험을 원천 차단(0%)합니다.
+  - **브라우저 영구 저장소 (IndexedDB)**: `decks`, `cards`, `progress`, `exam_results`의 모든 데이터는 사용자 브라우저의 클라이언트 저장소(`src/lib/client-db.ts`)에 단일화되어 보관됩니다.
+  - **공개 샘플 덱 (Static Sample Decks)**: 기본 제공되는 공개 샘플 덱(웹 기초, JS 퀴즈, 생활 한국어, 비즈니스 영어)은 `input/public/*.json`에서 서버리스 환경 파일시스템 또는 API(`src/app/api/sample-decks/[deckId]`)를 통해 정적으로 제공됩니다.
+  - **상세 시험 기록 추적**: 각 세션의 문제별 정오답 기록(사용자가 선택한 오답 포함)이 브라우저 IndexedDB의 `exam_results` 스토어에 영구 보존되며, 상세 오답 노트 및 백업/복원 기능을 100% 클라이언트 환경에서 제공합니다.
 
 ### 4. 데이터 파이프라인 (Data Pipeline)
 
-- **커스텀 ETL 파이프라인 (`src/scripts/etl.ts` & Web Upload)**:
-  - 원본 JSON 데이터를 파싱하여 Prisma Client를 통해 DB에 적재합니다. 웹 UI(데이터 관리 탭)의 Drag & Drop 업로드 또한 동일한 무결성 로직을 공유합니다.
-  - **데이터 무결성 보장 (Stable ID & Upsert)**: `crypto` 모듈을 사용해 문항의 텍스트 콘텐츠(Question/Front)를 기반으로 고유한 MD5 해시 식별자를 생성합니다. 이를 통해 카드를 추가하거나 삭제하더라도, 기존 카드의 고유 ID가 유지되어 유저의 망각 곡선 복습 기록(`learningProgress`)이 파괴되지 않고 안전하게 보존(Upsert)됩니다.
-  - 실행 명령어: `npm run etl` (tsx를 통한 TypeScript 스크립트 실행)
+- **클라이언트 사이드 통합 임포트 (`src/lib/client-db.ts` & Web Upload)**:
+  - 사용자가 단어장/퀴즈 JSON 파일을 웹 UI(홈 화면 또는 데이터 관리 탭)에 Drag & Drop하면, 파일이 서버로 전송되지 않고 브라우저 메모리 상에서 Zod 스키마로 즉시 파싱 및 유효성 검증됩니다.
+  - **데이터 무결성 보장 (Stable ID & Upsert)**: 문항의 텍스트 콘텐츠(Question/Front)를 기반으로 고유한 해시 식별자를 생성하여 IndexedDB에 저장합니다. 이를 통해 카드를 추가하거나 수정하더라도 기존 카드의 고유 ID가 유지되어 망각 곡선 복습 기록(`progress`)이 안전하게 보존됩니다.
+  - **다중 탭 실시간 동기화**: `BroadcastChannel`(`memorize_db_events`) API를 통해 여러 탭이 열려 있어도 덱 추가/삭제, 시험 기록 저장 시 모든 탭이 실시간으로 동기화됩니다.
 
 ```mermaid
 sequenceDiagram
-    participant J as JSON Files (input/)
-    participant E as ETL Script (etl.ts)
-    participant C as Crypto Module
-    participant DB as SQLite DB
+    participant U as User (Browser)
+    participant UI as Drag & Drop Dropzone
+    participant IDB as IndexedDB (Client Storage)
+    participant BC as BroadcastChannel
     
-    E->>J: 1. Read JSON Data
-    J-->>E: Return Cards Array
-    loop For each card
-        E->>C: 2. Generate MD5 Hash based on Text
-        C-->>E: Return Stable Hash ID
-        E->>DB: 3. Upsert Card with Hash ID
-        DB-->>E: Success (Preserves Learning Progress)
-    end
+    U->>UI: 1. Drop custom JSON file
+    UI->>UI: 2. Validate with Zod Schema
+    UI->>IDB: 3. Upsert Deck & Cards (Stable Hash ID)
+    IDB-->>UI: 4. Storage Complete
+    UI->>BC: 5. Broadcast "deck_created" Event
+    BC-->>U: 6. All Open Tabs Instantly Updated
 ```
 
 ### 5. Local-First BYOD 아키텍처 및 개인정보 보호 (BYOD Architecture)

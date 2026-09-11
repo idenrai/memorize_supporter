@@ -1,11 +1,9 @@
 import { notFound } from "next/navigation"
 import DeckGallery from "@/components/home/DeckGallery"
-import { getAvailableDecks } from "@/lib/server-decks"
+import { getStaticDecks } from "@/lib/static-decks"
 import { getT } from "@/i18n"
 import { locales, type Locale } from "@/i18n/settings"
 import type { Lang } from "@/i18n/types"
-
-export const dynamic = 'force-dynamic'
 
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
@@ -16,8 +14,8 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 
   const validLang = lang as Lang;
 
-  // Fetch available decks dynamically with database resilience and filesystem fallback
-  const decks = await getAvailableDecks()
+  // Load static sample decks
+  const decks = getStaticDecks()
 
   const t = getT(validLang)
 

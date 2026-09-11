@@ -36,7 +36,21 @@ export default function DeckClientLoader({ deckId, limit, isExamMode, lang }: De
 
     async function loadLocalDeckData() {
       try {
-        const rawCards = await getLocalCards(deckId)
+        let rawCards = await getLocalCards(deckId)
+        if (!rawCards || rawCards.length === 0) {
+          if (!deckId.startsWith("local_")) {
+            try {
+              const res = await fetch(`/api/sample-decks/${deckId}`)
+              if (res.ok) {
+                const data = await res.json()
+                rawCards = data.cards || []
+              }
+            } catch (e) {
+              console.warn("Failed to fetch sample deck:", e)
+            }
+          }
+        }
+
         if (!isMounted) return
 
         if (!rawCards || rawCards.length === 0) {

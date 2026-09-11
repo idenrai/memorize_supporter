@@ -2,7 +2,7 @@
 
 import { useState, useRef, useTransition } from 'react'
 import { Upload } from 'lucide-react'
-import { uploadDeck } from '@/actions/deck'
+import { importJsonToLocalDb } from '@/lib/client-db'
 import { useT } from '@/hooks/useT'
 import { toast } from 'sonner'
 
@@ -26,12 +26,12 @@ export default function UploadZone() {
       
       startTransition(async () => {
         try {
-          const result = await uploadDeck({ jsonData: content, fileName: file.name })
+          const result = await importJsonToLocalDb(content, file.name)
           if (result.success) {
-            toast.success(t.management.uploadSuccess)
+            toast.success(t.local?.importSuccess || t.management.uploadSuccess)
             if (fileInputRef.current) fileInputRef.current.value = ''
           } else {
-            toast.error(t.management.uploadFailed)
+            toast.error(result.error || t.management.uploadFailed)
           }
         } catch {
           toast.error(t.common.error)

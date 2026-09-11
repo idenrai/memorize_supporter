@@ -2,14 +2,11 @@ import { clientConfig } from "./config.client"
 
 /**
  * Server-only configuration object.
- * Inherits clientConfig and adds server-only secrets/tunings.
+ * Inherits clientConfig and adds server-only secrets/limits.
  * DO NOT import this file in Client Components.
  */
 export const serverConfig = {
   ...clientConfig,
-  
-  // Database Tuning
-  dbChunkSize: parseInt(process.env.DB_CHUNK_SIZE || '50', 10),
   
   // Security & Limits (Server-side specific)
   // Maximum number of card result logs in a single exam submission
