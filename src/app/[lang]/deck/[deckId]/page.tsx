@@ -1,9 +1,9 @@
-import prisma from "@/lib/prisma"
 import DeckPlayer from "@/components/cards/DeckPlayer"
 import DeckClientLoader from "@/components/cards/DeckClientLoader"
 import type { CardData } from "@/types/card"
 import type { Metadata } from "next"
 import { parseCardDataList } from "@/lib/card-parser"
+import { getServerDeckCards } from "@/lib/server-decks"
 
 type Props = {
   params: Promise<{ deckId: string; lang: string }>
@@ -35,13 +35,8 @@ export default async function DeckPage({ params, searchParams }: Props) {
   const takeCount = limit && !isNaN(Number(limit)) ? Number(limit) : undefined
   const isExamMode = mode === 'exam'
 
-  // Fetch cards that need review (or haven't been reviewed)
-  // SQLite doesn't have a great way to sort by related fields dynamically if null, 
-  // so we'll fetch them, prioritize in JS, then limit and shuffle.
-  const rawCards = await prisma.card.findMany({
-    where: { deck: deckId },
-    include: { progress: true }
-  })
+  // Fetch cards from DB or fallback to static public JSON files (zero crash in serverless)
+  const rawCards = await getServerDeckCards(deckId)
 
   if (rawCards.length === 0) {
     return (

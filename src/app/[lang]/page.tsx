@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import DeckGallery from "@/components/home/DeckGallery"
-import prisma from "@/lib/prisma"
+import { getAvailableDecks } from "@/lib/server-decks"
 import { getT } from "@/i18n"
 import { locales, type Locale } from "@/i18n/settings"
 import type { Lang } from "@/i18n/types"
@@ -16,26 +16,8 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 
   const validLang = lang as Lang;
 
-  // Fetch available decks dynamically using Next.js Server Components with explicit select
-  const decks = await prisma.deck.findMany({
-    where: {
-      isHidden: false
-    },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      type: true,
-      series: true,
-      createdAt: true,
-      _count: {
-        select: { cards: true }
-      }
-    },
-    orderBy: {
-      createdAt: 'asc'
-    }
-  })
+  // Fetch available decks dynamically with database resilience and filesystem fallback
+  const decks = await getAvailableDecks()
 
   const t = getT(validLang)
 
