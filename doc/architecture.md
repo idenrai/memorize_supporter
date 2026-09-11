@@ -130,11 +130,11 @@ sequenceDiagram
 ### 6. 인프라 및 배포 (Infrastructure & Deployment)
 
 - **배포 환경**:
-  - 기본적으로는 로컬(Self-hosted)에서 `npm run build`로 구동되지만, Vercel 등의 서버리스 호스팅 플랫폼 배포도 완벽하게 지원합니다. (서버리스 배포 시 Turso, Supabase 등 외부 프로덕션 데이터베이스 사용 권장)
+  - 로컬(Self-hosted) 환경뿐만 아니라 Vercel 등의 서버리스 호스팅 플랫폼 배포도 완벽하게 지원합니다. 100% Zero-Database(Local-First) 구조이므로 외부 데이터베이스 커넥션 설정이나 DB 호스팅 비용 없이 정적/서버리스 환경에 즉시 배포 가능합니다.
 - **CI/CD 파이프라인**:
-  - GitHub Actions를 구성하여 Type Check 및 Linting(`npm run lint`)을 수행하고, `input/public/` 폴더에 JSON 파일 푸시 시 자동으로 DB 프로덕션 환경에 `npm run etl`을 수행하는 자동화 파이프라인을 연동할 수 있습니다.
+  - GitHub Actions를 통해 Node 버전 검사, 정적 타입 검사(`npm run type-check`), ESLint 검사(`npm run lint`), Next.js 프로덕션 빌드(`npm run build`)를 자동 수행하여 무결성을 검증합니다.
 - **환경 변수 관리**:
-  - `.env` 파일을 통해 `DATABASE_URL` 등 핵심 변수를 주입받습니다.
+  - `.env` 파일을 통해 업로드 크기 상한(`NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB`), 합격 점수(`NEXT_PUBLIC_PASS_MARK_PERCENT`) 등의 앱 정책 변수를 주입받습니다.
 
 ### 7. 검증 및 Fail Fast 파이프라인 (Verification & Fail Fast Pipeline)
 
@@ -247,26 +247,24 @@ This document defines the system architecture of the `memorize_supporter` projec
 
 ### 4. Data Pipeline
 
-- **Custom ETL Pipeline (`src/scripts/etl.ts` & Web Upload)**:
-  - Parses original JSON data and loads it into the DB via Prisma Client. Web UI drag & drop upload shares the exact same integrity logic.
-  - **Data Integrity Guarantee (Stable ID & Upsert)**: Uses the `crypto` module to generate a unique MD5 hash identifier based on the text content of the question/front. Through this, even if cards are added or deleted, the unique ID of existing cards is maintained, so the user's forgetting curve review record (`learningProgress`) is not destroyed and is safely preserved (Upsert).
-  - Execution command: `npm run etl` (TypeScript script execution via tsx).
+- **Client-Side Unified Import (`src/lib/client-db.ts` & Web Upload)**:
+  - When users drag & drop custom JSON study materials into the Web UI (Upload Zone on the Data Management page), files are decoded and validated in memory using Zod schemas with 0 bytes transmitted to any server.
+  - **Data Integrity Guarantee (Stable ID & Upsert)**: Generates a deterministic MD5 hash identifier based on question/front text content. Even if cards are reorganized or updated, card IDs remain stable, safely preserving Ebbinghaus forgetting curve progress (`progress`).
+  - **Multi-Tab Real-time Synchronization**: The `BroadcastChannel` API (`memorize_db_events`) immediately propagates deck creations, deletions, and exam completions to all open browser tabs without manual page reloads.
 
 ```mermaid
 sequenceDiagram
-    participant J as JSON Files (input/)
-    participant E as ETL Script (etl.ts)
-    participant C as Crypto Module
-    participant DB as SQLite DB
+    participant U as User (Browser)
+    participant UI as Drag & Drop Upload Zone
+    participant IDB as IndexedDB (Client Storage)
+    participant BC as BroadcastChannel
     
-    E->>J: 1. Read JSON Data
-    J-->>E: Return Cards Array
-    loop For each card
-        E->>C: 2. Generate MD5 Hash based on Text
-        C-->>E: Return Stable Hash ID
-        E->>DB: 3. Upsert Card with Hash ID
-        DB-->>E: Success (Preserves Learning Progress)
-    end
+    U->>UI: 1. Drop custom JSON file(s)
+    UI->>UI: 2. Validate with Zod Schema
+    UI->>IDB: 3. Upsert Deck & Cards (Stable Hash ID)
+    IDB-->>UI: 4. Storage Complete
+    UI->>BC: 5. Broadcast "deck_created" Event
+    BC-->>U: 6. All Open Tabs Instantly Updated
 ```
 
 ### 5. Local-First BYOD Architecture & Privacy Protection
@@ -299,11 +297,11 @@ sequenceDiagram
 ### 6. Infrastructure & Deployment
 
 - **Deployment Environment**:
-  - By default, it runs locally (Self-hosted) via `npm run build`, but it fully supports deployment on serverless hosting platforms like Vercel. (When deploying serverless, using an external production database such as Turso or Supabase is recommended).
+  - Runs locally (Self-hosted) via `npm run build` as well as on serverless hosting platforms like Vercel. Because the application adopts a 100% Zero-Database (Local-First) architecture, it requires zero external database connections or DB hosting overhead.
 - **CI/CD Pipeline**:
-  - GitHub Actions can be configured to perform Type Check and Linting (`npm run lint`), as well as automate the ETL pipeline when JSON files are pushed to `input/public/`.
+  - GitHub Actions automates Node version verification, TypeScript checking (`npm run type-check`), ESLint analysis (`npm run lint`), and Next.js production builds (`npm run build`) to ensure repository integrity on every push and pull request.
 - **Environment Variable Management**:
-  - Core variables like `DATABASE_URL` are injected through the `.env` file.
+  - Application limits and policies (such as `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB` and `NEXT_PUBLIC_PASS_MARK_PERCENT`) are configured via `.env`.
 
 ### 7. Verification & Fail Fast Pipeline
 

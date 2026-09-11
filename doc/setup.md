@@ -16,7 +16,7 @@
   nvm use
   ```
 - **패키지 매니저**: `npm >= 10.0.0` (`.npmrc`의 `engine-strict=true` 설정을 통해 요구 버전을 엄격히 강제합니다).
-- **운영 체제**: macOS, Windows, Linux 무관 (로컬 SQLite 파일 데이터베이스를 사용하므로 별도의 외부 DB 설치 불필요).
+- **운영 체제**: macOS, Windows, Linux 무관 (브라우저 네이티브 클라이언트 저장소인 IndexedDB를 사용하므로 별도의 외부 DB 설치 불필요).
 
 ### 2. 원클릭 간편 실행 (One-Click Launchers)
 
@@ -25,7 +25,7 @@
 - **Windows**: [`start.bat`](file:///Users/idenrai/project/memorize_supporter/start.bat) 더블 클릭
 - **macOS / Linux**: [`start.sh`](file:///Users/idenrai/project/memorize_supporter/start.sh) 더블 클릭 (또는 터미널에서 `./start.sh` 실행)
 
-런처 스크립트는 의존성 설치(`npm install`), 환경 변수 및 DB 초기화(`npm run setup`), 개발 서버 실행 및 브라우저 오픈(`npm run dev`)을 원터치로 자동 수행합니다.
+런처 스크립트는 의존성 설치(`npm install`), 환경 변수 초기화(`npm run setup`), 개발 서버 실행 및 브라우저 오픈(`npm run dev`)을 원터치로 자동 수행합니다.
 
 ### 3. 터미널 수동 설치 (Command-Line Setup)
 
@@ -42,7 +42,7 @@ nvm use
 # 3. 의존성 설치
 npm install
 
-# 4. 원스톱 자동 설정 (.env 복사, DB push, 초기 ETL 적재)
+# 4. 원스톱 자동 설정 (.env 복사 및 환경 초기화)
 npm run setup
 
 # 5. 개발 서버 기동 및 브라우저 자동 오픈
@@ -51,7 +51,7 @@ npm run dev
 
 ### 4. 환경 변수 (Environment Variables)
 
-데이터베이스 경로는 `.env` 파일에 정의됩니다. 자동 셋업 스크립트(`npm run setup`)가 실행 시 파일이 없을 경우 `.env.example`로부터 자동 생성합니다.
+앱 설정 및 정책은 `.env` 파일에 정의됩니다. 자동 셋업 스크립트(`npm run setup`)가 실행 시 파일이 없을 경우 `.env.example`로부터 자동 생성합니다.
 
 ```bash
 cp .env.example .env
@@ -59,8 +59,10 @@ cp .env.example .env
 
 | 변수명 | 기본값 | 설명 |
 | :--- | :--- | :--- |
-| `DATABASE_URL` | `file:./.data/memorize.sqlite` | SQLite 로컬 데이터베이스 파일 경로 |
+| `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB` | `5` | JSON 덱 파일 1개당 최대 업로드 허용 크기(MB) |
 | `NEXT_PUBLIC_PASS_MARK_PERCENT` | `80` | 시험 모드 합격 커트라인 백분율 (기본 80%) |
+| `MAX_SESSION_RESULTS` | `2000` | 단일 세션에 유지할 최대 시험 결과 수 |
+| `FAILED_REVIEW_INTERVAL_MINUTES` | `10` | 오답 복습 권장 인터벌 시간(분) |
 
 ### 5. 품질 검증 파이프라인 (Verification & Fail Fast Pipeline)
 
@@ -101,7 +103,7 @@ This document provides comprehensive guides for setting up, installing, running,
   nvm use
   ```
 - **Package Manager**: `npm >= 10.0.0` (Enforced strictly by `.npmrc` via `engine-strict=true`).
-- **Operating System**: macOS, Windows, Linux (Fully local SQLite file database; no external database server like MySQL or PostgreSQL required).
+- **Operating System**: macOS, Windows, Linux (Uses browser-native IndexedDB client storage; no external database server like MySQL or PostgreSQL required).
 
 ### 2. One-Click Launchers
 
@@ -110,7 +112,7 @@ For non-developers or quick runs without manual command-line typing, double-clic
 - **Windows**: Double-click [`start.bat`](file:///Users/idenrai/project/memorize_supporter/start.bat)
 - **macOS / Linux**: Double-click [`start.sh`](file:///Users/idenrai/project/memorize_supporter/start.sh) (or execute `./start.sh` in terminal)
 
-The launcher script automatically installs dependencies (`npm install`), executes initial environment and database setup (`npm run setup`), and starts the development server (`npm run dev`) while opening your default browser.
+The launcher script automatically installs dependencies (`npm install`), executes initial environment setup (`npm run setup`), and starts the development server (`npm run dev`) while opening your default browser.
 
 ### 3. Command-Line Setup
 
@@ -127,7 +129,7 @@ nvm use
 # 3. Install dependencies
 npm install
 
-# 4. Run automated setup (.env, DB push, initial ETL)
+# 4. Run automated setup (.env initialization)
 npm run setup
 
 # 5. Start development server & open browser
@@ -136,7 +138,7 @@ npm run dev
 
 ### 4. Environment Variables
 
-Database configuration is stored in `.env`. The automated setup script creates this file from `.env.example` if it does not already exist.
+Application configuration and policies are stored in `.env`. The automated setup script creates this file from `.env.example` if it does not already exist.
 
 ```bash
 cp .env.example .env
@@ -144,8 +146,10 @@ cp .env.example .env
 
 | Variable | Default Value | Description |
 | :--- | :--- | :--- |
-| `DATABASE_URL` | `file:./.data/memorize.sqlite` | SQLite local database file path |
+| `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB` | `5` | Maximum per-file upload size limit in MB for custom JSON decks |
 | `NEXT_PUBLIC_PASS_MARK_PERCENT` | `80` | Minimum score percentage for passing exam mode |
+| `MAX_SESSION_RESULTS` | `2000` | Maximum number of exam results retained per session |
+| `FAILED_REVIEW_INTERVAL_MINUTES` | `10` | Recommended interval in minutes for reviewing failed questions |
 
 ### 5. Verification & Quality Pipeline
 
