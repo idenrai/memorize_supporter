@@ -14,8 +14,10 @@ export const ko: Translations = {
     offline: "오프라인 모드",
     offlineDesc: "인터넷 연결이 없습니다. 모든 데이터는 기기에 안전하게 저장됩니다.",
     onlineRestored: "온라인 연결이 복구되었습니다.",
+    reload: "새로고침",
     settings: "설정",
     study: "학습하기",
+    updateAvailable: "새로운 버전이 준비되었습니다.",
   },
   home: {
     allCards: "전체 카드",

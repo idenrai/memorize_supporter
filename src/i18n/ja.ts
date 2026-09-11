@@ -14,8 +14,10 @@ export const ja: Translations = {
     offline: "オフラインモード",
     offlineDesc: "インターネット接続がありません。すべてのデータは端末に安全に保存されます。",
     onlineRestored: "オンライン接続が復旧しました。",
+    reload: "再読み込み",
     settings: "設定",
     study: "学習する",
+    updateAvailable: "新しいバージョンが利用可能です。",
   },
   home: {
     allCards: "すべてのカード",

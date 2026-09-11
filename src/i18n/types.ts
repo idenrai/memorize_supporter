@@ -20,8 +20,10 @@ export interface Translations {
     offline: string;
     offlineDesc: string;
     onlineRestored: string;
+    reload: string;
     settings: string;
     study: string;
+    updateAvailable: string;
   };
   home: {
     allCards: string;

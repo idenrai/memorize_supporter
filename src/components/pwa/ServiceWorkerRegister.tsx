@@ -1,10 +1,28 @@
 "use client"
 
 import { useEffect } from "react"
+import { useT } from "@/hooks/useT"
+import { toast } from "sonner"
 
 export default function ServiceWorkerRegister() {
+  const t = useT()
+
   useEffect(() => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
+      return
+    }
+
+    const isDev = process.env.NODE_ENV === "development"
+    const allowDevSw = window.localStorage.getItem("ENABLE_DEV_SW") === "true"
+
+    // In development mode, unregister existing service workers and skip registration
+    // to avoid HMR cache conflicts unless explicitly enabled via localStorage.
+    if (isDev && !allowDevSw) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (const reg of registrations) {
+          reg.unregister()
+        }
+      })
       return
     }
 
@@ -22,7 +40,18 @@ export default function ServiceWorkerRegister() {
                 installingWorker.state === "installed" &&
                 navigator.serviceWorker.controller
               ) {
-                // New or updated content is available in background
+                toast.info(t.common.updateAvailable, {
+                  action: {
+                    label: t.common.reload,
+                    onClick: () => {
+                      if (registration.waiting) {
+                        registration.waiting.postMessage({ type: "SKIP_WAITING" })
+                      }
+                      window.location.reload()
+                    },
+                  },
+                  duration: 10000,
+                })
               }
             })
           }
@@ -38,7 +67,8 @@ export default function ServiceWorkerRegister() {
       window.addEventListener("load", registerSW)
       return () => window.removeEventListener("load", registerSW)
     }
-  }, [])
+  }, [t.common.updateAvailable, t.common.reload])
 
   return null
 }
+
