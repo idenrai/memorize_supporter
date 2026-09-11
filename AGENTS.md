@@ -40,3 +40,4 @@ AI가 특정 도구나 기능이 필요할 때 로드하세요.
 - **Next.js 앱 라우터(App Router), 서버 컴포넌트 및 데이터 패칭 설계 시:** `.agents/skills/nextjs-best-practices/SKILL.md` 읽기
 - **코드를 변경한 후 로컬 런타임(Next.js 환경)에서 직접 검증 및 확인이 필요할 시:** `.agents/skills/next-dev-loop/SKILL.md` 읽기
 - **복잡한 TypeScript 타입 분석, 성능 최적화 및 고급 비즈니스 로직 작성 시:** `.agents/skills/typescript-expert/SKILL.md` 읽기
+- **로컬 퍼스트(Local-First) 아키텍처, 브라우저 저장소(IndexedDB, OPFS) 설계, 다중 탭 동기화 및 오프라인 영구 보관 필요 시:** `.agents/skills/local-first/SKILL.md` 읽기

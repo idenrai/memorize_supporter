@@ -13,6 +13,7 @@ import { CardData, FlashcardContent } from "@/types/card"
 import type { Lang } from "@/i18n/types"
 import { updateProgress } from "@/actions/progress"
 import { saveExamResult } from "@/actions/exam"
+import { updateLocalProgress, saveLocalExamResult } from "@/lib/client-db"
 import { useT } from "@/hooks/useT"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
@@ -21,9 +22,10 @@ interface DeckPlayerProps {
   deckId: string
   cards: CardData[]
   mode?: 'practice' | 'exam'
+  isLocalDeck?: boolean
 }
 
-export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPlayerProps) {
+export default function DeckPlayer({ deckId, cards, mode = 'practice', isLocalDeck = false }: DeckPlayerProps) {
   const t = useT()
   const params = useParams()
   const lang = params.lang as string || 'en'
@@ -44,15 +46,19 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
     setSessionResults(newResults)
     
     if (mode === 'practice') {
-      // Server Action 호출 (UI 블로킹 없이 백그라운드 처리)
       try {
-        const result = await updateProgress({ cardId: card.id, isCorrect, deckId })
-        if (!result.success) {
-          console.error("Failed to update progress:", result.error)
-          toast.error(t.common?.error || "Failed to save progress")
+        if (isLocalDeck) {
+          await updateLocalProgress(card.id, deckId, isCorrect)
+        } else {
+          // Server Action 호출 (UI 블로킹 없이 백그라운드 처리)
+          const result = await updateProgress({ cardId: card.id, isCorrect, deckId })
+          if (!result.success) {
+            console.error("Failed to update progress:", result.error)
+            toast.error(t.common?.error || "Failed to save progress")
+          }
         }
       } catch (e) {
-        console.error("Server action failed:", e)
+        console.error("Progress save failed:", e)
         toast.error(t.common?.error || "Failed to save progress")
       }
     }
@@ -65,10 +71,24 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
         const totalCards = playingCards.length
         const score = totalCards > 0 ? Math.round((correctCount / totalCards) * 100) : 0
         try {
-          const result = await saveExamResult({ deckId, score, total: totalCards, correct: correctCount, sessionResults: newResults })
-          if (!result.success) {
-            console.error("Failed to save exam result:", result.error)
-            toast.error(t.common?.error || "Failed to save exam result")
+          if (isLocalDeck) {
+            await saveLocalExamResult({
+              deckId,
+              score,
+              total: totalCards,
+              correct: correctCount,
+              details: newResults.map(r => ({
+                cardId: r.cardId,
+                isCorrect: r.isCorrect,
+                selectedIndices: r.selectedIndices
+              }))
+            })
+          } else {
+            const result = await saveExamResult({ deckId, score, total: totalCards, correct: correctCount, sessionResults: newResults })
+            if (!result.success) {
+              console.error("Failed to save exam result:", result.error)
+              toast.error(t.common?.error || "Failed to save exam result")
+            }
           }
         } catch(e) {
           console.error("Failed to save exam result exception:", e)
@@ -77,7 +97,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
       }
       setCompleted(true)
     }
-  }, [currentIndex, playingCards, deckId, completed, t.common, mode, sessionResults])
+  }, [currentIndex, playingCards, deckId, completed, t.common, mode, sessionResults, isLocalDeck])
 
   if (cards.length === 0) {
     return (

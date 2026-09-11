@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "local-first": {
+      "source": "oakoss/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/local-first/SKILL.md",
+      "computedHash": "c05356a099367b588be3882372106084afa2873a4435f2982bc3a5aab23370ef"
+    },
     "next-dev-loop": {
       "source": "vercel/next.js",
       "sourceType": "github",

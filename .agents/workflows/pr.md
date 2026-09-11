@@ -39,9 +39,13 @@ Section body in English.
 - Tables: header row in English; add a brief Korean caption line above the table if the purpose is not obvious.
 - Code blocks and file/symbol names: always English only.
 
-### 2. Verify Build
-- `run_command` 도구를 사용하여 `npm run build`를 실행합니다.
-- **에러가 발생할 경우:** 즉시 `.agents/workflows/build-guard.md`를 참고하여 에러의 원인을 파악하고 코드를 수정한 뒤 다시 확인하여 0 에러 상태를 만듭니다.
+### 2. Verify Pipeline (Fail Fast, Fail Cheap)
+- **비용 사다리(Verification Ladder)** 순서에 따라 단계별 검증을 수행합니다:
+  1. `npm run type-check` (정적 타입 무결성 검사, 1.5초)
+  2. `npm run lint` (ESLint 0 에러 / 0 경고 검사, 1.5초)
+  3. `npm run build` (앞 단계 모두 통과 시 최종 프로덕션 번들 빌드)
+  *(또는 `npm run check` 명령으로 원터치 체이닝 검증)*
+- **에러가 발생할 경우:** 즉시 `.agents/workflows/build-guard.md`를 참고하여 에러의 원인을 파악하고 코드를 수정한 뒤 해당 단계부터 재검증하여 0 에러 상태를 만듭니다.
 
 ---
 

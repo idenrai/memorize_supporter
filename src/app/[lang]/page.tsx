@@ -1,18 +1,33 @@
+import { notFound } from "next/navigation"
 import DeckGallery from "@/components/home/DeckGallery"
 import prisma from "@/lib/prisma"
 import { getT } from "@/i18n"
+import { locales, type Locale } from "@/i18n/settings"
 import type { Lang } from "@/i18n/types"
 
-export const revalidate = 60 // Revalidate every 60 seconds (ISR)
+export const dynamic = 'force-dynamic'
 
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  // Fetch available decks dynamically using Next.js Server Components
+
+  if (!locales.includes(lang as Locale)) {
+    notFound();
+  }
+
+  const validLang = lang as Lang;
+
+  // Fetch available decks dynamically using Next.js Server Components with explicit select
   const decks = await prisma.deck.findMany({
     where: {
       isHidden: false
     },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      type: true,
+      series: true,
+      createdAt: true,
       _count: {
         select: { cards: true }
       }
@@ -22,7 +37,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
     }
   })
 
-  const t = getT(lang as Lang)
+  const t = getT(validLang)
 
   return (
     <div className="flex flex-col items-center pt-8 md:pt-12 px-4 sm:px-8">
