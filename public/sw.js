@@ -130,7 +130,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Sample decks API: Stale-While-Revalidate
+  // 3. Sample decks API: Stale-While-Revalidate with safe fallback
   if (url.pathname.startsWith('/api/sample-decks')) {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
@@ -142,7 +142,12 @@ self.addEventListener('fetch', (event) => {
             }
             return networkResponse;
           })
-          .catch(() => cached);
+          .catch(() => {
+            if (cached) return cached;
+            return new Response(JSON.stringify({ decks: [] }), {
+              headers: { 'Content-Type': 'application/json' }
+            });
+          });
 
         return cached || fetchPromise;
       })

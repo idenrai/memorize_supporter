@@ -26,6 +26,7 @@ export default function NetworkStatusBadge() {
     <div
       role="status"
       aria-live="polite"
+      aria-label={t.common.offline}
       className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/25 shadow-xs backdrop-blur-xs transition-all animate-pulse"
       title={t.common.offlineDesc}
     >
