@@ -75,8 +75,8 @@ Section body in English.
   - **Parameters:**
     - `owner`: (저장소 소유자)
     - `repo`: (저장소 이름)
-    - `title`: PR 제목 (커밋 제목과 유사하게 작성)
-    - `body`: 변경사항 요약, 구현한 기능 등을 작성합니다. 이때, 반드시 **`.agents/workflows/build-check.md`** 의 템플릿(마크다운 표 형식)을 참고하여 빌드/린트 검증 통과 내역을 본문에 포함하십시오.
+    - `title`: PR 제목 (Conventional Commit 태그는 영문 유지 가능하나 핵심 설명은 한국어로 작성, 예: `feat(local-first): BYOD 로컬 모드 구현`)
+    - `body`: `.agents/rules/language-strategies.md` 규칙에 따라 사용자가 읽고 검토할 수 있도록 **100% 한국어**로 상세하게 작성합니다 (코드/파일/심볼명 제외). 변경사항 요약, 구현한 주요 기능, 그리고 반드시 **`.agents/workflows/build-check.md`**의 검증 통과 내역 표를 포함하십시오.
     - `head`: 작업한 브랜치 이름
     - `base`: 병합할 타겟 브랜치 (기본값: `main`)
   - PR이 생성된 직후, 터미널에서 GitHub CLI(`gh`)를 사용하여 해당 PR에 작업자 본인을 Assignee로 할당합니다.
