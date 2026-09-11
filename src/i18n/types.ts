@@ -17,8 +17,13 @@ export interface Translations {
     examRecords: string;
     exit: string;
     loading: string;
+    offline: string;
+    offlineDesc: string;
+    onlineRestored: string;
+    reload: string;
     settings: string;
     study: string;
+    updateAvailable: string;
   };
   home: {
     allCards: string;

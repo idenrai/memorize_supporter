@@ -11,8 +11,13 @@ export const en: Translations = {
     examRecords: "Exam Records",
     exit: "Exit",
     loading: "Loading...",
+    offline: "Offline Mode",
+    offlineDesc: "No internet connection. All data is saved safely to this device.",
+    onlineRestored: "Internet connection restored.",
+    reload: "Reload",
     settings: "Settings",
     study: "Study",
+    updateAvailable: "A new version is available.",
   },
   home: {
     allCards: "All Cards",

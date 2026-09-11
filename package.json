@@ -12,8 +12,9 @@
     "start": "next start",
     "type-check": "tsc --noEmit",
     "lint": "eslint",
-    "check:fast": "npm run check:node && npm run type-check && npm run lint",
-    "check": "npm run check:node && npm run type-check && npm run lint && npm run build"
+    "test": "node --test --experimental-strip-types tests/**/*.test.ts",
+    "check:fast": "npm run check:node && npm run type-check && npm run lint && npm run test",
+    "check": "npm run check:node && npm run type-check && npm run lint && npm run test && npm run build"
   },
   "engines": {
     "node": ">=20.9.0"

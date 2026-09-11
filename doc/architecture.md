@@ -109,7 +109,7 @@ sequenceDiagram
   - **오브젝트 스토어 구성**: `decks`(덱 메타데이터), `cards`(카드 내용), `progress`(에빙하우스 SRS 진도), `exam_results`(모의고사 점수 및 풀이 기록).
   - **인덱스 및 스키마 v2**: `deckId` 인덱스 외에 `exam_results`에 `createdAt` 인덱스를 추가하여 고속 역순 쿼리를 지원합니다.
   - **커넥션 풀링 및 싱글톤**: `cachedDbPromise`를 통해 연결 핸드셰이크 오버헤드를 제거하고, `onversionchange`를 처리하여 탭 간 블로킹을 방지합니다.
-  - **스키마 무결성 검증**: 임포트되는 모든 JSON 문자열은 Zod `DeckSchema`를 통해 런타임 유효성 검사를 거친 후 저장됩니다.
+  - **스키마 무결성 및 호환성 검증**: 임포트되는 모든 JSON 문자열은 Zod `DeckSchema`를 통해 런타임 유효성 검사를 거친 후 저장됩니다. 외부에서 생성된 다양한 포맷이나 필드 누락(`category`, `tags`, `author` 등의 `null` 허용)에 대해 유연한 폴백 처리를 적용하여 파싱 실패율을 최소화했습니다.
 
 - **브라우저 스토리지 영구 보존 및 진단 (Anti-Eviction & Diagnostics)**:
   - **영구 보존 보장 (`requestPersistentStorage`)**: Safari ITP의 7일 미사용 시 자동 스토리지 증발 및 디스크 부족 시 브라우저 강제 삭제(Eviction)를 방지하기 위해 `navigator.storage.persist()`를 연동합니다.
@@ -125,6 +125,11 @@ sequenceDiagram
 - **데이터 라이프사이클 및 백업/복원 관리**:
   - 사용자는 개별 시험 기록을 삭제하거나, 원클릭으로 로컬 덱과 관련된 모든 진도 및 시험 기록을 단일 트랜잭션으로 영구 삭제할 수 있습니다.
   - 브라우저 캐시 삭제로 인한 데이터 유실을 방지하고 기기 간 데이터를 이전할 수 있도록, 종합 JSON 백업 내보내기(`exportLocalDataJson`) 및 백업 복원(`importBackupJson`)을 지원합니다.
+
+- **PWA Service Worker 및 오프라인 App Shell 캐싱 (`public/sw.js`, `src/components/pwa/ServiceWorkerRegister.tsx`)**:
+  - 데이터 계층(IndexedDB)의 완전한 오프라인 읽기/쓰기와 결합하여, 네트워크 단절(비행기 모드, 음영 지역) 상태에서도 정적 App Shell 및 Next.js JS/CSS 청크 번들이 로드되도록 Service Worker 캐싱을 지원합니다.
+  - 정적 에셋(`/_next/static/*`)은 Cache-First, HTML 네비게이션 요청은 Network-First with Cache Fallback, 샘플 덱 API는 Stale-While-Revalidate 전략을 채택하며, 동적 런타임 캐시는 LRU 정책(최대 50개 항목 제한)으로 불필요한 스토리지 비대화를 방지합니다.
+  - 새 버전 배포 시 즉시 활성화 배너(`SKIP_WAITING` 및 원클릭 새로고침)를 표시하여 캐시 파편화를 방지하고, 상단 글로벌 네비게이션에 네트워크 상태 뱃지(`NetworkStatusBadge`)를 바인딩하여 오프라인 감지 및 재연결 알림을 제공합니다.
 
 ### 6. 인프라 및 배포 (Infrastructure & Deployment)
 
@@ -145,23 +150,27 @@ sequenceDiagram
 flowchart TD
     S1["Step 1: check:node (~0.1s, Engine Verification)"]
     S2["Step 2: type-check (~1.5s, tsc --noEmit)"]
-    S3["Step 3: lint (~1.5s, ESLint 0 errors / 0 warnings)"]
-    S4["Step 4: build (~10-12s, Turbopack Production Bundle)"]
+    S3["Step 3: test (~0.1s, Native Node.js Unit Tests)"]
+    S4["Step 4: lint (~1.5s, ESLint 0 errors / 0 warnings)"]
+    S5["Step 5: build (~10-12s, Turbopack Production Bundle)"]
 
     S1 -->|Pass| S2
     S2 -->|Pass| S3
     S3 -->|Pass| S4
+    S4 -->|Pass| S5
 
     S2 -.->|Fail| F1["Halt immediately with pinpoint 1-line TS error"]
-    S3 -.->|Fail| F2["Halt immediately on lint rule violation"]
+    S3 -.->|Fail| F2["Halt immediately on failing unit test"]
+    S4 -.->|Fail| F3["Halt immediately on lint rule violation"]
 ```
 
 - **파이프라인 명령어 체계**:
-  - `npm run check:fast`: 개발 루프 중간에 빌드를 제외하고 Node 버전 → 타입 체크 → 린트만 약 3초 만에 검증하는 초고속 루프 명령어 (LLM 턴 시간 및 토큰 절약).
+  - `npm run check:fast`: 개발 루프 중간에 빌드를 제외하고 Node 버전 → 타입 체크 → 단위 테스트 → 린트만 약 3초 만에 검증하는 초고속 루프 명령어 (LLM 턴 시간 및 토큰 절약).
   - `npm run type-check`: 컴파일 출력 없이 타입 무결성만 1.5초 만에 검증하는 초고속 정적 타입 체크 (`tsc --noEmit`).
+  - `npm run test`: 외부 무거운 테스트 프레임워크(Jest, Vitest) 의존성 없이 Node 24 내장 `node:test`와 `node:assert/strict`로 0.1초 만에 실행되는 초경량 네이티브 단위 테스트.
   - `npm run lint`: 0 에러 / 0 경고를 엄격히 강제하는 ESLint 코드 스타일 및 품질 검사.
   - `npm run build`: Next.js Turbopack 프로덕션 번들 생성 및 정적 페이지 빌드.
-  - `npm run check`: Node 버전 검사부터 타입 체크, 린트, 빌드를 순차 실행하며 실패 시 즉시 멈추는 전체 파이프라인.
+  - `npm run check`: Node 버전 검사부터 타입 체크, 단위 테스트, 린트, 빌드를 순차 실행하며 실패 시 즉시 멈추는 전체 파이프라인.
 
 ### 8. 품질 및 진단 표준 (Quality & Diagnostics Standards)
 
@@ -276,7 +285,7 @@ sequenceDiagram
   - **Object Stores**: `decks` (deck metadata), `cards` (card contents), `progress` (Ebbinghaus SRS state), `exam_results` (quiz scores and answers).
   - **Indexing & Schema v2**: In addition to `deckId`, `exam_results` includes an index on `createdAt` for fast reverse-chronological retrieval.
   - **Connection Pooling & Singleton**: `cachedDbPromise` eliminates handshake overhead across calls, while handling `onversionchange` to prevent cross-tab upgrade blocking.
-  - **Schema Validation**: All imported JSON strings are validated at runtime against Zod `DeckSchema` before being persisted.
+  - **Schema Validation & Resiliency**: All imported JSON strings are validated at runtime against Zod `DeckSchema` before being persisted. Tolerant parsing supports nullable/optional metadata (`category`, `tags`, `author`) to maximize compatibility with third-party and legacy deck files.
 
 - **Storage Persistence & Diagnostics (Anti-Eviction & Diagnostics)**:
   - **Persistence Guard (`requestPersistentStorage`)**: Integrates `navigator.storage.persist()` to protect user study material and quiz progress from Safari ITP 7-day inactivity eviction and browser storage pressure wiping.
@@ -292,6 +301,11 @@ sequenceDiagram
 - **Data Lifecycle & Backup/Restore (`exportLocalDataJson`, `importBackupJson`, `deleteLocalDeck`, `deleteLocalExamResult`)**:
   - Users can delete individual local exam records or wipe an entire local deck with all associated progress in a single atomic transaction.
   - To prevent data loss when clearing browser cache and allow seamless data migration across devices, users can export and restore all on-device data via JSON backup files (`exportLocalDataJson` / `importBackupJson`).
+
+- **PWA Service Worker & Offline App Shell Caching (`public/sw.js`, `src/components/pwa/ServiceWorkerRegister.tsx`)**:
+  - Coupled with the IndexedDB data layer, a native Service Worker ensures that static App Shell bundles and Next.js JS/CSS chunks are cached, enabling full application startup and card study even in airplane mode.
+  - Uses Cache-First for static assets (`/_next/static/*`), Network-First with Cache Fallback for HTML navigations, and Stale-While-Revalidate for sample deck APIs, with an LRU dynamic cache pruning policy (50 entries max) to prevent storage bloat.
+  - Features an update prompt banner triggering `SKIP_WAITING` and one-click reload when a new service worker version is detected, while `NetworkStatusBadge` in the header provides real-time offline status and reconnection toasts.
 
 ### 6. Infrastructure & Deployment
 
@@ -312,23 +326,27 @@ sequenceDiagram
 flowchart TD
     S1["Step 1: check:node (~0.1s, Engine Verification)"]
     S2["Step 2: type-check (~1.5s, tsc --noEmit)"]
-    S3["Step 3: lint (~1.5s, ESLint 0 errors / 0 warnings)"]
-    S4["Step 4: build (~10-12s, Turbopack Production Bundle)"]
+    S3["Step 3: test (~0.1s, Native Node.js Unit Tests)"]
+    S4["Step 4: lint (~1.5s, ESLint 0 errors / 0 warnings)"]
+    S5["Step 5: build (~10-12s, Turbopack Production Bundle)"]
 
     S1 -->|Pass| S2
     S2 -->|Pass| S3
     S3 -->|Pass| S4
+    S4 -->|Pass| S5
 
     S2 -.->|Fail| F1["Halt immediately with pinpoint 1-line TS error"]
-    S3 -.->|Fail| F2["Halt immediately on lint rule violation"]
+    S3 -.->|Fail| F2["Halt immediately on failing unit test"]
+    S4 -.->|Fail| F3["Halt immediately on lint rule violation"]
 ```
 
 - **Pipeline Commands**:
-  - `npm run check:fast`: Rapid iterative dev loop check executing Node engine verification → Type Check → Lint in ~3 seconds (saves LLM turn time and tokens).
+  - `npm run check:fast`: Rapid iterative dev loop check executing Node engine verification → Type Check → Unit Tests → Lint in ~3 seconds (saves LLM turn time and tokens).
   - `npm run type-check`: Ultra-fast TypeScript static check without emitting output files (`tsc --noEmit`).
+  - `npm run test`: Zero-dependency native unit tests executing in ~0.1s using Node 24's built-in `node:test` and `node:assert/strict`.
   - `npm run lint`: Strict ESLint check enforcing 0 errors and 0 warnings.
   - `npm run build`: Production Next.js Turbopack compiler and static page generation.
-  - `npm run check`: Chained all-in-one verification pipeline executing `check:node && type-check && lint && build`.
+  - `npm run check`: Chained all-in-one verification pipeline executing `check:node && type-check && test && lint && build`.
 
 ### 8. Quality & Diagnostics Standards
 

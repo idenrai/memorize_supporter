@@ -14,7 +14,7 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "package.json": "package-lock.json, tsconfig.json, tsconfig.*.json, next.config.*, postcss.config.*, eslint.config.*, skills-lock.json, .env*",
+    "package.json": "package-lock.json, tsconfig.json, tsconfig.*.json, next.config.*, postcss.config.*, eslint.config.*, cspell.json, skills-lock.json, .env*",
     "README.md": "AGENTS.md, CLAUDE.md, GEMINI.md, .markdownlint*"
   },
   // 4. 불필요한 빌드 캐시 파일 검색 및 감시 제외 (성능 향상)
@@ -29,19 +29,28 @@
   // 5. cSpell 맞춤법 검사 도메인 사전 등록
   "cSpell.words": [
     "antigravity",
+    "bradlc",
+    "dbaeumer",
     "Ebbinghaus",
     "formatjs",
     "glassmorphic",
     "glassmorphism",
     "localematcher",
     "lucide",
+    "maxage",
     "nums",
     "OPFS",
+    "precache",
+    "precaching",
+    "serwist",
+    "sonner",
     "tabular",
     "tailwindcss",
+    "Turbopack",
     "turbopack",
     "turborepo",
     "typesync",
-    "viewports"
+    "viewports",
+    "zustand"
   ]
 }

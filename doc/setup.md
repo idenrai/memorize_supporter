@@ -63,13 +63,16 @@ cp .env.example .env
 # 1. 초고속 정적 타입 검사 (~1.5초, tsc --noEmit, 0 에러 필수)
 npm run type-check
 
-# 2. ESLint 정적 분석 (~1.5초, 0 에러 / 0 경고 필수)
+# 2. 초경량 네이티브 단위 테스트 (~0.1초, Node 24 내장 test runner, 0 실패 필수)
+npm run test
+
+# 3. ESLint 정적 분석 (~1.5초, 0 에러 / 0 경고 필수)
 npm run lint
 
-# 3. Next.js Turbopack 프로덕션 번들 빌드
+# 4. Next.js Turbopack 프로덕션 번들 빌드
 npm run build
 
-# 4. 원스톱 체이닝 검증 파이프라인 (Node 버전 -> 타입 -> 린트 -> 빌드, 실패 시 즉시 중단)
+# 5. 원스톱 체이닝 검증 파이프라인 (Node 버전 -> 타입 -> 단위 테스트 -> 린트 -> 빌드, 실패 시 즉시 중단)
 npm run check
 ```
 
@@ -141,13 +144,16 @@ The project enforces a strict **"Fail Fast, Fail Cheap"** verification ladder to
 # 1. Fast static type checking (~1.5s, 0 errors required)
 npm run type-check
 
-# 2. ESLint code quality & style (~1.5s, 0 errors & 0 warnings required)
+# 2. Ultra-fast native unit testing (~0.1s, built-in Node 24 test runner, 0 failures required)
+npm run test
+
+# 3. ESLint code quality & style (~1.5s, 0 errors & 0 warnings required)
 npm run lint
 
-# 3. Production Next.js bundle & Turbopack build
+# 4. Production Next.js bundle & Turbopack build
 npm run build
 
-# 4. Full Chained Verification Pipeline (Short-circuits immediately upon any failure)
+# 5. Full Chained Verification Pipeline (Short-circuits immediately upon any failure)
 npm run check
 ```
 

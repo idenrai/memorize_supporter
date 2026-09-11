@@ -5,6 +5,7 @@ import type { Lang } from "@/i18n/types";
 import { Toaster } from "sonner";
 import Header from "@/components/layout/Header";
 import ScrollToTop from "@/components/layout/ScrollToTop";
+import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#09090b",
+  themeColor: "#18181b",
 };
 
 export default async function RootLayout({
@@ -47,6 +48,7 @@ export default async function RootLayout({
   return (
     <html lang={initialLang} className="dark">
       <body className={`${inter.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}>
+        <ServiceWorkerRegister />
         <ScrollToTop />
         <Header lang={initialLang} />
         {children}

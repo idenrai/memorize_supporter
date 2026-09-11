@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: '/',
     display: 'standalone',
     background_color: '#18181b', // zinc-900
-    theme_color: '#6366f1', // indigo-500 (Main brand color)
+    theme_color: '#18181b', // zinc-900
     icons: [
       {
         src: '/icon', // Next.js dynamic icon route

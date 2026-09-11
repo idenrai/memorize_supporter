@@ -11,8 +11,13 @@ export const ja: Translations = {
     examRecords: "試験記録",
     exit: "終了",
     loading: "読み込み中...",
+    offline: "オフラインモード",
+    offlineDesc: "インターネット接続がありません。すべてのデータは端末に安全に保存されます。",
+    onlineRestored: "オンライン接続が復旧しました。",
+    reload: "再読み込み",
     settings: "設定",
     study: "学習する",
+    updateAvailable: "新しいバージョンが利用可能です。",
   },
   home: {
     allCards: "すべてのカード",
