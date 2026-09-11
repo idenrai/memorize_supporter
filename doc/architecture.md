@@ -133,7 +133,7 @@ sequenceDiagram
 - **CI/CD 파이프라인**:
   - GitHub Actions를 통해 Node 버전 검사, 정적 타입 검사(`npm run type-check`), ESLint 검사(`npm run lint`), Next.js 프로덕션 빌드(`npm run build`)를 자동 수행하여 무결성을 검증합니다.
 - **환경 변수 관리**:
-  - `.env` 파일을 통해 업로드 크기 상한(`NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB`), 합격 점수(`NEXT_PUBLIC_PASS_MARK_PERCENT`) 등의 앱 정책 변수를 주입받습니다.
+  - `.env` 파일을 통해 업로드 크기 상한(`NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB`), 합격 점수(`NEXT_PUBLIC_PASS_MARK_PERCENT`) 등의 앱 정책 변수를 주입받으며, `src/lib/constants.ts`를 통해 중앙 집중식 NaN 방어 및 기본값 폴백 처리가 수행됩니다.
 
 ### 7. 검증 및 Fail Fast 파이프라인 (Verification & Fail Fast Pipeline)
 
@@ -300,7 +300,7 @@ sequenceDiagram
 - **CI/CD Pipeline**:
   - GitHub Actions automates Node version verification, TypeScript checking (`npm run type-check`), ESLint analysis (`npm run lint`), and Next.js production builds (`npm run build`) to ensure repository integrity on every push and pull request.
 - **Environment Variable Management**:
-  - Application limits and policies (such as `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB` and `NEXT_PUBLIC_PASS_MARK_PERCENT`) are configured via `.env`.
+  - Application limits and policies (such as `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB` and `NEXT_PUBLIC_PASS_MARK_PERCENT`) are configured via `.env` and centrally managed through `src/lib/constants.ts` with robust NaN defense and fallback defaults.
 
 ### 7. Verification & Fail Fast Pipeline
 

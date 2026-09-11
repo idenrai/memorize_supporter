@@ -9,8 +9,9 @@ import {
 } from "@/lib/client-db"
 import { useT } from "@/hooks/useT"
 import { toast } from "sonner"
+import { MAX_UPLOAD_SIZE_BYTES } from "@/lib/constants"
 
-const MAX_FILE_SIZE = (parseInt(process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB || '5', 10)) * 1024 * 1024
+const MAX_FILE_SIZE = MAX_UPLOAD_SIZE_BYTES
 
 interface UploadZoneProps {
   onUploadSuccess?: () => void

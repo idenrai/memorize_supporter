@@ -15,6 +15,7 @@ import { updateLocalProgress, saveLocalExamResult } from "@/lib/client-db"
 import { useT } from "@/hooks/useT"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
+import { PASS_MARK_PERCENT } from "@/lib/constants"
 
 interface DeckPlayerProps {
   deckId: string
@@ -105,7 +106,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
       setCompleted(false)
     }
 
-        const PASS_MARK = parseInt(process.env.NEXT_PUBLIC_PASS_MARK_PERCENT || '80', 10);
+    const PASS_MARK = PASS_MARK_PERCENT
         
     if (mode === 'exam') {
       return (

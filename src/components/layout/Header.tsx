@@ -44,36 +44,40 @@ export default function Header({ lang }: { lang: Lang }) {
             href={`/${lang}`} 
             className={navItemClass(`/${lang}`)}
             title={t.common.dashboard}
+            aria-label={t.common.dashboard}
             aria-current={isActive(`/${lang}`) ? "page" : undefined}
           >
-            <LayoutDashboard size={16} />
+            <LayoutDashboard size={16} aria-hidden="true" />
             <span className="hidden lg:inline">{t.common.dashboard}</span>
           </Link>
           <Link 
             href={`/${lang}/records`} 
             className={navItemClass(`/${lang}/records`)}
             title={t.common.examRecords}
+            aria-label={t.common.examRecords}
             aria-current={isActive(`/${lang}/records`) ? "page" : undefined}
           >
-            <Trophy size={16} />
+            <Trophy size={16} aria-hidden="true" />
             <span className="hidden lg:inline">{t.common.examRecords}</span>
           </Link>
           <Link 
             href={`/${lang}/data-management`} 
             className={navItemClass(`/${lang}/data-management`)}
             title={t.common.dataManagement}
+            aria-label={t.common.dataManagement}
             aria-current={isActive(`/${lang}/data-management`) ? "page" : undefined}
           >
-            <Database size={16} />
+            <Database size={16} aria-hidden="true" />
             <span className="hidden lg:inline">{t.common.dataManagement}</span>
           </Link>
           <Link 
             href={`/${lang}/data-preparation`} 
             className={navItemClass(`/${lang}/data-preparation`)}
             title={t.common.dataPrep}
+            aria-label={t.common.dataPrep}
             aria-current={isActive(`/${lang}/data-preparation`) ? "page" : undefined}
           >
-            <FileJson size={16} />
+            <FileJson size={16} aria-hidden="true" />
             <span className="hidden lg:inline">{t.common.dataPrep}</span>
           </Link>
         </nav>

@@ -14,6 +14,7 @@ import Link from "next/link"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import { toast } from "sonner"
+import { PASS_MARK_PERCENT } from "@/lib/constants"
 
 export default function LocalRecordsView({
   deckId,
@@ -114,7 +115,7 @@ export default function LocalRecordsView({
     )
   }
 
-  const PASS_MARK = parseInt(process.env.NEXT_PUBLIC_PASS_MARK_PERCENT || '80', 10)
+  const PASS_MARK = PASS_MARK_PERCENT
 
   return (
     <div className="flex flex-col gap-4">
