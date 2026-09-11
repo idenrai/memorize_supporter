@@ -2,7 +2,11 @@
 
 import { useState, useRef } from "react"
 import { Upload, CheckCircle2 } from "lucide-react"
-import { importJsonToLocalDb, requestPersistentStorage } from "@/lib/client-db"
+import {
+  importMultipleJsonToLocalDb,
+  requestPersistentStorage,
+  type BatchImportItem
+} from "@/lib/client-db"
 import { useT } from "@/hooks/useT"
 import { toast } from "sonner"
 
@@ -15,36 +19,89 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
 
   const [isDragging, setIsDragging] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
+  const [progress, setProgress] = useState<{ current: number; total: number } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const processFile = async (file: File) => {
-    if (!file.name.toLowerCase().endsWith(".json")) {
-      toast.error(t.local.jsonOnlyError)
+  const processFiles = async (files: File[]) => {
+    if (!files || files.length === 0) return
+
+    const jsonFiles: File[] = []
+    let nonJsonCount = 0
+
+    for (const file of files) {
+      if (file.name.toLowerCase().endsWith(".json")) {
+        jsonFiles.push(file)
+      } else {
+        nonJsonCount++
+      }
+    }
+
+    if (nonJsonCount > 0) {
+      toast.info(t.management.nonJsonSkipped(nonJsonCount))
+    }
+
+    if (jsonFiles.length === 0) {
+      if (nonJsonCount > 0) {
+        toast.error(t.local.jsonOnlyError)
+      }
+      if (fileInputRef.current) fileInputRef.current.value = ""
       return
     }
 
     setIsImporting(true)
+    setProgress({ current: 0, total: jsonFiles.length })
+
     try {
-      const text = await file.text()
-      const result = await importJsonToLocalDb(text, file.name)
-      if (result.success) {
-        toast.success(t.management.uploadSuccess)
+      const items: BatchImportItem[] = []
+      for (const file of jsonFiles) {
+        try {
+          const text = await file.text()
+          items.push({
+            content: text,
+            fileName: file.name
+          })
+        } catch (readErr) {
+          console.warn(`Failed to read file ${file.name}:`, readErr)
+        }
+      }
+
+      if (items.length === 0) {
+        toast.error(t.local.fileReadError)
+        return
+      }
+
+      const result = await importMultipleJsonToLocalDb(items, (current, total) => {
+        setProgress({ current, total })
+      })
+
+      if (result.successCount > 0) {
         requestPersistentStorage().catch(() => {})
         onUploadSuccess?.()
+
+        if (result.failedCount === 0) {
+          if (result.total === 1) {
+            toast.success(t.management.uploadSuccess)
+          } else {
+            toast.success(t.management.multiUploadSuccess(result.successCount))
+          }
+        } else {
+          toast.warning(t.management.multiUploadPartial(result.successCount, result.total))
+        }
       } else {
-        toast.error(result.error || t.management.uploadFailed)
+        toast.error(result.results[0]?.error || t.management.uploadFailed)
       }
     } catch (err: unknown) {
-      toast.error((err as Error)?.message || t.local.fileReadError)
+      toast.error((err as Error)?.message || t.management.uploadFailed)
     } finally {
       setIsImporting(false)
+      setProgress(null)
       if (fileInputRef.current) fileInputRef.current.value = ""
     }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) processFile(file)
+    const files = Array.from(e.target.files || [])
+    if (files.length > 0) processFiles(files)
   }
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -63,8 +120,8 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
     e.preventDefault()
     e.stopPropagation()
     setIsDragging(false)
-    const file = e.dataTransfer.files?.[0]
-    if (file) processFile(file)
+    const files = Array.from(e.dataTransfer.files || [])
+    if (files.length > 0) processFiles(files)
   }
 
   return (
@@ -73,6 +130,7 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
       <input
         ref={fileInputRef}
         type="file"
+        multiple
         accept=".json,application/json"
         onChange={handleFileChange}
         className="hidden"
@@ -111,7 +169,11 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
           </div>
 
           <h3 className="text-base sm:text-lg font-bold text-zinc-100 mb-1.5">
-            {isImporting ? t.management.uploading : t.management.uploadDropzoneTitle}
+            {isImporting
+              ? (progress && progress.total > 1
+                  ? t.management.uploadingProgress(progress.current, progress.total)
+                  : t.management.uploading)
+              : t.management.uploadDropzoneTitle}
           </h3>
 
           <p className="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto leading-relaxed mb-4">

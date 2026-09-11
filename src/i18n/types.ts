@@ -107,6 +107,10 @@ export interface Translations {
     uploadFailed: string;
     uploadSizeLimitError: string;
     uploadSuccess: string;
+    multiUploadSuccess: (count: number) => string;
+    multiUploadPartial: (success: number, total: number) => string;
+    uploadingProgress: (current: number, total: number) => string;
+    nonJsonSkipped: (count: number) => string;
     uploading: string;
     visible: string;
     addSampleDecks: string;
