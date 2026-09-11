@@ -31,8 +31,15 @@ export async function getLocalDecks(): Promise<LocalDeck[]> {
       request.onsuccess = () => {
         const rawList = (request.result || []) as Record<string, unknown>[]
         const decks: LocalDeck[] = rawList.map((d) => ({
-          ...(d as unknown as LocalDeck),
-          createdAt: d.createdAt ? new Date(d.createdAt as string) : new Date(),
+          id: String(d.id || ""),
+          title: String(d.title || ""),
+          description: d.description ? String(d.description) : null,
+          type: String(d.type || "flashcard"),
+          series: d.series ? String(d.series) : null,
+          createdAt: d.createdAt ? new Date(d.createdAt as string | number | Date) : new Date(),
+          _count: typeof d._count === "object" && d._count !== null && "cards" in d._count
+            ? { cards: Number((d._count as { cards?: unknown }).cards) || 0 }
+            : { cards: 0 },
           isLocal: true
         }))
         resolve(decks)
@@ -59,10 +66,17 @@ export async function getLocalDeck(deckId: string): Promise<LocalDeck | null> {
 
       request.onsuccess = () => {
         if (!request.result) return resolve(null)
-        const d = request.result
+        const d = request.result as Record<string, unknown>
         resolve({
-          ...d,
-          createdAt: d.createdAt ? new Date(d.createdAt) : new Date(),
+          id: String(d.id || ""),
+          title: String(d.title || ""),
+          description: d.description ? String(d.description) : null,
+          type: String(d.type || "flashcard"),
+          series: d.series ? String(d.series) : null,
+          createdAt: d.createdAt ? new Date(d.createdAt as string | number | Date) : new Date(),
+          _count: typeof d._count === "object" && d._count !== null && "cards" in d._count
+            ? { cards: Number((d._count as { cards?: unknown }).cards) || 0 }
+            : { cards: 0 },
           isLocal: true
         })
       }

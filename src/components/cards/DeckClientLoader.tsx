@@ -164,7 +164,6 @@ export default function DeckClientLoader({ deckId, limit, isExamMode, lang }: De
       deckId={deckId}
       cards={cards}
       mode={isExamMode ? "exam" : "practice"}
-      isLocalDeck={true}
     />
   )
 }

@@ -20,7 +20,6 @@ interface DeckPlayerProps {
   deckId: string
   cards: CardData[]
   mode?: 'practice' | 'exam'
-  isLocalDeck?: boolean
 }
 
 export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPlayerProps) {

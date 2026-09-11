@@ -114,7 +114,7 @@ export default function LocalRecordsView({
     )
   }
 
-  const PASS_MARK = 80
+  const PASS_MARK = parseInt(process.env.NEXT_PUBLIC_PASS_MARK_PERCENT || '80', 10)
 
   return (
     <div className="flex flex-col gap-4">

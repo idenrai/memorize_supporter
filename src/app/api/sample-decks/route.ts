@@ -25,7 +25,14 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({ decks })
+    return NextResponse.json(
+      { decks },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400"
+        }
+      }
+    )
   } catch (err) {
     console.error("Failed to load sample decks:", err)
     return NextResponse.json({ error: "Failed to load sample decks" }, { status: 500 })

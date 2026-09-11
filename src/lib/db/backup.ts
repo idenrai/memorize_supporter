@@ -123,38 +123,6 @@ export async function importBackupJson(jsonString: string): Promise<RestoreBacku
   }
 }
 
-const HIDDEN_DECKS_STORAGE_KEY = "memorize_hidden_deck_ids"
-
-/**
- * Get the set of deck IDs that the user has hidden/deleted (legacy compatibility)
- */
-export function getHiddenDeckIds(): Set<string> {
-  if (typeof window === "undefined") return new Set()
-  try {
-    const raw = localStorage.getItem(HIDDEN_DECKS_STORAGE_KEY)
-    if (!raw) return new Set()
-    const list = JSON.parse(raw)
-    return new Set(Array.isArray(list) ? list : [])
-  } catch {
-    return new Set()
-  }
-}
-
-/**
- * Hide/delete a deck from display (legacy compatibility)
- */
-export function hideDeck(deckId: string): void {
-  if (typeof window === "undefined") return
-  try {
-    const hidden = getHiddenDeckIds()
-    hidden.add(deckId)
-    localStorage.setItem(HIDDEN_DECKS_STORAGE_KEY, JSON.stringify(Array.from(hidden)))
-    notifyLocalDbChange("deck_deleted")
-  } catch (e) {
-    console.warn("Failed to hide deck:", e)
-  }
-}
-
 /**
  * Loads sample decks from the /api/sample-decks endpoint and imports them into local IndexedDB.
  */

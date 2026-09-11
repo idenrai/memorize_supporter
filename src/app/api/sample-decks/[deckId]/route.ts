@@ -10,5 +10,12 @@ export async function GET(
   if (!cards || cards.length === 0) {
     return NextResponse.json({ error: "Sample deck not found" }, { status: 404 })
   }
-  return NextResponse.json({ cards })
+  return NextResponse.json(
+    { cards },
+    {
+      headers: {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400"
+      }
+    }
+  )
 }
