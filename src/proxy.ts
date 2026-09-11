@@ -36,6 +36,11 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Skip root-level PWA files
+  if (pathname === "/sw.js" || pathname === "/manifest.webmanifest") {
+    return NextResponse.next();
+  }
+
   // Redirect if there is no locale
   const locale = getLocale(request);
   const url = request.nextUrl.clone();
@@ -45,7 +50,7 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next, api, public files)
-    '/((?!api|_next/static|_next/image|icon|apple-icon|favicon.ico|.*\\.(?:xml|json|png|jpg|jpeg|gif|webp|ico|svg|txt)$).*)',
+    // Skip all internal paths (_next, api, public files, service worker)
+    '/((?!api|_next/static|_next/image|icon|apple-icon|favicon.ico|manifest\\.webmanifest|sw\\.js|.*\\.(?:xml|json|png|jpg|jpeg|gif|webp|ico|svg|txt)$).*)',
   ],
 };

@@ -7,6 +7,7 @@ import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import LanguageSwitch from "@/components/LanguageSwitch"
 import BrandLogo from "@/components/common/BrandLogo"
+import NetworkStatusBadge from "@/components/common/NetworkStatusBadge"
 
 export default function Header({ lang }: { lang: Lang }) {
   const t = useT()
@@ -83,6 +84,7 @@ export default function Header({ lang }: { lang: Lang }) {
         </nav>
         
         <div className="h-5 w-px bg-white/10 hidden sm:block"></div>
+        <NetworkStatusBadge />
         <LanguageSwitch />
       </div>
     </header>

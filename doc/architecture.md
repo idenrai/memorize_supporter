@@ -126,6 +126,11 @@ sequenceDiagram
   - 사용자는 개별 시험 기록을 삭제하거나, 원클릭으로 로컬 덱과 관련된 모든 진도 및 시험 기록을 단일 트랜잭션으로 영구 삭제할 수 있습니다.
   - 브라우저 캐시 삭제로 인한 데이터 유실을 방지하고 기기 간 데이터를 이전할 수 있도록, 종합 JSON 백업 내보내기(`exportLocalDataJson`) 및 백업 복원(`importBackupJson`)을 지원합니다.
 
+- **PWA Service Worker 및 오프라인 App Shell 캐싱 (`public/sw.js`, `src/components/pwa/ServiceWorkerRegister.tsx`)**:
+  - 데이터 계층(IndexedDB)의 완전한 오프라인 읽기/쓰기와 결합하여, 네트워크 단절(비행기 모드, 음영 지역) 상태에서도 정적 App Shell 및 Next.js JS/CSS 청크 번들이 로드되도록 Service Worker 캐싱을 지원합니다.
+  - 정적 에셋(`/_next/static/*`)은 Cache-First, HTML 네비게이션 요청은 Network-First with Cache Fallback, 샘플 덱 API는 Stale-While-Revalidate 전략을 채택합니다.
+  - 상단 글로벌 네비게이션에 네트워크 상태 뱃지(`NetworkStatusBadge`)를 바인딩하여 오프라인 감지 및 재연결 알림을 제공합니다.
+
 ### 6. 인프라 및 배포 (Infrastructure & Deployment)
 
 - **배포 환경**:
@@ -292,6 +297,11 @@ sequenceDiagram
 - **Data Lifecycle & Backup/Restore (`exportLocalDataJson`, `importBackupJson`, `deleteLocalDeck`, `deleteLocalExamResult`)**:
   - Users can delete individual local exam records or wipe an entire local deck with all associated progress in a single atomic transaction.
   - To prevent data loss when clearing browser cache and allow seamless data migration across devices, users can export and restore all on-device data via JSON backup files (`exportLocalDataJson` / `importBackupJson`).
+
+- **PWA Service Worker & Offline App Shell Caching (`public/sw.js`, `src/components/pwa/ServiceWorkerRegister.tsx`)**:
+  - Coupled with the IndexedDB data layer, a native Service Worker ensures that static App Shell bundles and Next.js JS/CSS chunks are cached, enabling full application startup and card study even in airplane mode.
+  - Uses Cache-First for static assets (`/_next/static/*`), Network-First with Cache Fallback for HTML navigations, and Stale-While-Revalidate for sample deck APIs.
+  - Integrates `NetworkStatusBadge` in the header to provide real-time offline status and reconnection toasts.
 
 ### 6. Infrastructure & Deployment
 

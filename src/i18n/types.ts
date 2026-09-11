@@ -17,6 +17,9 @@ export interface Translations {
     examRecords: string;
     exit: string;
     loading: string;
+    offline: string;
+    offlineDesc: string;
+    onlineRestored: string;
     settings: string;
     study: string;
   };
