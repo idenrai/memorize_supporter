@@ -20,9 +20,7 @@
   - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어
   - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 템플릿을 생성/검증하는 관리 도구
   - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
-  - `SQLite & Prisma`: 오프라인(로컬 파일) 환경에서 동작하는 경량 데이터 레이어
-  - `ETL Script`: 원본 문서(JSON)를 읽고 파싱하여 DB에 밀어넣는(Upsert) 데이터 파이프라인 스크립트
-  - `CardParser` (`src/lib/card-parser.ts`): DB 원시 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
+  - `CardParser` (`src/lib/card-parser.ts`): 원시 JSON 및 카드 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
 
 ### 2. 프론트엔드 (Frontend)
 
@@ -64,8 +62,7 @@
 ### 3. 백엔드 및 타입 아키텍처 (Backend & Type Architecture)
 
 - **API 및 데이터 통신**:
-  - 별도의 외부 REST API 서버 없이 Next.js의 Server Actions 또는 Prisma Client 직접 호출을 통해 데이터를 클라이언트에 공급합니다.
-  - **보안 격리 정책**: 비즈니스 로직(Server Actions)은 라우터 공간인 `app/` 내부가 아닌, 완전히 분리된 `src/actions/` 디렉토리에 격리하여 보관합니다. 이를 통해 내부 함수가 외부의 퍼블릭 API 엔드포인트로 예기치 않게 노출되는 보안 위험을 원천 차단합니다.
+  - 클라이언트 IndexedDB 및 정적 샘플 덱 엔드포인트를 통해 데이터를 공급합니다.
 
 - **도메인 타입 아키텍처 ("Parse, Don't Validate")**:
   - **중앙화된 도메인 파서 (`src/lib/card-parser.ts`)**: DB에 저장된 원시 카드 문자열은 컴포넌트나 액션에서 `as unknown as CardData`와 같은 위험한 타입 단언으로 임의 캐스팅되지 않습니다. 모든 레코드는 `parseCardData(card)` 및 `parseCardDataList(cards)`를 통해 Zod 스키마로 런타임 검증된 후 정식 `CardData` 판별 유니온 타입으로 승격됩니다.
@@ -191,8 +188,6 @@ This document defines the system architecture of the `memorize_supporter` projec
   - `LocalRecordsView`: Unified exam records interface for on-device quiz history, featuring local record deletion and one-click JSON backup export.
   - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, and real-time schema validation.
   - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private user study materials, forgetting curves, and quiz scores.
-  - `SQLite & Prisma`: Lightweight data layer operating in an offline (local file) environment.
-  - `ETL Script`: Data pipeline script that reads original documents (JSON), parses them, and pushes them (Upsert) into the DB.
   - `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
 
 ### 2. Frontend
@@ -235,22 +230,20 @@ This document defines the system architecture of the `memorize_supporter` projec
 ### 3. Backend & Type Architecture
 
 - **API and Data Communication**:
-  - Supplies data to the client through Next.js Server Actions or direct Prisma Client calls without a separate external REST API server.
-  - **Security Isolation**: Server Actions are explicitly isolated in the `src/actions/` directory, outside of the Next.js `app/` routing directory. This prevents accidental exposure of backend business logic as public endpoints.
+  - Supplies data directly through client-side IndexedDB and static sample deck endpoints without an external database server.
 
 - **Domain Type Architecture: "Parse, Don't Validate"**:
   - **Centralized Domain Parser (`src/lib/card-parser.ts`)**: Raw card strings stored in the database are never blindly cast using unsafe assertions like `as unknown as CardData`. All records are validated at runtime against Zod schemas and promoted to the strictly-typed `CardData` discriminated union.
   - **Zero Unsafe Assertions**: Ensures 0% `as any` or `as unknown as` assertions across the entire codebase.
 
 - **Data Validation & Error Handling (Zero-Trust)**:
-  - **Action Wrapper (`safe-action.ts`)**: All Server Actions are strictly wrapped by a centralized High-Order Component (HOC) that handles `try/catch` logic. This ensures a consistent `{ success, message, data }` response format across the entire application without duplicating error handling logic in every action.
   - **Shared Schema (Zod)**: Client inputs are never trusted. Every payload (e.g., 5MB limit check, unknown field stripping) is strictly parsed through reusable Zod schemas (`src/lib/schemas.ts`, `src/schemas/deck.ts`) *before* reaching the business logic.
 
-- **Database and ORM Integration**:
-  - **SQLite (Default)**: Built locally at `.data/memorize.sqlite`. This file is excluded from Git tracking (`.gitignore`).
-  - **PostgreSQL (Optional)**: Supported for production or serverless environments.
-  - **Prisma ORM**: Generates type-safe queries and manages the database schema. Maintains a singleton connection in `src/lib/prisma.ts`.
-  - **Exam History Tracking**: Records detailed exam sessions using `ExamResult` and `ExamResultDetail` tables, enabling users to review previous quizzes question-by-question (including chosen incorrect answers and accurate scores).
+- **Database Architecture (100% Zero-Database & Local-First)**:
+  - **Zero-Server Database**: Does not use any server-side database (Prisma, SQLite, PostgreSQL, etc.), eliminating 100% of serverless DB connection errors and 500 rendering crashes.
+  - **Browser Persistent Storage (IndexedDB)**: All data (`decks`, `cards`, `progress`, `exam_results`) is stored in the browser's client storage (`src/lib/client-db.ts`).
+  - **Static Sample Decks**: Pre-packaged public sample decks are loaded statically from `input/public/*.json` or via `/api/sample-decks`.
+  - **Detailed Exam History Tracking**: Question-by-question exam results (including chosen incorrect options) are stored permanently in the `exam_results` IndexedDB object store, providing detailed review and backup/restore entirely client-side.
 
 ### 4. Data Pipeline
 

@@ -82,13 +82,10 @@ npm run check
 
 ### 6. 문제 해결 (Troubleshooting)
 
-Prisma 스키마를 직접 변경했거나 로컬 학습 기록을 깨끗하게 초기화하고 `input/` 디렉토리의 원본 덱을 다시 적재하고 싶은 경우:
+브라우저의 로컬 학습 기록이나 덱 데이터를 완전히 초기화하고 싶은 경우:
 
-```bash
-# DB 강제 초기화 및 ETL 재실행
-npx prisma db push --force-reset
-npm run etl
-```
+- **웹 UI 이용**: 상단 네비게이션의 **[데이터 관리]** 페이지로 이동하여 개별 덱을 삭제하거나 새 JSON 덱을 다시 등록합니다.
+- **브라우저 개발자 도구 이용**: 개발자 도구(F12) -> **Application (애플리케이션)** -> **IndexedDB** -> `memorize_supporter_local_db`를 삭제 후 새로고침합니다.
 
 ---
 
@@ -170,10 +167,7 @@ npm run check
 
 ### 6. Troubleshooting
 
-If you modified the Prisma database schema or wish to completely reset your local study history and reload fresh decks from `input/`:
+If you wish to completely reset your local study history and deck data stored in the browser:
 
-```bash
-# Force reset the database and re-run ETL
-npx prisma db push --force-reset
-npm run etl
-```
+- **Via Web UI**: Navigate to the **[Data Management]** page from the top navigation bar to delete individual decks or re-upload JSON decks.
+- **Via Browser DevTools**: Open DevTools (F12) -> **Application** tab -> **IndexedDB** -> Delete `memorize_supporter_local_db` and refresh the page.
