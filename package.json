@@ -10,7 +10,6 @@
     "dev": "concurrently \"next dev\" \"wait-on http://localhost:3000 && open-cli http://localhost:3000\"",
     "build": "next build",
     "start": "next start",
-    "setup": "node scripts/setup.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint",
     "check:fast": "npm run check:node && npm run type-check && npm run lint",
