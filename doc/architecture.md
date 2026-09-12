@@ -17,9 +17,10 @@
   - `DeckPlayer` 및 세부 카드 컴포넌트들(`Flashcard`, `VocabularyCard`, `PracticeQuizCard`): 프론트엔드 인터랙티브 카드 렌더러 (마이크로 애니메이션, 피드백 처리)
   - `DeckClientLoader`: 로컬 전용 덱 접근 시 IndexedDB로부터 카드를 로드하여 서버와 동일한 SRS 우선순위로 플레이어를 구동하는 클라이언트 로더
   - `ExamResultView`: 문항별 오답 상세 복습, 시각적 선택지 비교 및 '틀린 문제만 다시 풀기'를 지원하는 시험 결과 뷰어
-  - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어
-  - `ConfirmModal`: 파괴적 변경(덱 삭제, 시험 기록 삭제) 시 브라우저 기본 팝업을 대체하여 WAI-ARIA Focus Trap, Return Focus, ESC 키 취소 및 백드롭 블러를 제공하는 접근성 중심의 프리미엄 확인 모달
-    - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 단일 JSON 객체 스키마 규격 및 체계적인 [출력 규칙]을 갖춘 템플릿을 생성/검증하는 관리 도구
+  - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어 (Tactile DeckCard 수준의 이중 레이어 및 글로우 인터랙션 적용)
+  - `ConfirmModal`: 파괴적 변경(덱 삭제, 시험 기록 삭제) 시 브라우저 기본 팝업을 대체하여 WAI-ARIA Focus Trap, Return Focus, ESC 키 취소, 모바일 뷰포트 안전 스크롤(`max-h-[85vh]`) 및 알약 버튼 디자인을 제공하는 접근성 중심의 프리미엄 확인 모달
+  - `PageHeader` (`src/components/common/PageHeader.tsx`): 소개, 시험 기록, 데이터 관리, 데이터 준비 등 모든 서브 페이지의 일관된 알약 뱃지, 반응형 그라디언트 타이틀, 보조 설명 및 우측 액션 슬롯을 일원화한 공통 헤더 컴포넌트
+  - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 단일 JSON 객체 스키마 규격 및 체계적인 [출력 규칙]을 갖춘 템플릿을 생성/검증하는 관리 도구 (모바일 가로 스크롤 동적 페이드 인디케이터 지원)
   - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): 인지 과학 및 Local-First 철학, 인터랙티브 3D 플립 카드 데모, 6대 기능 덱, 키보드 단축키 안내를 제공하는 브랜드 소개 뷰어
   - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
   - `CardParser` (`src/lib/card-parser.ts`): 원시 JSON 및 카드 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
@@ -55,7 +56,11 @@
   - **끊김 없는 문제 검토 네비게이션 및 단축키**: 시험 기록 및 오답 검토 화면에서 목록으로 나가지 않고도 전후 문제로 즉시 이동할 수 있도록 상단 Sticky 헤더와 하단 액션 버튼을 양방향 제공하며, 키보드 좌우 방향키(`←`, `→`), `Escape`, `Enter` 단축키를 완벽 지원합니다.
   - Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, WAI-ARIA 속성(`role="group"`, `aria-pressed`, `aria-label`), 견고한 키보드 포커스(`focus-visible`), 고정폭 수치 폰트(`tabular-nums`), 그리고 모바일 터치 피드백(`active:scale-95`) 등 최고 수준의 접근성을 보장합니다.
   - 네이티브 브라우저 엘리먼트를 대체하는 접근성 높은 커스텀 UI 컴포넌트(예: React Portal 기반의 `CustomSelect`, WAI-ARIA Focus Trap 및 Return Focus를 완비한 `ConfirmModal`)를 구현하여, 모든 플랫폼에서 일관된 프리미엄 룩(글래스모피즘)을 유지하는 동시에 엄격한 WAI-ARIA 다이얼로그 표준과 키보드 네비게이션을 지원합니다.
-  - **스토리지 지표 카피라이팅 최적화**: 브라우저 할당량 대비 현재 사용량을 `저장 공간 충분 (사용량: X MB)`으로 표기하여, 사용자에게 '남은 여유 공간'으로 오해되는 문제를 원천 차단하고 스토리지 건전성을 직관적으로 전달합니다.
+  - **전체 페이지 디자인 시스템 통일(Tactile Cognitive Deck Studio) 및 공통 `PageHeader`**:
+    - 모든 페이지 컨테이너 너비를 `max-w-6xl mx-auto px-4 sm:px-6 md:px-8`로 완전 통일하여 페이지 전환 시 뷰포트 폭 불일치 및 레이아웃 시프트(CLS)를 원천 차단했습니다.
+    - 서브 페이지 헤더를 공통 컴포넌트(`PageHeader`)로 추상화하여, 알약 뱃지(`text-2xs font-bold uppercase tracking-widest px-3.5 py-1 rounded-full`), 반응형 그라디언트 헤딩(`text-2xl sm:text-3xl md:text-4xl`), 보조 설명, 우측 액션 슬롯을 단일 인터페이스로 제공합니다.
+    - 시험 기록 뷰(`LocalRecordsView`)의 카드를 메인 덱 카드 수준의 이중 레이어(`p-px rounded-3xl`, 앰비언트 글로우, 호버 그라디언트 테두리)로 격상하고, 모달 및 제어 버튼을 알약(`rounded-full`) 형태로 일원화했습니다.
+    - 데이터 테이블(`DeckTable`)의 모바일 가로 스크롤 동적 페이드 인디케이터 및 `ConfirmModal`의 모바일 뷰포트 안전 스크롤(`max-h-[85vh] overflow-y-auto`)을 적용하여 반응형 접근성을 극대화했습니다.
   - `framer-motion`을 도입하여 180도 3D 플립, Scale Pop 등 시각적 피드백을 제공합니다.
 
 - **PWA 및 메타데이터 전략**:
@@ -198,9 +203,10 @@ This document defines the system architecture of the `memorize_supporter` projec
   - `DeckPlayer`, `Flashcard`, `VocabularyCard`, `PracticeQuizCard`: Frontend interactive card renderer (handling micro-animations and feedback).
   - `DeckClientLoader`: Client-side deck runner that dynamically retrieves and prioritizes cards from IndexedDB for local-only decks.
   - `ExamResultView`: Comprehensive exam review interface supporting question-by-question replay, visual color-coded answer comparison, and "Retry Incorrect Only" session trigger.
-  - `LocalRecordsView`: Unified exam records interface for on-device quiz history, featuring custom accessible modal confirmation on record deletion and one-click JSON backup export.
-  - `ConfirmModal`: Premium accessible confirmation modal replacing native browser confirm dialogs for destructive actions (deck/record deletion), equipped with WAI-ARIA Focus Trap, Return Focus, Escape dismissal, and backdrop blur.
-  - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, and real-time schema validation with single JSON object schema enforcement and unified [Output Rules].
+  - `LocalRecordsView`: Unified exam records interface for on-device quiz history, upgraded with tactile double-layer deck card styling, ambient glow, and custom accessible modal confirmation on record deletion.
+  - `ConfirmModal`: Premium accessible confirmation modal replacing native browser confirm dialogs for destructive actions (deck/record deletion), equipped with WAI-ARIA Focus Trap, Return Focus, Escape dismissal, mobile safe scroll (`max-h-[85vh]`), and pill-shaped action buttons.
+  - `PageHeader` (`src/components/common/PageHeader.tsx`): Reusable sub-page header component standardizing pill badges, responsive gradient headings, descriptions, and action slots across about, records, data-management, and data-preparation pages.
+  - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, real-time schema validation with single JSON object schema enforcement, unified [Output Rules], and mobile dynamic horizontal scroll fade indicators.
   - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): Brand and product introduction interface presenting cognitive science and Local-First philosophies, an interactive 3D flip card demo, 6 core feature decks, and keyboard shortcuts guidance.
   - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private user study materials, forgetting curves, and quiz scores.
   - `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
@@ -235,8 +241,11 @@ This document defines the system architecture of the `memorize_supporter` projec
   - **SSoT Sticky Header & Unified `QuizHeader` Component**: Implements a reusable `QuizHeader` (and matching `QuizHeader.Skeleton`) that sticks beneath the global navigation bar (`sticky top-(--header-height) z-30 backdrop-blur-md`). This resolves header collision, eliminates vertical gaps by replacing dynamic `my-auto` margins with consistent top alignment, and unifies progress tracking across practice, exam, and review modes without layout shift (CLS).
   - **Seamless Review Navigation & Shortcuts**: In exam history and question review views, provides dual navigation controls (sticky top header and card bottom action buttons) along with full keyboard navigation (`ArrowLeft`/`ArrowRight` for prev/next question, `Escape` for list view, `Enter`/`Space` for progression) to review question details consecutively without navigating back and forth.
   - Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, WAI-ARIA attributes (`role="group"`, `aria-pressed`, `aria-label`), robust keyboard navigation focus states (`focus-visible`), fixed-width numeric typography (`tabular-nums`), and touch feedback (`active:scale-95`).
-  - Implements custom accessible UI components (e.g., `CustomSelect` using React Portals, `ConfirmModal` with WAI-ARIA Focus Trap and Return Focus) to replace native browser elements, ensuring a consistent premium look (glassmorphism) across all platforms while maintaining strict WAI-ARIA standards and keyboard accessibility.
-  - **Storage Indicator Copywriting Optimization**: Formats storage status as `Storage Healthy (X MB used)` to prevent user confusion regarding remaining quota versus active usage.
+  - **Unified Page Design System (Tactile Cognitive Deck Studio) & Common `PageHeader`**:
+    - Standardizes the max-width container across all application views to `max-w-6xl mx-auto px-4 sm:px-6 md:px-8`, eliminating layout shifts (CLS) and width inconsistencies between pages.
+    - Abstracts sub-page headers into a reusable `PageHeader` component with standardized pill badges (`text-2xs font-bold uppercase tracking-widest px-3.5 py-1 rounded-full`), responsive gradient headings (`text-2xl sm:text-3xl md:text-4xl`), subtitles, and optional action slots.
+    - Elevates exam history cards in `LocalRecordsView` to the tactile dual-layer design (`p-px rounded-3xl`, ambient glow, hover gradient border) matching the main deck cards, and standardizes all modal and control buttons into pill shapes (`rounded-full`).
+    - Implements dynamic horizontal scroll fade indicators on mobile data tables (`DeckTable`) and mobile-safe viewport scrolling (`max-h-[85vh] overflow-y-auto`) in `ConfirmModal` for optimal responsive accessibility.
   - Provides visual feedback such as a 180-degree 3D flip and Scale Pop by integrating `framer-motion`.
 
 - **PWA & Metadata Strategy**:

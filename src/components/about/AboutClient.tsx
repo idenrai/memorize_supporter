@@ -317,24 +317,26 @@ export default function AboutClient({ lang }: AboutClientProps) {
       {/* 3. The Two Core Pillars: Cognitive Architecture & Zero-Server Local-First */}
       <section aria-label={t.about.corePhilosophiesTitle} className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Pillar 1: Cognitive Science */}
-        <div className="group relative overflow-hidden rounded-3xl border border-teal-500/20 bg-zinc-950/90 p-6 sm:p-8 shadow-xl backdrop-blur-xl transition-colors hover:border-teal-500/40">
+        <div className="group relative flex flex-col overflow-hidden rounded-3xl border border-teal-500/20 bg-zinc-950/90 p-6 sm:p-8 shadow-xl backdrop-blur-xl transition-colors hover:border-teal-500/40">
           <div className="pointer-events-none absolute -bottom-12 -left-12 size-48 rounded-full bg-teal-500/15 blur-3xl group-hover:bg-teal-500/25 transition-colors" />
 
-          <div className="relative z-10">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-teal-500/10 px-3.5 py-1 text-2xs font-bold uppercase tracking-widest text-teal-400 border border-teal-500/30">
-              <Brain size={14} className="text-teal-400" aria-hidden="true" />
-              <span>{t.about.pillar1Badge}</span>
+          <div className="relative z-10 flex flex-col justify-between h-full">
+            <div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-teal-500/10 px-3.5 py-1 text-2xs font-bold uppercase tracking-widest text-teal-400 border border-teal-500/30">
+                <Brain size={14} className="text-teal-400" aria-hidden="true" />
+                <span>{t.about.pillar1Badge}</span>
+              </div>
+
+              <h3 className="text-lg sm:text-xl font-bold text-zinc-100 mb-3">
+                {t.about.cognitiveTitle}
+              </h3>
+
+              <p className="text-xs sm:text-sm leading-relaxed text-zinc-400 font-normal">
+                {t.about.cognitiveDesc}
+              </p>
             </div>
 
-            <h3 className="text-lg sm:text-xl font-bold text-zinc-100 mb-3">
-              {t.about.cognitiveTitle}
-            </h3>
-
-            <p className="text-xs sm:text-sm leading-relaxed text-zinc-400 mb-6 font-normal">
-              {t.about.cognitiveDesc}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-white/5">
+            <div className="mt-6 flex flex-wrap items-center gap-2 pt-4 border-t border-white/5">
               <span className="rounded-full bg-teal-500/10 px-3 py-1 text-2xs font-medium text-teal-300 border border-teal-500/20">
                 {t.about.pillar1Tag1}
               </span>
@@ -349,24 +351,26 @@ export default function AboutClient({ lang }: AboutClientProps) {
         </div>
 
         {/* Pillar 2: Local-First Privacy */}
-        <div className="group relative overflow-hidden rounded-3xl border border-emerald-500/20 bg-zinc-950/90 p-6 sm:p-8 shadow-xl backdrop-blur-xl transition-colors hover:border-emerald-500/40">
+        <div className="group relative flex flex-col overflow-hidden rounded-3xl border border-emerald-500/20 bg-zinc-950/90 p-6 sm:p-8 shadow-xl backdrop-blur-xl transition-colors hover:border-emerald-500/40">
           <div className="pointer-events-none absolute -bottom-12 -right-12 size-48 rounded-full bg-emerald-500/15 blur-3xl group-hover:bg-emerald-500/25 transition-colors" />
 
-          <div className="relative z-10">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3.5 py-1 text-2xs font-bold uppercase tracking-widest text-emerald-400 border border-emerald-500/30">
-              <ShieldCheck size={14} className="text-emerald-400" aria-hidden="true" />
-              <span>{t.about.pillar2Badge}</span>
+          <div className="relative z-10 flex flex-col justify-between h-full">
+            <div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3.5 py-1 text-2xs font-bold uppercase tracking-widest text-emerald-400 border border-emerald-500/30">
+                <ShieldCheck size={14} className="text-emerald-400" aria-hidden="true" />
+                <span>{t.about.pillar2Badge}</span>
+              </div>
+
+              <h3 className="text-lg sm:text-xl font-bold text-zinc-100 mb-3">
+                {t.about.privacyTitle}
+              </h3>
+
+              <p className="text-xs sm:text-sm leading-relaxed text-zinc-400 font-normal">
+                {t.about.privacyDesc}
+              </p>
             </div>
 
-            <h3 className="text-lg sm:text-xl font-bold text-zinc-100 mb-3">
-              {t.about.privacyTitle}
-            </h3>
-
-            <p className="text-xs sm:text-sm leading-relaxed text-zinc-400 mb-6 font-normal">
-              {t.about.privacyDesc}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-white/5">
+            <div className="mt-6 flex flex-wrap items-center gap-2 pt-4 border-t border-white/5">
               <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-2xs font-medium text-emerald-300 border border-emerald-500/20">
                 {t.about.pillar2Tag1}
               </span>

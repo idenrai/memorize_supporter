@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition, useMemo, useEffect, useCallback } from 'react'
+import { useState, useTransition, useMemo, useEffect, useCallback, useRef } from 'react'
 import {
   Trash2,
   ChevronUp,
@@ -39,6 +39,15 @@ export default function DeckTable() {
   const [localDecks, setLocalDecks] = useState<LocalDeck[]>([])
   const [isLoadingSamples, setIsLoadingSamples] = useState(false)
   const [deletingDeck, setDeletingDeck] = useState<{ id: string; title: string } | null>(null)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+  const tableContainerRef = useRef<HTMLDivElement>(null)
+
+  const checkScroll = useCallback(() => {
+    const el = tableContainerRef.current
+    if (!el) return
+    const hasMoreRight = el.scrollWidth > el.clientWidth && el.scrollLeft + el.clientWidth < el.scrollWidth - 12
+    setCanScrollRight(hasMoreRight)
+  }, [])
 
   const refreshLocalDecks = useCallback(async () => {
     try {
@@ -152,6 +161,12 @@ export default function DeckTable() {
     return sortableItems
   }, [allDecks, sortConfig])
 
+  useEffect(() => {
+    checkScroll()
+    window.addEventListener('resize', checkScroll)
+    return () => window.removeEventListener('resize', checkScroll)
+  }, [checkScroll, sortedDecks.length])
+
   const requestSort = (key: SortKey) => {
     let direction: 'asc' | 'desc' = 'asc'
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -179,10 +194,10 @@ export default function DeckTable() {
   return (
     <div className="flex flex-col gap-4">
       {/* Action Toolbar (Focused purely on deck collection management) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-zinc-900/60 border border-white/10 backdrop-blur-md">
-        <div className="text-sm font-semibold text-zinc-300">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-3xl bg-zinc-950/60 border border-white/10 backdrop-blur-xl shadow-lg">
+        <span className="text-2xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 shadow-inner">
           {t.management.totalDecks(allDecks.length)}
-        </div>
+        </span>
 
         <div className="flex items-center gap-2">
           {/* Add Sample Decks */}
@@ -190,18 +205,30 @@ export default function DeckTable() {
             type="button"
             onClick={handleAddSampleDecks}
             disabled={isPending || isLoadingSamples}
-            className="h-9 px-4 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-full transition-all inline-flex items-center gap-1.5 shadow-md active:scale-95"
+            className="btn-indigo h-9 px-4 text-xs font-bold uppercase tracking-wider rounded-full transition-all inline-flex items-center gap-1.5 shadow-md active:scale-95 disabled:opacity-50"
             title={t.management.addSampleDecks}
           >
-            <Sparkles size={14} />
+            <Sparkles size={14} aria-hidden="true" />
             <span>{isLoadingSamples ? t.home.loadingSamples : t.management.addSampleDecks}</span>
           </button>
         </div>
       </div>
 
       {/* Table Section */}
-      <div className="relative z-10 rounded-2xl border border-white/10 bg-zinc-950/50 shadow-inner overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="relative z-10 rounded-3xl border border-white/10 bg-zinc-950/60 backdrop-blur-xl shadow-xl overflow-hidden">
+        {/* Mobile Horizontal Scroll Indicator (Visual Cue) */}
+        <div
+          className={`pointer-events-none absolute top-0 right-0 bottom-0 w-8 bg-linear-to-l from-zinc-950/90 to-transparent md:hidden z-20 transition-opacity duration-300 ${
+            canScrollRight ? 'opacity-100' : 'opacity-0'
+          }`}
+          aria-hidden="true"
+        />
+
+        <div
+          ref={tableContainerRef}
+          onScroll={checkScroll}
+          className="overflow-x-auto custom-scrollbar"
+        >
           <table className="min-w-[540px] w-full divide-y divide-white/10">
             <thead className="bg-white/5">
               <tr>

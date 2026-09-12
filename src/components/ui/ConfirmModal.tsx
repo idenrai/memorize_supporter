@@ -38,8 +38,10 @@ export default function ConfirmModal({
       previousActiveElementRef.current = document.activeElement
     }
 
-    // Auto focus cancel button for safety
-    cancelButtonRef.current?.focus()
+    // Auto focus cancel button for safety after mount
+    const rafId = requestAnimationFrame(() => {
+      cancelButtonRef.current?.focus()
+    })
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -76,6 +78,7 @@ export default function ConfirmModal({
 
     window.addEventListener("keydown", handleKeyDown)
     return () => {
+      cancelAnimationFrame(rafId)
       window.removeEventListener("keydown", handleKeyDown)
       // Return focus to previous trigger element if it still exists in DOM
       if (previousActiveElementRef.current && document.body.contains(previousActiveElementRef.current)) {
@@ -104,7 +107,7 @@ export default function ConfirmModal({
       {/* Modal Dialog Content */}
       <div
         ref={modalRef}
-        className="relative w-full max-w-md bg-zinc-900/95 border border-white/10 rounded-3xl p-6 sm:p-7 shadow-2xl shadow-black/80 z-10 animate-in zoom-in-95 duration-200 backdrop-blur-xl"
+        className="relative w-full max-w-md max-h-[85vh] overflow-y-auto custom-scrollbar bg-zinc-900/95 border border-white/10 rounded-3xl p-6 sm:p-7 shadow-2xl shadow-black/80 z-10 animate-in zoom-in-95 duration-200 backdrop-blur-xl"
       >
         {/* Close Button */}
         <button
@@ -113,7 +116,7 @@ export default function ConfirmModal({
           className="absolute top-4 right-4 p-2 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500"
           aria-label={cancelText}
         >
-          <X size={18} />
+          <X size={18} aria-hidden="true" />
         </button>
 
         <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
@@ -146,7 +149,7 @@ export default function ConfirmModal({
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="h-10 px-5 text-sm font-semibold rounded-xl bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-zinc-300 border border-zinc-700/60 transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-400 disabled:opacity-50"
+            className="h-10 px-5 text-xs sm:text-sm font-bold uppercase tracking-wider rounded-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-zinc-300 border border-zinc-700/60 transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-400 disabled:opacity-50"
           >
             {cancelText}
           </button>
@@ -154,10 +157,10 @@ export default function ConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className={`h-10 px-5 text-sm font-semibold rounded-xl text-white transition-all shadow-md inline-flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 ${
+            className={`h-10 px-5 text-xs sm:text-sm font-bold uppercase tracking-wider rounded-full text-white transition-all shadow-md inline-flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 ${
               isDestructive
                 ? "bg-rose-600 hover:bg-rose-500 shadow-rose-900/30"
-                : "bg-indigo-600 hover:bg-indigo-500 shadow-indigo-900/30"
+                : "btn-indigo"
             }`}
           >
             {isLoading ? (

@@ -166,9 +166,9 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
             type="button"
             onClick={handleExportBackup}
             disabled={isExporting || isPending}
-            className="btn-indigo px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-2 shadow-md shadow-indigo-900/20"
+            className="btn-indigo px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider disabled:opacity-50 inline-flex items-center justify-center gap-2 shadow-md shadow-indigo-900/20"
           >
-            <Download size={16} />
+            <Download size={15} aria-hidden="true" />
             <span>{t.management.backupDownload}</span>
           </button>
 
@@ -176,9 +176,9 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isExporting || isPending}
-            className="px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 active:scale-95 disabled:opacity-50 text-zinc-200 text-sm font-semibold rounded-xl border border-zinc-700 transition-colors inline-flex items-center justify-center gap-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500"
+            className="px-5 py-2.5 bg-zinc-900/80 hover:bg-zinc-800 active:scale-95 disabled:opacity-50 text-zinc-300 hover:text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-full border border-white/10 transition-colors inline-flex items-center justify-center gap-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500 shadow-sm"
           >
-            <Upload size={16} />
+            <Upload size={15} aria-hidden="true" />
             <span>{t.management.backupRestore}</span>
           </button>
         </div>
