@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useCallback, useRef } from "react"
 import { PracticeQuizContent } from "@/types/card"
 import { CheckCircle2, XCircle, Bot, ChevronLeft, ChevronRight } from "lucide-react"
 import { motion, AnimatePresence, useIsPresent, useReducedMotion } from "framer-motion"
@@ -93,11 +93,6 @@ export default function PracticeQuizCard({
   }
 
   const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    // Intentionally left empty: Auto-focus on mount was removed 
-    // to improve accessibility and not steal focus from keyboard users
-  }, [isPresent])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const target = e.target as HTMLElement
