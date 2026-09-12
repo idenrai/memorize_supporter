@@ -46,9 +46,9 @@ export default async function DataPreparationPage({ params }: { params: Promise<
         badge={{
           icon: FileJson,
           label: t.common.dataPrep,
-          colorClass: "text-teal-400",
-          bgClass: "bg-teal-500/10",
-          borderClass: "border-teal-500/30",
+          colorClass: "text-indigo-400",
+          bgClass: "bg-indigo-500/10",
+          borderClass: "border-indigo-500/30",
         }}
         title={t.prep.title}
         description={t.prep.desc}

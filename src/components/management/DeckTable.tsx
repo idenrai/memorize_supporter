@@ -193,9 +193,9 @@ export default function DeckTable() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Action Toolbar (Focused purely on deck collection management) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-3xl bg-zinc-950/60 border border-white/10 backdrop-blur-xl shadow-lg">
-        <span className="text-2xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 shadow-inner">
+      {/* Action Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-2">
+        <span className="text-xs font-semibold px-2.5 py-1 rounded-lg text-zinc-300 bg-zinc-800 border border-zinc-700/60">
           {t.management.totalDecks(allDecks.length)}
         </span>
 
@@ -205,17 +205,17 @@ export default function DeckTable() {
             type="button"
             onClick={handleAddSampleDecks}
             disabled={isPending || isLoadingSamples}
-            className="btn-indigo h-9 px-4 text-xs font-bold uppercase tracking-wider rounded-full transition-all inline-flex items-center gap-1.5 shadow-md active:scale-95 disabled:opacity-50"
+            className="btn-primary h-8 px-3 text-xs font-semibold rounded-lg inline-flex items-center gap-1.5 disabled:opacity-50"
             title={t.management.addSampleDecks}
           >
-            <Sparkles size={14} aria-hidden="true" />
+            <Sparkles size={13} aria-hidden="true" />
             <span>{isLoadingSamples ? t.home.loadingSamples : t.management.addSampleDecks}</span>
           </button>
         </div>
       </div>
 
       {/* Table Section */}
-      <div className="relative z-10 rounded-3xl border border-white/10 bg-zinc-950/60 backdrop-blur-xl shadow-xl overflow-hidden">
+      <div className="relative rounded-xl border border-zinc-800 bg-zinc-950/40 overflow-hidden shadow-xs">
         {/* Mobile Horizontal Scroll Indicator (Visual Cue) */}
         <div
           className={`pointer-events-none absolute top-0 right-0 bottom-0 w-8 bg-linear-to-l from-zinc-950/90 to-transparent md:hidden z-20 transition-opacity duration-300 ${
@@ -229,82 +229,84 @@ export default function DeckTable() {
           onScroll={checkScroll}
           className="overflow-x-auto custom-scrollbar"
         >
-          <table className="min-w-[540px] w-full divide-y divide-white/10">
-            <thead className="bg-white/5">
+          <table className="min-w-[540px] w-full divide-y divide-zinc-800">
+            <thead className="bg-zinc-900/80">
               <tr>
                 <th 
-                  className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-white/10"
+                  className="px-4 py-3 sm:px-5 sm:py-3.5 text-left text-2xs font-semibold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-zinc-800/60 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-zinc-800"
                   onClick={() => requestSort('title')}
                   onKeyDown={(e) => handleSortKeyDown(e, 'title')}
                   tabIndex={0}
                   aria-sort={sortConfig?.key === 'title' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
-                  aria-label={`Sort by ${t.management.thName}`}
+                  aria-label={t.management.sortBy(t.management.thName)}
                 >
                   {t.management.thName} {renderSortIcon('title')}
                 </th>
                 <th 
-                  className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-white/10"
+                  className="px-4 py-3 sm:px-5 sm:py-3.5 text-left text-2xs font-semibold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-zinc-800/60 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-zinc-800"
                   onClick={() => requestSort('series')}
                   onKeyDown={(e) => handleSortKeyDown(e, 'series')}
                   tabIndex={0}
                   aria-sort={sortConfig?.key === 'series' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
-                  aria-label={`Sort by ${t.management.thSeries}`}
+                  aria-label={t.management.sortBy(t.management.thSeries)}
                 >
                   {t.management.thSeries} {renderSortIcon('series')}
                 </th>
                 <th 
-                  className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-white/10"
+                  className="px-4 py-3 sm:px-5 sm:py-3.5 text-left text-2xs font-semibold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-zinc-800/60 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-zinc-800"
                   onClick={() => requestSort('type')}
                   onKeyDown={(e) => handleSortKeyDown(e, 'type')}
                   tabIndex={0}
                   aria-sort={sortConfig?.key === 'type' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
-                  aria-label={`Sort by ${t.management.thType}`}
+                  aria-label={t.management.sortBy(t.management.thType)}
                 >
                   {t.management.thType} {renderSortIcon('type')}
                 </th>
                 <th 
-                  className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-white/5 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-white/10"
+                  className="px-4 py-3 sm:px-5 sm:py-3.5 text-left text-2xs font-semibold text-zinc-400 uppercase tracking-wider cursor-pointer hover:bg-zinc-800/60 select-none transition-colors whitespace-nowrap focus-visible:outline-hidden focus-visible:bg-zinc-800"
                   onClick={() => requestSort('cards')}
                   onKeyDown={(e) => handleSortKeyDown(e, 'cards')}
                   tabIndex={0}
                   aria-sort={sortConfig?.key === 'cards' ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
-                  aria-label={`Sort by ${t.management.thCards}`}
+                  aria-label={t.management.sortBy(t.management.thCards)}
                 >
                   {t.management.thCards} {renderSortIcon('cards')}
                 </th>
-                <th className="px-4 py-3 sm:px-6 sm:py-4 text-right text-xs font-bold text-zinc-400 uppercase tracking-wider select-none whitespace-nowrap">
+                <th className="px-4 py-3 sm:px-5 sm:py-3.5 text-right text-2xs font-semibold text-zinc-400 uppercase tracking-wider select-none whitespace-nowrap">
                   {t.management.thActions}
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 bg-transparent">
+            <tbody className="divide-y divide-zinc-800/60 bg-transparent">
               {sortedDecks.map((deck) => (
-                <tr key={deck.id} className="hover:bg-white/5 transition-colors">
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap max-w-37.5 sm:max-w-62.5 lg:max-w-xs">
+                <tr key={deck.id} className="hover:bg-zinc-900/50 transition-colors">
+                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap max-w-37.5 sm:max-w-62.5 lg:max-w-xs">
                     <div title={deck.title}>
-                      <div className="text-sm font-bold text-zinc-100 truncate">{deck.title}</div>
-                      <div className="text-xs text-zinc-500 mt-1 font-mono truncate">{deck.id}</div>
+                      <div className="text-sm font-semibold text-zinc-100 truncate">{deck.title}</div>
+                      <div className="text-2xs text-zinc-500 mt-0.5 font-mono truncate">{deck.id}</div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-sm text-zinc-300 max-w-30 sm:max-w-50 truncate" title={deck.series || ''}>
+                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-xs text-zinc-300 max-w-30 sm:max-w-50 truncate" title={deck.series || ''}>
                     {deck.series || <span className="text-zinc-600 italic">-</span>}
                   </td>
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-sm text-zinc-400 capitalize">
-                    {deck.type}
+                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-xs text-zinc-400 capitalize">
+                    <span className="px-2 py-0.5 rounded bg-zinc-800/60 border border-zinc-800 text-zinc-300 text-2xs font-medium">
+                      {deck.type}
+                    </span>
                   </td>
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-sm font-medium text-zinc-300 tabular-nums">
+                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-xs font-medium text-zinc-300 tabular-nums">
                     {deck._count?.cards ?? 0}
                   </td>
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end gap-2">
+                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-right text-xs font-medium">
+                    <div className="flex justify-end gap-1">
                       <button
                         onClick={() => handleRequestDelete(deck.id, deck.title)}
                         disabled={isPending}
-                        className="text-red-400/70 hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500"
+                        className="text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 p-1.5 rounded-lg transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-rose-500"
                         title={t.management.delete}
                         aria-label={`${deck.title} ${t.management.delete}`}
                       >
-                        <Trash2 size={18} aria-hidden="true" />
+                        <Trash2 size={15} aria-hidden="true" />
                       </button>
                     </div>
                   </td>
@@ -312,11 +314,11 @@ export default function DeckTable() {
               ))}
               {sortedDecks.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-14 text-center text-zinc-500 text-sm">
+                  <td colSpan={5} className="px-6 py-12 text-center text-zinc-500 text-sm">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <FolderOpen size={36} className="text-zinc-600 mb-2 opacity-50" aria-hidden="true" />
-                      <p className="text-zinc-200 font-bold text-base">{t.management.emptyDecksTitle}</p>
-                      <p className="text-zinc-400 text-xs sm:text-sm max-w-md leading-relaxed break-keep">
+                      <FolderOpen size={32} className="text-zinc-600 mb-1 opacity-60" aria-hidden="true" />
+                      <p className="text-zinc-200 font-bold text-sm">{t.management.emptyDecksTitle}</p>
+                      <p className="text-zinc-400 text-xs max-w-md leading-relaxed break-keep font-normal">
                         {t.management.emptyDecksDesc}
                       </p>
                     </div>
@@ -326,11 +328,6 @@ export default function DeckTable() {
             </tbody>
           </table>
         </div>
-        {/* Mobile horizontal scroll affordance fade */}
-        <div
-          className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-linear-to-l from-zinc-950/80 to-transparent sm:hidden"
-          aria-hidden="true"
-        />
       </div>
 
       {/* Custom Accessible Confirm Modal */}

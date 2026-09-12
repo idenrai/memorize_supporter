@@ -146,7 +146,7 @@ export default function PracticeQuizCard({
       ref={containerRef}
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className="w-full max-w-4xl select-none font-sans antialiased focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500/50 rounded-2xl"
+      className="w-full max-w-4xl select-none font-sans antialiased focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500/50 rounded-2xl"
     >
       <AnimatePresence initial={false} mode="wait">
         {!isFlipped ? (
@@ -157,51 +157,52 @@ export default function PracticeQuizCard({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: "easeOut" }}
-            className="w-full flex flex-col bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-10 shadow-2xl transition duration-300 hover:border-zinc-700/80"
+            className="w-full flex flex-col bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-10 shadow-xl transition duration-200 hover:border-zinc-700"
           >
-            <div className="text-xs font-medium text-zinc-400 mb-4 tracking-widest uppercase flex items-center justify-between min-w-0">
-              <span className="truncate min-w-0 max-w-45 sm:max-w-75 text-teal-500">{content.category || t.quiz.practiceQuiz}</span>
-              <span className="text-zinc-500 shrink-0 ml-2">
+            <div className="text-xs font-medium text-zinc-400 mb-4 tracking-wider uppercase flex items-center justify-between min-w-0">
+              <span className="truncate min-w-0 max-w-45 sm:max-w-75 text-indigo-400 font-semibold">{content.category || t.quiz.practiceQuiz}</span>
+              <span className="text-zinc-500 shrink-0 ml-2 text-2xs">
                 {content.answers.length > 1 
                   ? `${t.quiz.selectMultiple(content.answers.length)} ${t.quiz.selectionProgress(selectedIndices.length, content.answers.length)}` 
                   : t.quiz.selectOne}
               </span>
             </div>
             
-            <h2 className={`${content.question.length > 300 ? 'text-sm sm:text-base' : content.question.length > 150 ? 'text-base sm:text-lg' : 'text-xl sm:text-2xl'} font-semibold text-zinc-200 mb-6 shrink-0 leading-relaxed whitespace-pre-wrap text-balance tracking-wide`}>
+            <h2 className={`${content.question.length > 300 ? 'text-sm sm:text-base' : content.question.length > 150 ? 'text-base sm:text-lg' : 'text-xl sm:text-2xl'} font-semibold text-zinc-100 mb-6 shrink-0 leading-relaxed whitespace-pre-wrap text-balance`}>
               {formatText(content.question)}
             </h2>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2.5">
               {content.options.map((opt, i) => (
                 <button
                   key={i}
                   type="button"
                   aria-pressed={selectedIndices.includes(i)}
                   onClick={() => toggleSelection(i)}
-                  className={`text-left px-5 py-4 rounded-xl border transition duration-200 flex items-center gap-3 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-600 text-sm sm:text-base active:scale-99 ${
+                  className={`text-left px-5 py-3.5 rounded-xl border transition-colors duration-150 flex items-center gap-3 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 text-sm sm:text-base ${
                     selectedIndices.includes(i) 
-                      ? 'border-teal-600 bg-teal-600/10 text-teal-200 shadow-sm shadow-teal-900/10' 
-                      : 'border-zinc-800 hover:border-zinc-700 text-zinc-300 bg-zinc-800/30 hover:bg-zinc-800/50'
+                      ? 'border-indigo-500/80 bg-indigo-500/10 text-zinc-100 shadow-xs' 
+                      : 'border-zinc-800 hover:border-zinc-700 text-zinc-300 bg-zinc-950/40 hover:bg-zinc-800/50'
                   }`}
                 >
                   <div className={`w-5 h-5 flex items-center justify-center shrink-0 border transition-colors ${
-                    isSingleChoice ? 'rounded-full' : 'rounded'
+                    isSingleChoice ? 'rounded-full' : 'rounded-md'
                   } ${
-                    selectedIndices.includes(i) ? 'border-teal-600 bg-teal-600 text-white' : 'border-zinc-600'
+                    selectedIndices.includes(i) ? 'border-indigo-500 bg-indigo-600 text-white' : 'border-zinc-600'
                   }`}>
-                    {selectedIndices.includes(i) && <CheckCircle2 size={14} aria-hidden="true" />}
+                    {selectedIndices.includes(i) && <CheckCircle2 size={13} aria-hidden="true" />}
                   </div>
-                  <span className="whitespace-pre-wrap">{formatText(opt)}</span>
+                  <span className="whitespace-pre-wrap font-medium">{formatText(opt)}</span>
                 </button>
               ))}
             </div>
 
             <div className="mt-6 flex justify-end">
               <button 
+                type="button"
                 onClick={handleSubmit}
                 disabled={selectedIndices.length === 0}
-                className="px-8 py-2.5 bg-teal-600 text-white font-medium rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-teal-500 active:scale-95 transition shadow-sm"
+                className="px-6 py-2 rounded-xl text-sm font-semibold btn-primary disabled:opacity-40 disabled:pointer-events-none"
               >
                 {mode === 'exam' ? t.quiz.next : t.quiz.submit}
               </button>
@@ -300,29 +301,30 @@ export default function PracticeQuizCard({
               </div>
             )}
 
-            <div className="pt-6 border-t border-zinc-800/80">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="pt-5 border-t border-zinc-800">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
                   type="button"
                   onClick={handleCopyPrompt}
-                  className="px-6 py-3 border border-zinc-600 text-zinc-300 font-medium rounded-full flex items-center justify-center gap-2 hover:bg-zinc-800 hover:border-zinc-500 hover:text-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition w-full sm:w-auto shadow-sm"
+                  className="px-5 py-2.5 btn-secondary flex items-center justify-center gap-2 rounded-xl text-xs sm:text-sm font-medium w-full sm:w-auto"
                 >
-                  <Bot size={18} aria-hidden="true" />
+                  <Bot size={16} aria-hidden="true" />
                   <span>{t.quiz.askAi}</span>
                 </button>
 
                 {mode !== 'review' ? (
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleNext()
                     }}
-                    className="px-8 py-3 bg-teal-600 text-white font-medium rounded-full hover:bg-teal-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition shadow-sm w-full sm:w-auto"
+                    className="px-6 py-2.5 btn-primary rounded-xl text-xs sm:text-sm font-semibold w-full sm:w-auto"
                   >
                     {t.quiz.next}
                   </button>
                 ) : (
-                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className="flex items-center gap-2.5 w-full sm:w-auto">
                     {onPrevReview && (
                       <button
                         type="button"
@@ -332,9 +334,9 @@ export default function PracticeQuizCard({
                           onPrevReview()
                         }}
                         title={`${t.quiz.prevQuestion} (←)`}
-                        className="px-5 py-3 border border-zinc-700 text-zinc-300 font-medium rounded-full flex items-center justify-center gap-1.5 hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
+                        className="px-4 py-2.5 btn-secondary rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-1 disabled:opacity-40 disabled:pointer-events-none flex-1 sm:flex-initial"
                       >
-                        <ChevronLeft size={18} aria-hidden="true" />
+                        <ChevronLeft size={16} aria-hidden="true" />
                         <span>{t.quiz.prevQuestion}</span>
                       </button>
                     )}
@@ -347,10 +349,10 @@ export default function PracticeQuizCard({
                           onNextReview()
                         }}
                         title={`${t.quiz.nextQuestion} (→ / Enter)`}
-                        className="px-6 py-3 bg-teal-600 text-white font-medium rounded-full flex items-center justify-center gap-1.5 hover:bg-teal-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
+                        className="px-5 py-2.5 btn-primary rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 flex-1 sm:flex-initial"
                       >
                         <span>{t.quiz.nextQuestion}</span>
-                        <ChevronRight size={18} aria-hidden="true" />
+                        <ChevronRight size={16} aria-hidden="true" />
                       </button>
                     ) : (
                       onClose && (
@@ -361,7 +363,7 @@ export default function PracticeQuizCard({
                             onClose()
                           }}
                           title={`${t.quiz.closeReview} (Esc)`}
-                          className="px-6 py-3 bg-zinc-700 text-white font-medium rounded-full hover:bg-zinc-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-95 transition flex-1 sm:flex-initial shadow-sm"
+                          className="px-5 py-2.5 btn-secondary rounded-xl text-xs sm:text-sm font-medium flex-1 sm:flex-initial"
                         >
                           {t.quiz.closeReview}
                         </button>

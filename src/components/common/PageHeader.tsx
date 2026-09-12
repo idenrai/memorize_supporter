@@ -34,13 +34,11 @@ export default function PageHeader({
     >
       {badge && (
         <div
-          className={`mb-3 inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-2xs font-bold uppercase tracking-widest shadow-inner w-fit ${
-            badge.bgClass || 'bg-indigo-500/10'
-          } ${badge.borderClass || 'border border-indigo-500/30'} ${
-            badge.colorClass || 'text-indigo-400'
+          className={`mb-3 inline-flex items-center gap-2 rounded-lg px-2.5 py-1 text-2xs font-semibold tracking-wide w-fit border border-zinc-800 bg-zinc-900/80 text-zinc-300 ${
+            badge.colorClass || 'text-zinc-300'
           }`}
         >
-          <badge.icon size={14} aria-hidden="true" />
+          <badge.icon size={13} className={badge.colorClass || 'text-indigo-400'} aria-hidden="true" />
           <span>{badge.label}</span>
         </div>
       )}
@@ -51,11 +49,11 @@ export default function PageHeader({
         }`}
       >
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-linear-to-r from-zinc-100 to-zinc-400 mb-3 break-keep text-balance">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-zinc-100 mb-2 break-keep text-balance">
             {title}
           </h1>
           <p
-            className={`text-sm sm:text-base text-zinc-400 leading-relaxed break-keep font-medium ${
+            className={`text-sm sm:text-base text-zinc-400 leading-relaxed break-keep font-normal ${
               isCenter ? 'max-w-2xl mx-auto' : 'max-w-3xl'
             }`}
           >

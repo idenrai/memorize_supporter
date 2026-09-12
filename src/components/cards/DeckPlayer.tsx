@@ -7,7 +7,7 @@ import VocabularyCard from "./VocabularyCard"
 import PracticeQuizCard from "./PracticeQuizCard"
 import ExamResultView from "./ExamResultView"
 import QuizHeader from "./QuizHeader"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Trophy, Target } from "lucide-react"
 import Link from "next/link"
 import { CardData, FlashcardContent } from "@/types/card"
 import type { Lang } from "@/i18n/types"
@@ -48,7 +48,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
         await updateLocalProgress(card.id, deckId, isCorrect)
       } catch (e) {
         console.error("Progress save failed:", e)
-        toast.error(t.common?.error || "Failed to save progress")
+        toast.error(t.common.error)
       }
     }
 
@@ -73,7 +73,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
           })
         } catch(e) {
           console.error("Failed to save exam result exception:", e)
-          toast.error(t.common?.error || "Failed to save exam result")
+          toast.error(t.common.error)
         }
       }
       setCompleted(true)
@@ -84,7 +84,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
         <h2 className="text-xl text-zinc-400 text-balance">{t.quiz.noCards}</h2>
-        <Link href={`/${lang}`} className="mt-4 text-teal-500 hover:underline flex items-center gap-2">
+        <Link href={`/${lang}`} className="mt-4 text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-2">
           <ArrowLeft size={16} aria-hidden="true" /> {t.common.backToHome}
         </Link>
       </div>
@@ -106,6 +106,14 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
       setCompleted(false)
     }
 
+    const handleStudyNewSession = () => {
+      setPlayingCards(cards)
+      setCurrentIndex(0)
+      setSessionResults([])
+      setRetryRound(0)
+      setCompleted(false)
+    }
+
     const PASS_MARK = PASS_MARK_PERCENT
         
     if (mode === 'exam') {
@@ -116,7 +124,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
           lang={lang as Lang}
           backLink={`/${lang}`}
           onRetryIncorrect={handleRetryIncorrect}
-          onStudyNewSession={() => window.location.reload()}
+          onStudyNewSession={handleStudyNewSession}
         />
       )
     }
@@ -124,39 +132,58 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
     return (
       <motion.div 
         aria-live="polite"
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex-1 flex flex-col items-center justify-center gap-6"
+        className="flex-1 flex flex-col items-center justify-center gap-5 max-w-md mx-auto w-full py-8"
       >
-        <div className={`w-24 h-24 rounded-full flex items-center justify-center text-4xl mb-4 ${
-          accuracy >= PASS_MARK ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'
+        <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-2 border shadow-xs ${
+          accuracy >= PASS_MARK 
+            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' 
+            : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
         }`}>
-          {accuracy >= PASS_MARK ? '🎉' : '🎯'}
-        </div>
-        <h2 className="text-3xl font-bold text-white text-balance">{t.quiz.quizCompleted}</h2>
-        <div className="bg-zinc-900/50 rounded-2xl p-8 border border-zinc-800 text-center flex flex-col gap-2">
-          <p className="text-4xl font-black text-white">{accuracy}%</p>
-          <p className="text-zinc-400">{t.quiz.youScored(correctCount, playingCards.length)}</p>
+          {accuracy >= PASS_MARK ? (
+            <Trophy size={36} aria-hidden="true" />
+          ) : (
+            <Target size={36} aria-hidden="true" />
+          )}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-6">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-100 text-center tracking-tight">
+          {t.quiz.quizCompleted}
+        </h2>
+
+        <div className="card-precision p-6 sm:p-8 text-center flex flex-col gap-1.5 w-full">
+          <p className="text-4xl sm:text-5xl font-extrabold text-zinc-100 tabular-nums">
+            {accuracy}%
+          </p>
+          <p className="text-sm text-zinc-400">
+            {t.quiz.youScored(correctCount, playingCards.length)}
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 w-full mt-3">
           {incorrectIds.length > 0 && (
             <button 
+              type="button"
               onClick={handleRetryIncorrect}
-              className="px-8 py-3 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500"
+              className="flex-1 px-5 py-3 rounded-xl text-sm font-semibold btn-secondary text-center"
             >
               {t.quiz.retryIncorrect(incorrectIds.length)}
             </button>
           )}
           <button 
-            onClick={() => window.location.reload()}
-            className="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-medium transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-teal-500"
+            type="button"
+            onClick={handleStudyNewSession}
+            className="flex-1 px-5 py-3 rounded-xl text-sm font-semibold btn-primary text-center"
           >
             {t.quiz.studyNewSession}
           </button>
         </div>
         
-        <Link href={`/${lang}`} className="text-zinc-500 hover:text-zinc-300 transition-colors mt-4 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500 rounded px-2">
+        <Link 
+          href={`/${lang}`} 
+          className="text-xs font-medium text-zinc-500 hover:text-zinc-300 transition-colors mt-2"
+        >
           {t.quiz.backToDashboard}
         </Link>
       </motion.div>

@@ -13,17 +13,13 @@
 - **목적**: 사용자가 플래시카드(핀포인트 팁), 객관식 문제, 영단어 등을 효율적으로 암기할 수 있도록 돕는 범용 암기 애플리케이션입니다. 인지 과학적 원리(Active Recall, Spaced Repetition)와 포커스 모드 디자인을 채택하여 학습 효율을 극대화합니다.
 - **핵심 컴포넌트**:
   - `DeckGallery`: `useDeferredValue`를 활용한 렌더링 최적화와 함께 실시간 덱 검색 및 시리즈 필터링을 담당하는 클라이언트 컴포넌트
-  - `UploadZone`: 서버 전송 없이 브라우저 IndexedDB로 개인 커스텀 덱을 단일 또는 복수 일괄(Multi-file Batch)로 즉시 적재하는 드래그 앤 드롭 파일 임포터 (데이터 관리 페이지)
-  - `DeckPlayer` 및 세부 카드 컴포넌트들(`Flashcard`, `VocabularyCard`, `PracticeQuizCard`): 프론트엔드 인터랙티브 카드 렌더러 (마이크로 애니메이션, 피드백 처리)
-  - `DeckClientLoader`: 로컬 전용 덱 접근 시 IndexedDB로부터 카드를 로드하여 서버와 동일한 SRS 우선순위로 플레이어를 구동하는 클라이언트 로더
-  - `ExamResultView`: 문항별 오답 상세 복습, 시각적 선택지 비교 및 '틀린 문제만 다시 풀기'를 지원하는 시험 결과 뷰어
-  - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어 (Tactile DeckCard 수준의 이중 레이어 및 글로우 인터랙션 적용)
-  - `ConfirmModal`: 파괴적 변경(덱 삭제, 시험 기록 삭제) 시 브라우저 기본 팝업을 대체하여 WAI-ARIA Focus Trap, Return Focus, ESC 키 취소, 모바일 뷰포트 안전 스크롤(`max-h-[85vh]`) 및 알약 버튼 디자인을 제공하는 접근성 중심의 프리미엄 확인 모달
-  - `PageHeader` (`src/components/common/PageHeader.tsx`): 소개, 시험 기록, 데이터 관리, 데이터 준비 등 모든 서브 페이지의 일관된 알약 뱃지, 반응형 그라디언트 타이틀, 보조 설명 및 우측 액션 슬롯을 일원화한 공통 헤더 컴포넌트
-  - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 단일 JSON 객체 스키마 규격 및 체계적인 [출력 규칙]을 갖춘 템플릿을 생성/검증하는 관리 도구 (모바일 가로 스크롤 동적 페이드 인디케이터 지원)
-  - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): 인지 과학 및 Local-First 철학, 인터랙티브 3D 플립 카드 데모, 6대 기능 덱, 키보드 단축키 안내를 제공하는 브랜드 소개 뷰어
-  - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
-  - `CardParser` (`src/lib/card-parser.ts`): 원시 JSON 및 카드 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
+  - `UploadZone`: 서버 전송 없이 브라우저 IndexedD   - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어 (고집중 Precision Canvas 단일 레이어 보더 및 시맨틱 뱃지 적용)
+   - `ConfirmModal`: 파괴적 변경(덱 삭제, 복원 확인, 시험 기록 삭제) 시 브라우저 기본 팝업을 대체하여 WAI-ARIA Focus Trap, Return Focus, ESC 키 취소, 모바일 뷰포트 안전 스크롤(`max-h-[85vh]`) 및 정밀 버튼 디자인을 제공하는 접근성 중심의 프리미엄 확인 모달
+   - `PageHeader` (`src/components/common/PageHeader.tsx`): 소개, 시험 기록, 데이터 관리, 데이터 준비 등 모든 서브 페이지의 일관된 시맨틱 뱃지, 단색 볼드 타이틀, 보조 설명 및 우측 액션 슬롯을 일원화한 공통 헤더 컴포넌트
+   - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 단일 JSON 객체 스키마 규격 및 체계적인 [출력 규칙]을 갖춘 템플릿을 생성/검증/다운로드하는 관리 도구 (프롬프트/JSON 탭 분기 및 맞춤 복사 기능 지원)
+   - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): 인지 과학 및 Local-First 철학, 인터랙티브 3D 플립 카드 데모, 6대 기능 카드, 키보드 단축키 및 엔지니어링 기술 사양 테이블(100% i18n 지원)을 제공하는 브랜드 소개 뷰어
+   - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
+   - `CardParser` (`src/lib/card-parser.ts`): 원시 JSON 및 카드 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
 
 ### 2. 프론트엔드 (Frontend)
 
@@ -38,30 +34,27 @@
 
 - **다국어 처리 및 UI 하드코딩 제로 전략 (i18n & Zero Hardcoded UI Text Policy)**:
   - **URL 기반 단일 진실 공급원(SSoT)**: URL 기반 동적 라우팅(`app/[lang]/...`)을 활용합니다. 전역 상태 관리자(Zustand 등)를 배제하여 SSR 렌더링 시점의 쿠키 분석에 의존하지 않고, Hydration 에러를 원천 차단합니다.
-  - **UI 텍스트 하드코딩 절대 금지 (Zero Hardcoded UI Text Policy)**: 버튼, 헤딩, 본문, 뱃지, 태그, 힌트, placeholder, `aria-label`, 토스트 및 메타데이터를 포함하여 사용자 대면 및 스크린 리더용 모든 UI 문자열의 인라인 하드코딩을 엄격히 금지합니다.
+  - **UI 텍스트 하드코딩 절대 금지 (Zero Hardcoded UI Text Policy)**: 버튼, 헤딩, 본문, 뱃지, 태그, 힌트, placeholder, `aria-label`, 토스트, 코드 템플릿 라벨 및 기술 사양 테이블을 포함하여 사용자 대면 및 스크린 리더용 모든 UI 문자열의 인라인 하드코딩을 100% 엄격히 금지합니다.
   - **엄격한 타입 안전 다국어 사전**: `src/i18n/types.ts`를 단일 진실 공급원으로 삼아 한국어(`ko.ts`), 영어(`en.ts`), 일본어(`ja.ts`) 3개 국어의 번역 사전을 완전 동기화하고, 실제 사용자 흐름에 맞춘 직관적인 UX 카피라이팅을 적용합니다.
   - **프록시 기반 로캘 라우팅**: Next.js 16 규칙에 따라 `src/proxy.ts`를 사용하여 동적 로캘 라우팅을 처리합니다. 다국어 상수(locales)는 `src/i18n/settings.ts`로 분리하여 애플리케이션 전체에서 일관되게 관리합니다.
 
 - **상태 관리 전략**:
   - 로컬 상태(`useState`)를 활용하여 현재 데크(Deck)의 학습 진행 상황과 플립 여부를 관리합니다. 복잡한 전역 상태 관리자(Redux 등)는 지양합니다.
+  - **SPA 세션 재시작**: 학습 완료 후 전체 브라우저 새로고침(`window.location.reload()`)을 배제하고, 인메모리 상태 리셋(`handleStudyNewSession`)을 통해 지연 없는 부드러운 새 세션을 즉시 구동합니다.
 
-- **스타일링, 마이크로 애니메이션 및 접근성**:
-  - Tailwind CSS v4 (`@tailwindcss/postcss`)를 활용하여 눈이 편안한 Zinc(배경)와 Teal/Indigo(프라이머리) 기반의 다크 모드 포커스 레이아웃을 제공합니다.
-  - `globals.css` 파일에 Tailwind CSS v4의 `@theme` 및 `@utility` 지시어를 활용하여 글로벌 디자인 토큰(`--header-height: 4rem;`) 및 시맨틱 유틸리티(`.glass-panel`, `.btn-indigo`, 3D 변환 등)를 정의함으로써 스타일 코드 결합성과 유지보수성을 극대화했습니다.
+- **스타일링, 마이크로 애니메이션 및 접근성 (Precision Canvas)**:
+  - Tailwind CSS v4 (`@tailwindcss/postcss`)를 활용하여 딥 차콜 캔버스(`--color-background: #09090b`), 촉각적 카드 표면(`--color-card: #18181b`), 정밀한 1px 테두리(`--color-card-border: #27272a`), 통일된 인디고 프라이머리(`--color-primary: #6366f1`) 기반의 고집중 Precision Canvas 레이아웃을 제공합니다.
+  - `globals.css` 파일에 Tailwind CSS v4의 `@theme` 및 `@utility` 지시어를 활용하여 글로벌 디자인 토큰 및 시맨틱 유틸리티(`.card-precision`, `.card-interactive`, `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.kbd-badge`, 3D 변환 등)를 정의하여 스타일 일관성과 유지보수성을 극대화했습니다.
   - **CJK 타이포그래피 최적화**: `globals.css`의 `body`에 `word-break: keep-all; overflow-wrap: anywhere;`를 전역 적용하여 한국어/일본어 어절이 음절 단위로 쪼개지는 현상을 방지하고, 좁은 모바일 뷰포트에서의 긴 텍스트 오버플로우를 차단합니다.
   - **가변 높이 및 모션 제어**: 퀴즈 카드 및 상호작용 컨트롤에 `AnimatePresence (initial={false})`와 `useReducedMotion`(`motion-reduce:` 변형자)을 적용하여 컨텐츠 길이에 맞춰 유연하게 조절하고, 모션 덜컹거림(Jitter)을 방지합니다.
   - **다중 선택 문항 개수 제한**: 정답 개수(`content.answers.length`)를 초과하여 선택할 수 없도록 동적으로 상한선을 제한하고, 실시간 진행 뱃지(`(1/2 선택됨)`) 및 안내 토스트를 제공하여 불필요한 중복 클릭을 방지합니다.
   - **전체 선택지 하이라이트 및 해설 강화**: 퀴즈 해설 및 결과 검토 화면에서 문제의 전체 선택지를 렌더링하고, 실제 정답(초록색), 사용자가 고른 오답(빨간색), 미선택 보기를 아이콘과 뱃지로 3중 강조하여 오답 원인을 직관적으로 학습할 수 있도록 지원합니다.
-  - **단일 진실 공급원(SSoT) 스티키 헤더 및 공통 `QuizHeader` 컴포넌트**: 전역 헤더 높이 토큰과 완벽히 연동되는 재사용 가능한 `QuizHeader`(및 `QuizHeader.Skeleton`)를 도입하여 스크롤 시 글로벌 네비게이션 바로 아래(`sticky top-(--header-height) z-30`)에 안정적으로 고정됩니다. 상단 기준 정렬을 확립하여 문제 카드와의 비정상적 여백을 해소하고, 누적 레이아웃 시프트(CLS) 없는 일관된 학습 환경을 보장합니다.
-  - **끊김 없는 문제 검토 네비게이션 및 단축키**: 시험 기록 및 오답 검토 화면에서 목록으로 나가지 않고도 전후 문제로 즉시 이동할 수 있도록 상단 Sticky 헤더와 하단 액션 버튼을 양방향 제공하며, 키보드 좌우 방향키(`←`, `→`), `Escape`, `Enter` 단축키를 완벽 지원합니다.
-  - Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, WAI-ARIA 속성(`role="group"`, `aria-pressed`, `aria-label`), 견고한 키보드 포커스(`focus-visible`), 고정폭 수치 폰트(`tabular-nums`), 그리고 모바일 터치 피드백(`active:scale-95`) 등 최고 수준의 접근성을 보장합니다.
-  - 네이티브 브라우저 엘리먼트를 대체하는 접근성 높은 커스텀 UI 컴포넌트(예: React Portal 기반의 `CustomSelect`, WAI-ARIA Focus Trap 및 Return Focus를 완비한 `ConfirmModal`)를 구현하여, 모든 플랫폼에서 일관된 프리미엄 룩(글래스모피즘)을 유지하는 동시에 엄격한 WAI-ARIA 다이얼로그 표준과 키보드 네비게이션을 지원합니다.
-  - **전체 페이지 디자인 시스템 통일(Tactile Cognitive Deck Studio) 및 공통 `PageHeader`**:
-    - 모든 페이지 컨테이너 너비를 `max-w-6xl mx-auto px-4 sm:px-6 md:px-8`로 완전 통일하여 페이지 전환 시 뷰포트 폭 불일치 및 레이아웃 시프트(CLS)를 원천 차단했습니다.
-    - 서브 페이지 헤더를 공통 컴포넌트(`PageHeader`)로 추상화하여, 알약 뱃지(`text-2xs font-bold uppercase tracking-widest px-3.5 py-1 rounded-full`), 반응형 그라디언트 헤딩(`text-2xl sm:text-3xl md:text-4xl`), 보조 설명, 우측 액션 슬롯을 단일 인터페이스로 제공합니다.
-    - 시험 기록 뷰(`LocalRecordsView`)의 카드를 메인 덱 카드 수준의 이중 레이어(`p-px rounded-3xl`, 앰비언트 글로우, 호버 그라디언트 테두리)로 격상하고, 모달 및 제어 버튼을 알약(`rounded-full`) 형태로 일원화했습니다.
-    - 데이터 테이블(`DeckTable`)의 모바일 가로 스크롤 동적 페이드 인디케이터 및 `ConfirmModal`의 모바일 뷰포트 안전 스크롤(`max-h-[85vh] overflow-y-auto`)을 적용하여 반응형 접근성을 극대화했습니다.
-  - `framer-motion`을 도입하여 180도 3D 플립, Scale Pop 등 시각적 피드백을 제공합니다.
+  - **단일 진실 공급원(SSoT) 스티키 헤더 및 공통 `QuizHeader` 컴포넌트**: 전역 헤더 높이 토큰과 완벽히 연동되는 재사용 가능한 `QuizHeader`를 도입하여 스크롤 시 글로벌 네비게이션 바로 아래(`sticky top-(--header-height) z-30`)에 안정적으로 고정됩니다. WAI-ARIA `role="progressbar"`, `aria-valuenow`, `aria-valuemin="0"`, `aria-valuemax="100"`, 다국어 `aria-label`을 완비하여 시각 장애 사용자에게도 실시간 진행 상태를 명확히 전달합니다.
+  - **전역 문제 검토 네비게이션 및 시각적 키 뱃지 (`kbd-badge`)**: 시험 기록 및 오답 검토 화면에서 최상위 키보드 리스너(`Escape`, `←`, `→`)를 완비하여 플래시카드, 어휘, 퀴즈 전 종류에서 즉시 탐색이 가능하며, 헤더와 버튼에 `Esc`, `←`, `→` 시각적 키 뱃지를 일관되게 병기하여 키보드 우선 사용자의 인지 속도를 극대화했습니다.
+  - **스트레칭 링크(Stretched Link) 기반 탭 스톱(Tab Stop) 최적화**: 덱 카드(`DeckCard`) 및 덱 리스트(`DeckListRow`)의 메인 타이틀 링크에 `after:absolute after:inset-0`를 적용하여 카드 전체 영역을 클릭 가능하게 확장하고, 하단 보조 버튼에 `tabIndex={-1} aria-hidden="true"`를 부여하여 키보드 탐색 시 동일 링크가 2회 중복 포커스되는 UX 피로도를 원천 해소했습니다.
+  - Vercel Web Interface Guidelines를 철저하게 준수하여 시맨틱 HTML, WAI-ARIA 속성(`role="group"`, `role="progressbar"`, `aria-pressed`, `aria-label`), 장식용 SVG 아이콘 `aria-hidden="true"` 전수 적용, 견고한 키보드 포커스 대체 링(`focus-visible:ring-2 focus-visible:ring-indigo-500`), 고정폭 수치 폰트(`tabular-nums`), 그리고 모바일 터치 피드백(`active:scale-[0.98]`) 등 최고 수준의 접근성을 보장합니다.
+  - 네이티브 브라우저 팝업을 전면 퇴출하고 WAI-ARIA Focus Trap 및 Return Focus를 완비한 `ConfirmModal`을 도입하여 모든 플랫폼에서 일관된 고집중 Precision 테마를 유지하는 동시에 엄격한 WAI-ARIA 다이얼로그 표준을 충족합니다.
+  - `framer-motion`을 도입하여 180도 3D 플립, Scale Pop 등 절제된 시각적 피드백을 제공합니다.
 
 - **PWA 및 메타데이터 전략**:
   - Progressive Web App (PWA) 표준인 `manifest.ts`를 구현하여 네이티브 디바이스 환경(테마 색상 동기화, Standalone 디스플레이 등)에 자연스럽게 녹아들도록 구성했습니다.
@@ -207,7 +200,7 @@ This document defines the system architecture of the `memorize_supporter` projec
   - `ConfirmModal`: Premium accessible confirmation modal replacing native browser confirm dialogs for destructive actions (deck/record deletion), equipped with WAI-ARIA Focus Trap, Return Focus, Escape dismissal, mobile safe scroll (`max-h-[85vh]`), and pill-shaped action buttons.
   - `PageHeader` (`src/components/common/PageHeader.tsx`): Reusable sub-page header component standardizing pill badges, responsive gradient headings, descriptions, and action slots across about, records, data-management, and data-preparation pages.
   - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, real-time schema validation with single JSON object schema enforcement, unified [Output Rules], and mobile dynamic horizontal scroll fade indicators.
-  - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): Brand and product introduction interface presenting cognitive science and Local-First philosophies, an interactive 3D flip card demo, 6 core feature decks, and keyboard shortcuts guidance.
+  - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): Brand and product introduction interface presenting cognitive science and Local-First philosophies, an interactive 3D flip card demo, 6 core feature decks, keyboard shortcuts guidance, and an engineering technical specifications table (100% i18n support).
   - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private user study materials, forgetting curves, and quiz scores.
   - `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
 
@@ -224,28 +217,26 @@ This document defines the system architecture of the `memorize_supporter` projec
 
 - **i18n Strategy & Zero Hardcoded UI Text Policy**:
   - **URL as Single Source of Truth (SSoT)**: Uses dynamic routing (`app/[lang]/...`) to manage the current language state. This prevents hydration errors caused by resolving language through cookies or local storage during SSR.
-  - **Zero Hardcoded UI Text Policy**: Strictly prohibits inline hardcoding of any UI strings visible to users or read by screen readers, including buttons, headings, body text, badges, tags, hints, placeholders, `aria-label`, toasts, and page metadata.
+  - **Zero Hardcoded UI Text Policy**: Strictly prohibits inline hardcoding of any UI strings visible to users or read by screen readers, including buttons, headings, body text, badges, tags, hints, placeholders, `aria-label`, toasts, code template labels, and technical specification tables.
   - **Strictly Typed Translations (SSoT)**: Managed via `src/i18n/types.ts` as the single source of truth, synchronizing Korean (`ko.ts`), English (`en.ts`), and Japanese (`ja.ts`) with 100% type safety and natural product-oriented UX copywriting.
   - **Locale Routing via Proxy**: Adheres to Next.js 16 conventions by using `src/proxy.ts` for dynamic locale routing. Locale constants are isolated in `src/i18n/settings.ts` to maintain a single source of truth across the application.
 
 - **State Management Strategy**:
   - Manages the learning progress and flip state of the current deck using local state (`useState`). Avoids using complex global state managers (like Redux).
+  - **SPA Session Restart**: Eliminates destructive full-page browser reloads (`window.location.reload()`) upon session completion, instantly launching a fresh session via in-memory state reset (`handleStudyNewSession`).
 
-- **Styling, Micro-animations, and Accessibility**:
-  - Focus-mode layout based on a Zinc (background) and Teal/Indigo (primary) dark mode theme using Tailwind CSS v4 (`@tailwindcss/postcss`).
-  - Enhances code readability and maintainability by defining global semantic utilities (e.g., `@utility .glass-panel`, `@utility .btn-indigo`, 3D transforms) and design tokens (e.g., `--header-height: 4rem;`) in `globals.css` via Tailwind CSS v4 `@theme` and `@utility` directives.
+- **Styling, Micro-animations, and Accessibility (Precision Canvas)**:
+  - Focus-mode layout based on a deep charcoal canvas (`--color-background: #09090b`), tactile card surfaces (`--color-card: #18181b`), crisp 1px borders (`--color-card-border: #27272a`), and a unified indigo primary accent (`--color-primary: #6366f1`) using Tailwind CSS v4 (`@tailwindcss/postcss`).
+  - Enhances code readability and maintainability by defining global semantic utilities (e.g., `.card-precision`, `.card-interactive`, `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.kbd-badge`, 3D transforms) and design tokens in `globals.css` via Tailwind CSS v4 `@theme` and `@utility` directives.
   - **CJK Typography Optimization**: Configures `word-break: keep-all; overflow-wrap: anywhere;` on `body` in `globals.css` to prevent unnatural word splitting in Korean and Japanese, while preventing text overflow in narrow mobile viewports.
   - **Adaptive Height & Motion Control**: Uses `AnimatePresence` with `initial={false}` and `useReducedMotion` (`motion-reduce:` variants) in cards and interactive controls to adapt smoothly to varying content lengths without layout jitter.
   - **Multiple-Choice Selection Constraint**: Dynamically restricts the maximum number of selectable options to the exact count of correct answers (`content.answers.length`), providing immediate toast feedback and live selection progress badges (`(1/2 selected)`) to prevent accidental excessive clicks.
   - **Comprehensive Explanation & Visual Highlights**: In quiz result/review views, displays all available choices (`content.options`) with color-coded and badged visual highlights (Emerald for correct answers, Rose for user-selected incorrect answers, and neutral for unpicked choices) to reinforce Active Recall.
-  - **SSoT Sticky Header & Unified `QuizHeader` Component**: Implements a reusable `QuizHeader` (and matching `QuizHeader.Skeleton`) that sticks beneath the global navigation bar (`sticky top-(--header-height) z-30 backdrop-blur-md`). This resolves header collision, eliminates vertical gaps by replacing dynamic `my-auto` margins with consistent top alignment, and unifies progress tracking across practice, exam, and review modes without layout shift (CLS).
-  - **Seamless Review Navigation & Shortcuts**: In exam history and question review views, provides dual navigation controls (sticky top header and card bottom action buttons) along with full keyboard navigation (`ArrowLeft`/`ArrowRight` for prev/next question, `Escape` for list view, `Enter`/`Space` for progression) to review question details consecutively without navigating back and forth.
-  - Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, WAI-ARIA attributes (`role="group"`, `aria-pressed`, `aria-label`), robust keyboard navigation focus states (`focus-visible`), fixed-width numeric typography (`tabular-nums`), and touch feedback (`active:scale-95`).
-  - **Unified Page Design System (Tactile Cognitive Deck Studio) & Common `PageHeader`**:
-    - Standardizes the max-width container across all application views to `max-w-6xl mx-auto px-4 sm:px-6 md:px-8`, eliminating layout shifts (CLS) and width inconsistencies between pages.
-    - Abstracts sub-page headers into a reusable `PageHeader` component with standardized pill badges (`text-2xs font-bold uppercase tracking-widest px-3.5 py-1 rounded-full`), responsive gradient headings (`text-2xl sm:text-3xl md:text-4xl`), subtitles, and optional action slots.
-    - Elevates exam history cards in `LocalRecordsView` to the tactile dual-layer design (`p-px rounded-3xl`, ambient glow, hover gradient border) matching the main deck cards, and standardizes all modal and control buttons into pill shapes (`rounded-full`).
-    - Implements dynamic horizontal scroll fade indicators on mobile data tables (`DeckTable`) and mobile-safe viewport scrolling (`max-h-[85vh] overflow-y-auto`) in `ConfirmModal` for optimal responsive accessibility.
+  - **SSoT Sticky Header & Unified `QuizHeader` Component**: Implements a reusable `QuizHeader` (and matching `QuizHeader.Skeleton`) that sticks beneath the global navigation bar (`sticky top-(--header-height) z-30`). Fully equipped with WAI-ARIA `role="progressbar"`, `aria-valuenow`, `aria-valuemin="0"`, `aria-valuemax="100"`, and localized `aria-label` to communicate live progression clearly to screen reader users.
+  - **Seamless Review Navigation & Shortcuts**: In exam history and question review views, provides top-level window keyboard listeners (`Escape`, `ArrowLeft`, `ArrowRight`) enabling immediate navigation across flashcards, vocabulary, and quizzes, paired with visible keyboard badges (`kbd-badge` for `Esc`, `←`, `→`) to maximize cognitive speed for keyboard-first users.
+  - **Stretched Link Tab Stop Optimization**: In deck cards (`DeckCard`) and deck list rows (`DeckListRow`), applies `after:absolute after:inset-0` to the primary title link to stretch clickable area over the entire card, while assigning `tabIndex={-1} aria-hidden="true"` to secondary CTA buttons, eliminating redundant double tab stops during keyboard navigation.
+  - Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, WAI-ARIA attributes (`role="group"`, `role="progressbar"`, `aria-pressed`, `aria-label`), universal `aria-hidden="true"` on decorative SVG icons, robust keyboard focus replacement rings (`focus-visible:ring-2 focus-visible:ring-indigo-500`), fixed-width numeric typography (`tabular-nums`), and mobile touch feedback (`active:scale-[0.98]`).
+  - Eliminates native browser alert/confirm popups in favor of accessible `ConfirmModal` dialogs featuring WAI-ARIA Focus Trap and Return Focus.
   - Provides visual feedback such as a 180-degree 3D flip and Scale Pop by integrating `framer-motion`.
 
 - **PWA & Metadata Strategy**:

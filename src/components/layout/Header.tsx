@@ -20,19 +20,19 @@ export default function Header({ lang }: { lang: Lang }) {
     return pathname.startsWith(path)
   }
 
-  const navItemClass = (path: string) => `flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+  const navItemClass = (path: string) => `flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-150 ${
     isActive(path)
-      ? 'text-white bg-blue-500/20 ring-1 ring-blue-500/50 shadow-inner'
+      ? 'text-zinc-100 bg-zinc-800 border border-zinc-700/80 shadow-xs'
       : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
   }`
 
   return (
-    <header className="sticky top-0 z-50 flex h-(--header-height) items-center justify-between border-b border-white/5 bg-zinc-950/80 backdrop-blur-md px-4 md:px-8 shadow-md">
+    <header className="sticky top-0 z-50 flex h-(--header-height) items-center justify-between border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md px-4 md:px-8 shadow-xs">
       {/* Left: Logo */}
       <div className="flex items-center gap-3">
         <Link href={`/${lang}`} className="group flex items-center gap-3 hover:opacity-90 transition-opacity">
           <BrandLogo size="md" />
-          <span className="text-lg font-bold tracking-tight text-white hidden md:block group-hover:text-teal-300 transition-colors">
+          <span className="text-base sm:text-lg font-bold tracking-tight text-zinc-100 hidden md:block group-hover:text-indigo-400 transition-colors">
             {t.home.title}
           </span>
         </Link>

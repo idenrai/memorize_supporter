@@ -65,6 +65,7 @@ export interface Translations {
     alreadyHaveJson: string;
     sampleDecksAlreadyAdded: string;
     sampleDecksLoadFailed: string;
+    clickToStudy: string;
   };
   prep: {
     aiPrompt: string;
@@ -79,6 +80,18 @@ export interface Translations {
     templateQuizDesc: string;
     templateVocabDesc: string;
     title: string;
+    tabPrompt: string;
+    tabJson: string;
+    downloadJson: string;
+    jsonCopied: string;
+    jsonCopyFailed: string;
+    schemaBadge: string;
+    terminalLabelPrompt: string;
+    terminalLabelJson: string;
+    fieldsFlashcard: string;
+    fieldsQuiz: string;
+    fieldsVocab: string;
+    copyJson: string;
   };
   management: {
     cancel: string;
@@ -139,6 +152,10 @@ export interface Translations {
     confirmDeleteDeckTitle: string;
     confirmDeleteDeckDesc: (title: string) => string;
     confirmDeleteDeckButton: string;
+    needHelpTemplate: string;
+    checkTemplatesInPrep: string;
+    sortBy: (column: string) => string;
+    schemaLabel: string;
   };
   quiz: {
     askAi: string;
@@ -178,6 +195,11 @@ export interface Translations {
     closeReview: string;
     prevQuestion: string;
     nextQuestion: string;
+    shortcutFlip: string;
+    shortcutHard: string;
+    shortcutEasy: string;
+    pressSpaceOrClick: string;
+    progressLabel: (current: number, total: number) => string;
   };
   error: {
     defaultMessage: string;
@@ -205,6 +227,12 @@ export interface Translations {
     deleteSuccess: string;
     deleteFailed: string;
     manageBackupLink: string;
+    reviewExam: string;
+    filterAll: string;
+    filterIncorrect: string;
+    examReviewTitle: string;
+    examReviewSubtitle: (deckTitle: string) => string;
+    examSessionInfo: (date: string, count: number) => string;
   };
   local: {
     badge: string;
@@ -268,6 +296,7 @@ export interface Translations {
     privacyTitle: string;
     privacyDesc: string;
     techTitle: string;
+    techSubtitle: string;
     startLearning: string;
     githubLink: string;
     disclaimer: string;
@@ -305,5 +334,23 @@ export interface Translations {
     pillar2Tag2: string;
     pillar2Tag3: string;
     corePhilosophiesTitle: string;
+    techSpecArchCat: string;
+    techSpecArchItem: string;
+    techSpecArchDetail: string;
+    techSpecFwCat: string;
+    techSpecFwItem: string;
+    techSpecFwDetail: string;
+    techSpecStyleCat: string;
+    techSpecStyleItem: string;
+    techSpecStyleDetail: string;
+    techSpecCognitiveCat: string;
+    techSpecCognitiveItem: string;
+    techSpecCognitiveDetail: string;
+    techSpecStateCat: string;
+    techSpecStateItem: string;
+    techSpecStateDetail: string;
+    techSpecDistCat: string;
+    techSpecDistItem: string;
+    techSpecDistDetail: string;
   };
 }

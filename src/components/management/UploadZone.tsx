@@ -178,24 +178,22 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`group relative flex flex-col items-center justify-center text-center cursor-pointer p-6 sm:p-8 rounded-3xl border-2 border-dashed transition-all duration-300 backdrop-blur-xl ${
+        className={`group relative flex flex-col items-center justify-center text-center cursor-pointer p-6 sm:p-8 rounded-2xl border border-dashed transition-all duration-150 ${
           isDragging
-            ? "border-indigo-400 bg-indigo-500/10"
-            : "border-white/15 hover:border-indigo-400/60 bg-zinc-900/60 hover:bg-zinc-900/80 shadow-lg"
+            ? "border-indigo-500 bg-indigo-500/5 ring-1 ring-indigo-500/30"
+            : "border-zinc-800 hover:border-zinc-700 bg-zinc-950/50 hover:bg-zinc-900/60"
         } focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950`}
       >
-        <div className="absolute inset-0 bg-linear-to-br from-indigo-500/5 via-purple-500/5 to-transparent pointer-events-none rounded-3xl" />
-
         <div className="relative z-10 flex flex-col items-center">
-          <div className="w-16 h-16 bg-linear-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 rounded-2xl flex items-center justify-center mb-3.5 border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-300">
+          <div className="w-12 h-12 bg-zinc-900 text-indigo-400 rounded-xl flex items-center justify-center mb-3 border border-zinc-800 group-hover:scale-105 group-hover:border-zinc-700 transition-all duration-150 shadow-xs">
             {isImporting ? (
-              <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
             ) : (
-              <Upload size={28} aria-hidden="true" />
+              <Upload size={22} aria-hidden="true" />
             )}
           </div>
 
-          <h3 className="text-base sm:text-lg font-bold text-zinc-100 mb-1.5">
+          <h3 className="text-sm sm:text-base font-bold text-zinc-100 mb-1">
             {isImporting
               ? (progress && progress.total > 1
                   ? t.management.uploadingProgress(progress.current, progress.total)
@@ -203,13 +201,34 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
               : t.management.uploadDropzoneTitle}
           </h3>
 
-          <p className="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto leading-relaxed mb-4">
+          <p className="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto leading-relaxed mb-4 font-normal">
             {t.management.uploadDropzoneDesc}
           </p>
 
-          <div className="flex items-center justify-center">
-            <span className="inline-flex items-center gap-1.5 text-xs text-indigo-300/90 font-medium bg-indigo-500/10 px-3.5 py-1 rounded-full border border-indigo-500/20">
-              <CheckCircle2 size={13} className="text-indigo-400" />
+          {/* Progress Bar during import */}
+          {isImporting && progress && (
+            <div
+              role="progressbar"
+              aria-valuenow={Math.round((progress.current / progress.total) * 100)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={t.management.uploadingProgress(progress.current, progress.total)}
+              className="w-full max-w-xs h-1.5 bg-zinc-800 rounded-full overflow-hidden mb-4"
+            >
+              <div
+                className="h-full bg-indigo-500 transition-all duration-200"
+                style={{ width: `${(progress.current / progress.total) * 100}%` }}
+              />
+            </div>
+          )}
+
+          <div className="flex items-center justify-center flex-wrap gap-2">
+            <span className="inline-flex items-center gap-1.5 text-2xs text-zinc-400 font-mono bg-zinc-900 px-2.5 py-1 rounded-md border border-zinc-800">
+              <span className="text-indigo-400 font-bold">.JSON</span>
+              <span>{t.management.schemaLabel}</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-2xs text-zinc-400 font-medium bg-zinc-900 px-2.5 py-1 rounded-md border border-zinc-800">
+              <CheckCircle2 size={12} className="text-emerald-400" aria-hidden="true" />
               {t.management.privacyBadge}
             </span>
           </div>
@@ -218,11 +237,11 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
 
       {/* Prominent Inline Validation Error Panel */}
       {validationErrors && validationErrors.length > 0 && (
-        <div className="mt-4 p-5 rounded-3xl bg-rose-950/40 border border-rose-500/30 text-rose-200 shadow-xl backdrop-blur-xl animate-in fade-in-50 duration-200">
+        <div className="mt-4 p-5 rounded-2xl bg-zinc-900 border border-rose-500/30 text-rose-200 shadow-xl animate-in fade-in-50 duration-200">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-400 flex items-center justify-center shrink-0">
-                <AlertCircle size={18} aria-hidden="true" />
+              <div className="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+                <AlertCircle size={16} aria-hidden="true" />
               </div>
               <div>
                 <h4 className="text-sm font-bold text-rose-100 tracking-tight">
@@ -236,10 +255,10 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
             <button
               type="button"
               onClick={() => setValidationErrors(null)}
-              className="p-1.5 rounded-full text-rose-400 hover:text-white hover:bg-rose-500/20 transition-colors"
+              className="p-1.5 rounded-lg text-rose-400 hover:text-white hover:bg-rose-500/20 transition-colors"
               aria-label={t.management.cancel}
             >
-              <X size={16} />
+              <X size={16} aria-hidden="true" />
             </button>
           </div>
 
@@ -247,10 +266,10 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
             {validationErrors.map((item, idx) => (
               <div
                 key={idx}
-                className="p-3 rounded-2xl bg-black/40 border border-rose-500/20 text-xs font-mono"
+                className="p-3 rounded-xl bg-zinc-950/80 border border-rose-500/20 text-xs font-mono"
               >
                 <div className="flex items-center gap-2 text-rose-300 font-semibold mb-1">
-                  <span className="px-2 py-0.5 rounded-md bg-rose-500/20 border border-rose-500/30">
+                  <span className="px-2 py-0.5 rounded bg-rose-500/15 border border-rose-500/30">
                     {item.fileName}
                   </span>
                 </div>
@@ -263,14 +282,14 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
 
           <div className="mt-3.5 pt-3 border-t border-rose-500/20 flex items-center justify-between flex-wrap gap-2 text-xs">
             <span className="text-rose-300/70">
-              올바른 데이터 형식이 필요하신가요?
+              {t.management.needHelpTemplate}
             </span>
             <Link
               href={`/${lang}/data-preparation`}
               className="inline-flex items-center gap-1 font-semibold text-rose-300 hover:text-white underline underline-offset-2 transition-colors"
             >
-              <span>데이터 준비 탭에서 템플릿 확인하기</span>
-              <ArrowRight size={13} />
+              <span>{t.management.checkTemplatesInPrep}</span>
+              <ArrowRight size={13} aria-hidden="true" />
             </Link>
           </div>
         </div>

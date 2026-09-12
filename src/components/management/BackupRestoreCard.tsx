@@ -13,6 +13,7 @@ import {
 } from "@/lib/client-db"
 import { toast } from "sonner"
 import { formatStorageMB } from "@/lib/storage-format"
+import ConfirmModal from "@/components/ui/ConfirmModal"
 
 interface BackupRestoreCardProps {
   onRestoreSuccess?: () => void
@@ -22,6 +23,7 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
   const t = useT()
   const [storageInfo, setStorageInfo] = useState<StorageEstimateResult | null>(null)
   const [isExporting, setIsExporting] = useState(false)
+  const [pendingRestoreFile, setPendingRestoreFile] = useState<File | null>(null)
   const [isPending, startTransition] = useTransition()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -78,11 +80,17 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
   const handleRestoreFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    setPendingRestoreFile(file)
+  }
 
-    if (!window.confirm(t.local.confirmRestore)) {
-      if (fileInputRef.current) fileInputRef.current.value = ""
-      return
-    }
+  const handleCancelRestore = () => {
+    setPendingRestoreFile(null)
+    if (fileInputRef.current) fileInputRef.current.value = ""
+  }
+
+  const handleConfirmRestore = () => {
+    if (!pendingRestoreFile) return
+    const file = pendingRestoreFile
 
     startTransition(async () => {
       try {
@@ -100,16 +108,14 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
         console.error("Backup restore failed", err)
         toast.error(t.local.restoreFailed)
       } finally {
+        setPendingRestoreFile(null)
         if (fileInputRef.current) fileInputRef.current.value = ""
       }
     })
   }
 
   return (
-    <div className="relative glass-panel rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl overflow-hidden">
-      {/* Background ambient gradient */}
-      <div className="absolute inset-0 bg-linear-to-br from-indigo-500/10 via-purple-500/5 to-transparent pointer-events-none" />
-
+    <div className="card-precision p-6 sm:p-8">
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -119,15 +125,15 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
         className="hidden"
       />
 
-      <div className="relative z-10 flex flex-col gap-6">
+      <div className="flex flex-col gap-6">
         {/* Header with Title & Storage Badge */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shadow-inner">
-              <Database size={24} aria-hidden="true" />
+            <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-indigo-400 flex items-center justify-center shadow-xs">
+              <Database size={20} aria-hidden="true" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-100 tracking-tight break-keep">
+              <h2 className="text-lg sm:text-xl font-bold text-zinc-100 tracking-tight break-keep">
                 {t.management.backupSectionTitle}
               </h2>
             </div>
@@ -136,7 +142,7 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
           {/* Storage usage indicator */}
           {storageInfo && storageInfo.usageMB > 0 && (
             <div
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-300 shadow-sm cursor-help hover:border-zinc-700 transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-800/80 border border-zinc-700/60 text-xs text-zinc-300 shadow-xs cursor-help hover:border-zinc-600 transition-colors"
               title={
                 storageInfo.quotaMB > 0
                   ? t.management.storageTooltip(
@@ -147,7 +153,7 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
               }
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" aria-hidden="true" />
-              <HardDrive size={14} className="text-emerald-400 shrink-0" aria-hidden="true" />
+              <HardDrive size={13} className="text-emerald-400 shrink-0" aria-hidden="true" />
               <span className="tabular-nums font-medium">
                 {t.management.storageStatus(formatStorageMB(storageInfo.usageMB))}
               </span>
@@ -156,7 +162,7 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
         </div>
 
         {/* Description */}
-        <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-3xl break-keep">
+        <p className="text-sm text-zinc-400 leading-relaxed max-w-3xl break-keep font-normal">
           {t.management.backupSectionDesc}
         </p>
 
@@ -166,9 +172,9 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
             type="button"
             onClick={handleExportBackup}
             disabled={isExporting || isPending}
-            className="btn-indigo px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider disabled:opacity-50 inline-flex items-center justify-center gap-2 shadow-md shadow-indigo-900/20"
+            className="btn-primary px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-2"
           >
-            <Download size={15} aria-hidden="true" />
+            <Download size={14} aria-hidden="true" />
             <span>{t.management.backupDownload}</span>
           </button>
 
@@ -176,13 +182,26 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isExporting || isPending}
-            className="px-5 py-2.5 bg-zinc-900/80 hover:bg-zinc-800 active:scale-95 disabled:opacity-50 text-zinc-300 hover:text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-full border border-white/10 transition-colors inline-flex items-center justify-center gap-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500 shadow-sm"
+            className="btn-secondary px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium disabled:opacity-50 inline-flex items-center justify-center gap-2"
           >
-            <Upload size={15} aria-hidden="true" />
+            <Upload size={14} aria-hidden="true" />
             <span>{t.management.backupRestore}</span>
           </button>
         </div>
       </div>
+
+      {/* Custom Accessible Confirm Modal */}
+      <ConfirmModal
+        isOpen={pendingRestoreFile !== null}
+        title={t.management.backupRestore}
+        description={t.local.confirmRestore}
+        confirmText={t.management.backupRestore}
+        cancelText={t.management.cancel}
+        isDestructive={false}
+        isLoading={isPending}
+        onConfirm={handleConfirmRestore}
+        onCancel={handleCancelRestore}
+      />
     </div>
   )
 }
