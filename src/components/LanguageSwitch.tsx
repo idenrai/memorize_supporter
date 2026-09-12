@@ -39,7 +39,7 @@ export default function LanguageSwitch() {
       dropdownClassName="min-w-35"
       trigger={
         <>
-          <Globe className="size-4" />
+          <Globe className="size-4" aria-hidden="true" />
           <span className="text-xs font-bold uppercase">{LANG_LABELS[lang] || "EN"}</span>
         </>
       }

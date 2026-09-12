@@ -141,7 +141,7 @@ export default function DeckClientLoader({ deckId, limit, isExamMode, lang }: De
   if (notFoundState || cards.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] p-6 text-center max-w-md mx-auto">
-        <div className="w-16 h-16 bg-red-500/10 text-red-400 rounded-3xl flex items-center justify-center mb-6 border border-red-500/20 shadow-inner">
+        <div className="w-16 h-16 bg-rose-500/10 text-rose-400 rounded-2xl flex items-center justify-center mb-6 border border-rose-500/20 shadow-inner">
           <AlertCircle size={32} aria-hidden="true" />
         </div>
         <h2 className="text-2xl font-extrabold text-white mb-2">{t.local.notFoundTitle}</h2>
@@ -150,7 +150,7 @@ export default function DeckClientLoader({ deckId, limit, isExamMode, lang }: De
         </p>
         <Link
           href={`/${lang}`}
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold btn-indigo shadow-lg shadow-indigo-500/20"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold btn-primary"
         >
           <ArrowLeft size={16} />
           <span>{t.common.backToHome}</span>

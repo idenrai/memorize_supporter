@@ -11,8 +11,7 @@ export default function DataManagementClient() {
       <UploadZone />
 
       {/* Deck Management Table Container */}
-      <div className="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 via-purple-500/5 to-transparent pointer-events-none" />
+      <div className="card-precision p-6 md:p-8">
         <DeckTable />
       </div>
 

@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { motion } from "framer-motion"
 import React from "react"
+import { useT } from "@/hooks/useT"
 
 export interface QuizHeaderProps {
   /** Target URL for back/exit link navigation */
@@ -40,6 +41,7 @@ export default function QuizHeader({
   animationKey,
   rightControls,
 }: QuizHeaderProps) {
+  const t = useT()
   const progressPercent = total > 0 ? Math.min(100, Math.max(0, (current / total) * 100)) : 0
 
   return (
@@ -49,10 +51,10 @@ export default function QuizHeader({
         <Link
           href={backHref}
           aria-label={backLabel}
-          className="text-zinc-400 hover:text-white transition-colors flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-teal-500 rounded px-2 py-1"
+          className="text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-lg px-2 py-1"
         >
-          <ArrowLeft size={20} aria-hidden="true" />
-          <span className="hidden md:inline text-sm font-medium">{backLabel}</span>
+          <ArrowLeft size={18} aria-hidden="true" />
+          <span className="hidden md:inline text-xs sm:text-sm font-medium">{backLabel}</span>
         </Link>
       ) : (
         <button
@@ -60,28 +62,36 @@ export default function QuizHeader({
           onClick={onBack}
           aria-label={backLabel}
           title={`${backLabel} (Esc)`}
-          className="text-zinc-400 hover:text-white transition-colors flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-teal-500 rounded px-2 py-1"
+          className="text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-lg px-2 py-1"
         >
-          <ArrowLeft size={20} aria-hidden="true" />
-          <span className="text-sm font-medium">{backLabel}</span>
+          <ArrowLeft size={18} aria-hidden="true" />
+          <span className="text-xs sm:text-sm font-medium">{backLabel}</span>
+          <span className="kbd-badge text-3xs px-1.5 py-0.5 ml-0.5 hidden sm:inline-flex" aria-hidden="true">Esc</span>
         </button>
       )}
 
       {/* Center Progress bar & Badge */}
       <div className="flex-1 max-w-md mx-4 sm:mx-8 flex flex-col gap-1">
         {badge}
-        <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+        <div
+          role="progressbar"
+          aria-valuenow={Math.round(progressPercent)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={t.quiz.progressLabel(current, total)}
+          className="h-1.5 bg-zinc-800 rounded-full overflow-hidden"
+        >
           {animateProgress ? (
             <motion.div
               key={animationKey ?? `progress-${current}-${total}`}
-              className="h-full bg-teal-500"
+              className="h-full bg-indigo-500"
               initial={{ width: 0 }}
               animate={{ width: `${progressPercent}%` }}
               transition={{ duration: 0.3 }}
             />
           ) : (
             <div
-              className="h-full bg-teal-500 transition-all duration-300"
+              className="h-full bg-indigo-500 transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           )}

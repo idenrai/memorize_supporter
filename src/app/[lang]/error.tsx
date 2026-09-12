@@ -27,29 +27,31 @@ export default function ErrorBoundary({
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md w-full bg-zinc-900 border border-red-900/50 rounded-2xl p-8 flex flex-col items-center text-center shadow-2xl"
+        className="card-precision max-w-md w-full p-8 flex flex-col items-center text-center shadow-2xl"
       >
-        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
-          <AlertCircle className="w-8 h-8 text-red-500" aria-hidden="true" />
+        <div className="w-12 h-12 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-xl flex items-center justify-center mb-5">
+          <AlertCircle className="w-6 h-6 text-rose-400" aria-hidden="true" />
         </div>
         
-        <h2 className="text-2xl font-bold text-zinc-100 mb-2">{t.error.somethingWentWrong}</h2>
-        <p className="text-zinc-400 mb-8 text-sm">
+        <h2 className="text-xl font-bold text-zinc-100 mb-2">{t.error.somethingWentWrong}</h2>
+        <p className="text-zinc-400 mb-6 text-xs sm:text-sm leading-relaxed font-normal">
           {error.message || t.error.defaultMessage}
         </p>
         
-        <div className="flex gap-4">
+        <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={() => router.push(`/${lang}`)}
-            className="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg transition-colors font-medium text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-500"
+            className="btn-secondary px-4 py-2 rounded-xl text-xs font-semibold"
           >
             {t.error.goHome}
           </button>
           <button
+            type="button"
             onClick={() => reset()}
-            className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500"
+            className="btn-primary px-4 py-2 rounded-xl text-xs font-semibold"
           >
             {t.error.tryAgain}
           </button>

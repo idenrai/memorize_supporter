@@ -15,12 +15,12 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const t = getT(validLang)
 
   return (
-    <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-12 pb-16 flex flex-col items-center">
-      <div className="mb-8 sm:mb-10 w-full text-center">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-zinc-100 to-zinc-400 tracking-tight mb-3 break-keep text-balance">
+    <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pt-6 sm:pt-10 pb-16 flex flex-col">
+      <div className="mb-8 w-full">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-zinc-100 tracking-tight mb-2 break-keep text-balance">
           {t.home?.subtitle}
         </h1>
-        <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed break-keep text-balance font-medium">
+        <p className="text-sm sm:text-base text-zinc-400 max-w-2xl leading-relaxed break-keep text-balance font-normal">
           {t.home?.description}
         </p>
       </div>

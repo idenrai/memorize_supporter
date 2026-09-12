@@ -25,6 +25,7 @@ import type { Deck } from "@/types/deck"
 import SearchAndFilter from "./SearchAndFilter"
 import DeckGrid from "./DeckGrid"
 import DeckList from "./DeckList"
+import ConfirmModal from "@/components/ui/ConfirmModal"
 
 interface DeckGalleryProps {
   initialDecks?: Deck[]
@@ -43,6 +44,8 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
   const [globalIsExamMode, setGlobalIsExamMode] = useState<boolean>(false)
   const isStale = searchQuery !== deferredSearchQuery
   const [isLoaded, setIsLoaded] = useState(false)
+  const [deletingDeck, setDeletingDeck] = useState<{ id: string; title: string } | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const refreshDecks = useCallback(async () => {
     try {
@@ -53,11 +56,18 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
     }
   }, [])
 
-  // Delete Deck directly from IndexedDB
-  const handleDeleteDeck = useCallback(async (deckId: string) => {
-    if (!window.confirm(t.local.confirmDeleteDeck)) return
+  // Request Deck deletion (open modal)
+  const handleRequestDelete = useCallback((deckId: string) => {
+    const deck = localDecks.find((d) => d.id === deckId)
+    setDeletingDeck({ id: deckId, title: deck?.title || deckId })
+  }, [localDecks])
+
+  // Confirm delete handler
+  const handleConfirmDelete = async () => {
+    if (!deletingDeck) return
+    setIsDeleting(true)
     try {
-      const ok = await deleteLocalDeck(deckId)
+      const ok = await deleteLocalDeck(deletingDeck.id)
       if (ok) {
         toast.success(t.local.deleteDeckSuccess)
         refreshDecks()
@@ -66,8 +76,11 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
       }
     } catch {
       toast.error(t.local.deleteDeckFailed)
+    } finally {
+      setIsDeleting(false)
+      setDeletingDeck(null)
     }
-  }, [t.local, refreshDecks])
+  }
 
   // Taste Sample Decks on-demand
   const handleTasteSampleDecks = async () => {
@@ -207,57 +220,55 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
   if (allDecks.length === 0) {
     return (
       <div className="w-full flex flex-col items-center">
-        <div className="relative text-center p-8 sm:p-14 w-full glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/10">
-          <div className="absolute inset-0 bg-linear-to-br from-indigo-500/10 via-purple-500/5 to-transparent pointer-events-none" />
-          
-          <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center">
+        <div className="relative text-center p-8 sm:p-12 w-full card-precision overflow-hidden">
+          <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
             {/* App Badge */}
-            <div className="w-16 h-16 bg-linear-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 rounded-2xl flex items-center justify-center mb-6 shadow-inner border border-white/10">
-              <Library size={28} aria-hidden="true" />
+            <div className="w-14 h-14 bg-zinc-800 border border-zinc-700/80 text-indigo-400 rounded-2xl flex items-center justify-center mb-5 shadow-xs">
+              <Library size={26} aria-hidden="true" />
             </div>
 
             {/* Title & Desc */}
-            <h3 className="text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-white to-zinc-300 mb-3 tracking-tight break-keep">
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-zinc-100 mb-2 tracking-tight break-keep">
               {t.home.welcomeTitle}
             </h3>
-            <p className="text-sm sm:text-base text-zinc-400 mb-8 max-w-xl leading-relaxed break-keep">
+            <p className="text-sm text-zinc-400 mb-8 max-w-xl leading-relaxed break-keep font-normal">
               {t.home.welcomeDesc}
             </p>
 
             {/* 3-Step Visual Process Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mb-8 text-left">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 w-full mb-8 text-left">
               {/* Step 1 */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors relative overflow-hidden">
-                <div className="text-xs font-mono font-bold text-indigo-400/80 mb-2">STEP 01</div>
-                <div className="flex items-center gap-2 font-bold text-zinc-100 text-sm mb-1.5">
-                  <FileText size={16} className="text-indigo-400 shrink-0" />
+              <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-4 transition-colors">
+                <div className="text-2xs font-mono font-bold text-zinc-500 mb-1.5">01</div>
+                <div className="flex items-center gap-2 font-semibold text-zinc-200 text-sm mb-1">
+                  <FileText size={15} className="text-indigo-400 shrink-0" aria-hidden="true" />
                   <span>{t.home.step1Title}</span>
                 </div>
-                <p className="text-xs text-zinc-400 leading-relaxed break-keep">
+                <p className="text-xs text-zinc-400 leading-relaxed break-keep font-normal">
                   {t.home.step1Desc}
                 </p>
               </div>
 
               {/* Step 2 */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors relative overflow-hidden">
-                <div className="text-xs font-mono font-bold text-purple-400/80 mb-2">STEP 02</div>
-                <div className="flex items-center gap-2 font-bold text-zinc-100 text-sm mb-1.5">
-                  <Sparkles size={16} className="text-purple-400 shrink-0" />
+              <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-4 transition-colors">
+                <div className="text-2xs font-mono font-bold text-zinc-500 mb-1.5">02</div>
+                <div className="flex items-center gap-2 font-semibold text-zinc-200 text-sm mb-1">
+                  <Sparkles size={15} className="text-indigo-400 shrink-0" aria-hidden="true" />
                   <span>{t.home.step2Title}</span>
                 </div>
-                <p className="text-xs text-zinc-400 leading-relaxed break-keep">
+                <p className="text-xs text-zinc-400 leading-relaxed break-keep font-normal">
                   {t.home.step2Desc}
                 </p>
               </div>
 
               {/* Step 3 */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors relative overflow-hidden">
-                <div className="text-xs font-mono font-bold text-emerald-400/80 mb-2">STEP 03</div>
-                <div className="flex items-center gap-2 font-bold text-zinc-100 text-sm mb-1.5">
-                  <Brain size={16} className="text-emerald-400 shrink-0" />
+              <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-4 transition-colors">
+                <div className="text-2xs font-mono font-bold text-zinc-500 mb-1.5">03</div>
+                <div className="flex items-center gap-2 font-semibold text-zinc-200 text-sm mb-1">
+                  <Brain size={15} className="text-indigo-400 shrink-0" aria-hidden="true" />
                   <span>{t.home.step3Title}</span>
                 </div>
-                <p className="text-xs text-zinc-400 leading-relaxed break-keep">
+                <p className="text-xs text-zinc-400 leading-relaxed break-keep font-normal">
                   {t.home.step3Desc}
                 </p>
               </div>
@@ -267,19 +278,19 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
               <Link
                 href={`/${lang}/data-preparation`}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg shadow-indigo-500/25 active:scale-95 transition-all"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold btn-primary gap-2"
               >
                 <span>{t.home.goToDataPrep}</span>
-                <ArrowRight size={15} />
+                <ArrowRight size={14} aria-hidden="true" />
               </Link>
 
               <button
                 type="button"
                 onClick={handleTasteSampleDecks}
                 disabled={isLoadingSamples}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-medium text-zinc-200 hover:text-white bg-zinc-800 hover:bg-zinc-700 border border-white/10 active:scale-95 transition-all"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium btn-secondary gap-2"
               >
-                <Sparkles size={15} className="text-indigo-400" />
+                <Sparkles size={14} className="text-indigo-400" aria-hidden="true" />
                 <span>
                   {isLoadingSamples ? t.home.loadingSamples : t.home.trySampleDecks}
                 </span>
@@ -287,12 +298,12 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
             </div>
 
             {/* Secondary Navigation */}
-            <div className="mt-5">
+            <div className="mt-6">
               <Link
                 href={`/${lang}/data-management`}
-                className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors inline-flex items-center gap-1"
+                className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors inline-flex items-center gap-1.5"
               >
-                <FolderKanban size={13} />
+                <FolderKanban size={13} aria-hidden="true" />
                 <span>{t.home.alreadyHaveJson}</span>
               </Link>
             </div>
@@ -307,16 +318,16 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
     <div className="flex flex-col gap-6 w-full">
       {/* Quick Action Navigation */}
       <div className="flex justify-between items-center w-full">
-        <div className="text-sm font-semibold text-zinc-400">
+        <div className="text-xs sm:text-sm font-medium text-zinc-400">
           {t.management.totalDecks(allDecks.length)}
         </div>
         <Link
           href={`/${lang}/data-management`}
-          className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-900/80 hover:bg-zinc-800 border border-white/10 rounded-full transition-all duration-200"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-colors"
         >
-          <FolderKanban size={13} className="text-indigo-400" />
+          <FolderKanban size={13} className="text-indigo-400" aria-hidden="true" />
           <span>{t.home.manageDecks}</span>
-          <ArrowRight size={12} />
+          <ArrowRight size={12} aria-hidden="true" />
         </Link>
       </div>
 
@@ -336,16 +347,16 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
 
       <div className={`w-full transition-opacity duration-200 ${isStale ? "opacity-50" : "opacity-100"}`}>
         {filteredDecks.length === 0 ? (
-          <div className="text-center p-12 bg-zinc-900/30 border border-zinc-800/50 rounded-3xl mt-2 w-full">
-            <Search size={32} className="text-zinc-600 mx-auto mb-4" aria-hidden="true" />
-            <h3 className="text-xl font-semibold text-zinc-300 mb-2">{t.home.noSearchResults}</h3>
+          <div className="text-center p-10 card-precision mt-2 w-full">
+            <Search size={28} className="text-zinc-600 mx-auto mb-3" aria-hidden="true" />
+            <h3 className="text-base sm:text-lg font-semibold text-zinc-300 mb-1">{t.home.noSearchResults}</h3>
           </div>
         ) : (
-          <div className="flex flex-col gap-12 w-full">
+          <div className="flex flex-col gap-10 w-full">
             {groupedDecks.map(([seriesName, seriesDecks]) => (
               <div key={seriesName} className="mb-2">
-                <div className="flex items-center gap-2 mb-6 text-zinc-300 font-medium border-b border-zinc-800/80 pb-3">
-                  <h4 className="text-xl font-semibold text-white">
+                <div className="flex items-center gap-2 mb-5 border-b border-zinc-800/80 pb-2.5">
+                  <h4 className="text-base sm:text-lg font-bold text-zinc-100">
                     {seriesName}
                   </h4>
                 </div>
@@ -356,7 +367,7 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
                     lang={lang}
                     globalLimit={globalLimit}
                     globalIsExamMode={globalIsExamMode}
-                    onDelete={handleDeleteDeck}
+                    onDelete={handleRequestDelete}
                   />
                 ) : (
                   <DeckList
@@ -364,7 +375,7 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
                     lang={lang}
                     globalLimit={globalLimit}
                     globalIsExamMode={globalIsExamMode}
-                    onDelete={handleDeleteDeck}
+                    onDelete={handleRequestDelete}
                   />
                 )}
               </div>
@@ -372,6 +383,23 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
           </div>
         )}
       </div>
+
+      {/* Custom Accessible Confirm Modal */}
+      <ConfirmModal
+        isOpen={deletingDeck !== null}
+        title={t.management.confirmDeleteDeckTitle}
+        description={
+          deletingDeck
+            ? t.management.confirmDeleteDeckDesc(deletingDeck.title)
+            : ""
+        }
+        confirmText={t.management.confirmDeleteDeckButton}
+        cancelText={t.management.cancel}
+        isDestructive={true}
+        isLoading={isDeleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeletingDeck(null)}
+      />
     </div>
   )
 }

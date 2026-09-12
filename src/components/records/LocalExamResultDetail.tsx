@@ -7,7 +7,7 @@ import type { CardData } from "@/types/card"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import ExamResultView from "@/components/cards/ExamResultView"
-import { Trophy, ArrowLeft } from "lucide-react"
+import { Trophy, ArrowLeft, Calendar, FileText } from "lucide-react"
 import Link from "next/link"
 
 interface LocalExamResultDetailProps {
@@ -94,13 +94,15 @@ export default function LocalExamResultDetail({ examId, lang }: LocalExamResultD
   if (!record) {
     return (
       <main className="flex-1 flex flex-col items-center justify-center min-h-125 w-full p-4">
-        <Trophy size={48} className="text-zinc-700 mb-6" aria-hidden="true" />
-        <h3 className="text-xl font-semibold text-zinc-400 mb-2">{t.records?.empty || "No records found"}</h3>
+        <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center mb-4 text-zinc-500">
+          <Trophy size={24} aria-hidden="true" />
+        </div>
+        <h3 className="text-lg font-bold text-zinc-300 mb-2">{t.records.empty}</h3>
         <Link
           href={`/${lang}/records`}
-          className="mt-4 px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors"
+          className="mt-4 px-5 py-2 btn-secondary rounded-xl text-xs font-semibold"
         >
-          {t.records?.backToRecords || "Back to Records"}
+          {t.records.backToRecords}
         </Link>
       </main>
     )
@@ -109,20 +111,20 @@ export default function LocalExamResultDetail({ examId, lang }: LocalExamResultD
   if (playingCards.length === 0) {
     return (
       <main className="flex-1 flex flex-col items-center justify-center min-h-125 w-full p-4">
-        <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center mb-6">
-          <ArrowLeft size={24} className="text-zinc-500" />
+        <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center mb-4 text-zinc-500">
+          <ArrowLeft size={20} aria-hidden="true" />
         </div>
-        <h3 className="text-xl font-semibold text-zinc-300 mb-2">
-          {t.records?.detailsNotAvailable || "Details not available"}
+        <h3 className="text-lg font-bold text-zinc-300 mb-2">
+          {t.records.detailsNotAvailable}
         </h3>
-        <p className="text-zinc-500 mb-8 max-w-md text-center">
-          {t.records?.legacyRecordDesc || "Question history for this session cannot be displayed."}
+        <p className="text-zinc-500 mb-6 max-w-md text-center text-xs leading-relaxed font-normal">
+          {t.records.legacyRecordDesc}
         </p>
         <Link
           href={`/${lang}/records`}
-          className="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors"
+          className="px-5 py-2 btn-secondary rounded-xl text-xs font-semibold"
         >
-          {t.records?.backToRecords || "Back to Records"}
+          {t.records.backToRecords}
         </Link>
       </main>
     )
@@ -130,12 +132,42 @@ export default function LocalExamResultDetail({ examId, lang }: LocalExamResultD
 
   return (
     <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-12 pb-16 flex flex-col">
+      {/* Session Breadcrumb & Metadata Card */}
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+        <Link
+          href={`/${lang}/records`}
+          className="inline-flex items-center gap-2 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors w-fit"
+        >
+          <ArrowLeft size={14} aria-hidden="true" />
+          <span>{t.records.backToRecords}</span>
+        </Link>
+
+        <div className="flex items-center gap-3 flex-wrap text-2xs text-zinc-500 font-mono">
+          <span className="flex items-center gap-1">
+            <Calendar size={12} className="text-zinc-600" aria-hidden="true" />
+            {new Date(record.createdAt).toLocaleString(lang, {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </span>
+          <span className="text-zinc-700">·</span>
+          <span className="flex items-center gap-1">
+            <FileText size={12} className="text-zinc-600" aria-hidden="true" />
+            {record.deckId}
+          </span>
+        </div>
+      </div>
+
       <ExamResultView
         playingCards={playingCards}
         sessionResults={record.details}
         lang={lang}
         backLink={`/${lang}/records`}
-        backLinkText={t.records?.backToRecords || "Back to Records"}
+        backLinkText={t.records.backToRecords}
+        isHistoricalReview={true}
         originalStats={{
           score: record.score,
           total: record.total,
