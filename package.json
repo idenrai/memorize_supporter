@@ -2,6 +2,10 @@
   "name": "memorize-supporter",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "scripts": {
     "check:node": "node scripts/check-node.js",
     "predev": "npm run check:node",

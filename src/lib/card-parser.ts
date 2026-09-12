@@ -1,4 +1,4 @@
-import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSchema } from "@/schemas"
+import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSchema } from "../schemas/index.ts"
 import type { CardData } from "@/types/card"
 
 export interface RawDbCard {
@@ -64,3 +64,20 @@ export function parseCardDataList(cards: RawDbCard[]): CardData[] {
   }
   return validCards
 }
+
+/**
+ * Extracts a human-readable display title or prompt from a CardData item.
+ */
+export function getCardTitle(card: CardData, fallback = ""): string {
+  switch (card.type) {
+    case "practice_quiz":
+      return card.content.question
+    case "vocabulary":
+      return card.content.word
+    case "flashcard":
+      return card.content.front
+    default:
+      return fallback
+  }
+}
+

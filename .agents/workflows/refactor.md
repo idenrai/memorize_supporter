@@ -1,3 +1,7 @@
+---
+description: 리팩터링 마스터 가이드라인
+---
+
 # Refactoring & Code Quality Workflow
 
 **Activation:** `/refactor` (또는 프로젝트 구조 개선, 소스코드 리팩토링, 코드 스멜 제거, 기술 부채 해소를 진행할 때)
