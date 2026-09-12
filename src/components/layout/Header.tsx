@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Database, FileJson, LayoutDashboard, Trophy } from "lucide-react"
+import { Database, FileJson, Info, LayoutDashboard, Trophy } from "lucide-react"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import LanguageSwitch from "@/components/LanguageSwitch"
@@ -80,6 +80,16 @@ export default function Header({ lang }: { lang: Lang }) {
           >
             <FileJson size={16} aria-hidden="true" />
             <span className="hidden lg:inline">{t.common.dataPrep}</span>
+          </Link>
+          <Link 
+            href={`/${lang}/about`} 
+            className={navItemClass(`/${lang}/about`)}
+            title={t.common.about}
+            aria-label={t.common.about}
+            aria-current={isActive(`/${lang}/about`) ? "page" : undefined}
+          >
+            <Info size={16} aria-hidden="true" />
+            <span className="hidden lg:inline">{t.common.about}</span>
           </Link>
         </nav>
         

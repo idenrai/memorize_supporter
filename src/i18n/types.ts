@@ -8,6 +8,7 @@ export const LANG_NAMES: Record<Lang, string> = {
 
 export interface Translations {
   common: {
+    about: string;
     backToHome: string;
     changeLanguage: string;
     dashboard: string;
@@ -245,5 +246,64 @@ export interface Translations {
     persistentStorageGranted: string;
     persistentStorageDesc: string;
     temporaryStorageDesc: string;
+  };
+  about: {
+    tagline: string;
+    intro: string;
+    featuresTitle: string;
+    feat1Title: string;
+    feat1Desc: string;
+    feat2Title: string;
+    feat2Desc: string;
+    feat3Title: string;
+    feat3Desc: string;
+    feat4Title: string;
+    feat4Desc: string;
+    feat5Title: string;
+    feat5Desc: string;
+    feat6Title: string;
+    feat6Desc: string;
+    cognitiveTitle: string;
+    cognitiveDesc: string;
+    privacyTitle: string;
+    privacyDesc: string;
+    techTitle: string;
+    startLearning: string;
+    githubLink: string;
+    disclaimer: string;
+    demoBadge: string;
+    demoFrontQuestion: string;
+    demoFrontHint: string;
+    demoBackAnswer: string;
+    demoBackHint: string;
+    shortcutsTitle: string;
+    shortcutsSubtitle: string;
+    shortcutFlipTitle: string;
+    shortcutFlipDesc: string;
+    shortcutChoiceTitle: string;
+    shortcutChoiceDesc: string;
+    shortcutFeedbackTitle: string;
+    shortcutFeedbackDesc: string;
+    shortcutEscTitle: string;
+    shortcutEscDesc: string;
+    heroBadge: string;
+    demoQuestionLabel: string;
+    demoAnswerLabel: string;
+    demoBackBadge: string;
+    feat1Badge: string;
+    feat2Badge: string;
+    feat3Badge: string;
+    feat4Badge: string;
+    feat5Badge: string;
+    feat6Badge: string;
+    pillar1Badge: string;
+    pillar1Tag1: string;
+    pillar1Tag2: string;
+    pillar1Tag3: string;
+    pillar2Badge: string;
+    pillar2Tag1: string;
+    pillar2Tag2: string;
+    pillar2Tag3: string;
+    corePhilosophiesTitle: string;
   };
 }
