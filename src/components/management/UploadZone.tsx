@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { Upload, CheckCircle2 } from "lucide-react"
+import { Upload, CheckCircle2, AlertCircle, X, ArrowRight } from "lucide-react"
+import Link from "next/link"
+import { useParams } from "next/navigation"
 import {
   importMultipleJsonToLocalDb,
   requestPersistentStorage,
@@ -10,6 +12,7 @@ import {
 import { useT } from "@/hooks/useT"
 import { toast } from "sonner"
 import { MAX_UPLOAD_SIZE_BYTES } from "@/lib/constants"
+import type { Lang } from "@/i18n/types"
 
 const MAX_FILE_SIZE = MAX_UPLOAD_SIZE_BYTES
 
@@ -19,10 +22,13 @@ interface UploadZoneProps {
 
 export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
   const t = useT()
+  const params = useParams()
+  const lang = (params?.lang as Lang) || "ko"
 
   const [isDragging, setIsDragging] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(null)
+  const [validationErrors, setValidationErrors] = useState<Array<{ fileName: string; error: string }> | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const processFiles = async (files: File[]) => {
@@ -60,6 +66,7 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
 
     setIsImporting(true)
     setProgress({ current: 0, total: jsonFiles.length })
+    setValidationErrors(null)
 
     try {
       const readResults = await Promise.allSettled(
@@ -82,6 +89,16 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
         setProgress({ current, total })
       })
 
+      const failedItems = result.results.filter((r) => !r.success && r.error)
+      if (failedItems.length > 0) {
+        setValidationErrors(
+          failedItems.map((f) => ({
+            fileName: f.fileName,
+            error: f.error || t.management.uploadFailed
+          }))
+        )
+      }
+
       if (result.successCount > 0) {
         requestPersistentStorage().catch(() => {})
         onUploadSuccess?.()
@@ -96,10 +113,12 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
           toast.warning(t.management.multiUploadPartial(result.successCount, result.total))
         }
       } else {
-        toast.error(result.results[0]?.error || t.management.uploadFailed)
+        toast.error(t.management.uploadFailed)
       }
     } catch (err: unknown) {
-      toast.error((err as Error)?.message || t.management.uploadFailed)
+      const errMsg = (err as Error)?.message || t.management.uploadFailed
+      setValidationErrors([{ fileName: "upload", error: errMsg }])
+      toast.error(errMsg)
     } finally {
       setIsImporting(false)
       setProgress(null)
@@ -196,6 +215,66 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
           </div>
         </div>
       </div>
+
+      {/* Prominent Inline Validation Error Panel */}
+      {validationErrors && validationErrors.length > 0 && (
+        <div className="mt-4 p-5 rounded-3xl bg-rose-950/40 border border-rose-500/30 text-rose-200 shadow-xl backdrop-blur-xl animate-in fade-in-50 duration-200">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-400 flex items-center justify-center shrink-0">
+                <AlertCircle size={18} aria-hidden="true" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-rose-100 tracking-tight">
+                  {t.management.validationErrorTitle}
+                </h4>
+                <p className="text-xs text-rose-300/80 leading-relaxed mt-0.5">
+                  {t.management.validationErrorDesc}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setValidationErrors(null)}
+              className="p-1.5 rounded-full text-rose-400 hover:text-white hover:bg-rose-500/20 transition-colors"
+              aria-label={t.management.cancel}
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          <div className="space-y-2 mt-2">
+            {validationErrors.map((item, idx) => (
+              <div
+                key={idx}
+                className="p-3 rounded-2xl bg-black/40 border border-rose-500/20 text-xs font-mono"
+              >
+                <div className="flex items-center gap-2 text-rose-300 font-semibold mb-1">
+                  <span className="px-2 py-0.5 rounded-md bg-rose-500/20 border border-rose-500/30">
+                    {item.fileName}
+                  </span>
+                </div>
+                <p className="text-rose-200/90 whitespace-pre-wrap leading-relaxed font-sans text-xs break-all">
+                  {item.error}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-3.5 pt-3 border-t border-rose-500/20 flex items-center justify-between flex-wrap gap-2 text-xs">
+            <span className="text-rose-300/70">
+              올바른 데이터 형식이 필요하신가요?
+            </span>
+            <Link
+              href={`/${lang}/data-preparation`}
+              className="inline-flex items-center gap-1 font-semibold text-rose-300 hover:text-white underline underline-offset-2 transition-colors"
+            >
+              <span>데이터 준비 탭에서 템플릿 확인하기</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

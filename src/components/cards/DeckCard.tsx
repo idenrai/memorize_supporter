@@ -46,11 +46,6 @@ export default function DeckCard({ deck, deckName, description, type = 'flashcar
               <div className={`text-2xs font-bold px-2.5 py-1 rounded-full uppercase tracking-widest ${config.color} bg-white/5 border border-white/10 shadow-inner backdrop-blur-md`}>
                 {type === 'practice_quiz' ? t.quiz.practiceQuiz : type === 'vocabulary' ? t.quiz.vocabulary : t.quiz.flashcard}
               </div>
-              {isLocal && (
-                <div className="text-2xs font-semibold px-2 py-0.5 rounded-full text-indigo-300 bg-indigo-500/20 border border-indigo-500/30">
-                  {t.local.badge}
-                </div>
-              )}
             </div>
             
             <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300 bg-white/5 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 shadow-inner tabular-nums">

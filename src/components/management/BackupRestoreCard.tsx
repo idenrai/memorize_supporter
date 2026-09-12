@@ -12,6 +12,7 @@ import {
   type StorageEstimateResult
 } from "@/lib/client-db"
 import { toast } from "sonner"
+import { formatStorageMB } from "@/lib/storage-format"
 
 interface BackupRestoreCardProps {
   onRestoreSuccess?: () => void
@@ -135,12 +136,20 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
           {/* Storage usage indicator */}
           {storageInfo && storageInfo.usageMB > 0 && (
             <div
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-400 shadow-sm"
-              title={storageInfo.persisted ? t.local.persistentStorageDesc : t.local.temporaryStorageDesc}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-300 shadow-sm cursor-help hover:border-zinc-700 transition-colors"
+              title={
+                storageInfo.quotaMB > 0
+                  ? t.management.storageTooltip(
+                      formatStorageMB(storageInfo.usageMB),
+                      formatStorageMB(storageInfo.quotaMB)
+                    )
+                  : (storageInfo.persisted ? t.local.persistentStorageDesc : t.local.temporaryStorageDesc)
+              }
             >
-              <HardDrive size={14} className={storageInfo.persisted ? "text-emerald-400" : "text-zinc-400"} />
-              <span className="tabular-nums">
-                {t.management.storageStatus(`${storageInfo.usageMB} MB`, storageInfo.persisted)}
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" aria-hidden="true" />
+              <HardDrive size={14} className="text-emerald-400 shrink-0" aria-hidden="true" />
+              <span className="tabular-nums font-medium">
+                {t.management.storageStatus(formatStorageMB(storageInfo.usageMB))}
               </span>
             </div>
           )}

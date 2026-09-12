@@ -67,21 +67,19 @@ export const en: Translations = {
     promptCopyFailed: "Failed to copy prompt to clipboard.",
     desc: "Convert your notes, textbooks, or vocabulary lists into study-ready decks with AI. Simply copy the prompt template and paste it into ChatGPT or Claude.",
     promptFormat: (content) => `You are an expert educational data engineer specialized in transforming study materials and notes into digital study decks (JSON).
-Analyze the provided content and convert it into a valid JSON array strictly adhering to the [Required Schema] below.
+Analyze the provided content and convert it into a single valid JSON object strictly adhering to the [Required Schema] below.
 
-[Rules]
-1. Output ONLY a valid JSON array ([ ... ]).
-2. Do NOT use markdown code blocks (\`\`\`json) or any conversational text before or after. Start directly with '[' and end with ']'.
-3. Every object must strictly adhere to the schema's field structure.
+[Output Rules]
+1. Do NOT include markdown code blocks (\`\`\`json) or any conversational text (greetings, explanations).
+2. Output ONLY a pure, single JSON object starting with '{' and ending with '}'.
+3. Strictly follow the structure of all fields (title, description, type, series, cards, etc.) defined in the schema below.
 4. If information is missing, do not omit fields; use null or an appropriate default value.
 
 [Required Schema and Example Structure]
 ${content}
 
 [Content to Convert]
-(Paste your textbook excerpt, word list, or lecture notes here)
-
-※ Important: Output ONLY the raw JSON array starting with '[' without any introductory or concluding text.`,
+(Paste your textbook excerpt, word list, or lecture notes here)`,
     selectTemplate: "Select Study Type",
     templateFlashcardDesc: "Standard front/back cards for quick active recall",
     templateQuizDesc: "Multiple-choice questions with options and explanations",
@@ -127,8 +125,8 @@ ${content}
     visible: "Visible",
     addSampleDecks: "Add Sample Decks",
     sampleDecksAdded: "Sample decks have been successfully added.",
-    uploadDropzoneTitle: "Import Study Deck (JSON)",
-    uploadDropzoneDesc: "Drag & drop your JSON file here, or click to browse.",
+    uploadDropzoneTitle: "Import Study Deck",
+    uploadDropzoneDesc: "Drag & drop your deck file here, or click to browse.",
     privacyBadge: "All data stays securely in your browser's local storage and is never sent to external servers.",
     totalDecks: (count: number) => `Total ${count} study deck${count === 1 ? '' : 's'}`,
     sampleDecksAlreadyAdded: "All sample decks are already added.",
@@ -136,11 +134,17 @@ ${content}
     emptyDecksTitle: "No study decks registered",
     emptyDecksDesc: "Drop a new JSON deck into the upload area above, or use 'Add Sample Decks' from the toolbar.",
     aiPromptGenerator: "AI Prompt Generator",
-    backupSectionTitle: "Full Data Backup & Restore (Archive)",
-    backupSectionDesc: "Securely export all decks, cards, learning progress, and exam history stored in your browser (IndexedDB) as a single JSON file, or restore from a previous backup.",
-    backupDownload: "Backup All Device Data (JSON)",
-    backupRestore: "Restore from Backup File (JSON)",
-    storageStatus: (usage, persisted) => `Device Storage: ${usage} (${persisted ? "Persistent Storage Active" : "Temporary Storage"})`,
+    backupSectionTitle: "Data Backup & Restore",
+    backupSectionDesc: "Back up your decks and exam history to a file, or restore them on another device.",
+    backupDownload: "Download Backup",
+    backupRestore: "Restore from File",
+    storageStatus: (usage) => `Storage Healthy (${usage} used)`,
+    storageTooltip: (usage, quota) => `Ample browser storage space available. (${usage} used of ${quota} limit)`,
+    validationErrorTitle: "Invalid Deck File Format",
+    validationErrorDesc: "The selected file does not match the required deck schema.",
+    confirmDeleteDeckTitle: "Delete Study Deck",
+    confirmDeleteDeckDesc: (title: string) => `Are you sure you want to delete "${title}"? All study progress and exam records will be permanently removed.`,
+    confirmDeleteDeckButton: "Delete",
   },
   quiz: {
     askAi: "Ask AI for In-Depth Explanation",
@@ -218,14 +222,16 @@ Please structure your response across the following 4 steps:
     detailsNotAvailable: "Details not available",
     legacyRecordDesc: "This exam record was created before the detailed recording feature was added, so its question history cannot be displayed.",
     confirmDeleteRecord: "Are you sure you want to permanently delete this exam record?",
+    confirmDeleteRecordTitle: "Delete Exam Record",
+    confirmDeleteRecordDesc: "Are you sure you want to permanently delete this exam record? This action cannot be undone.",
     deleteSuccess: "Exam record deleted successfully.",
     deleteFailed: "Failed to delete exam record.",
-    manageBackupLink: "Manage Full Data Backup & Restore",
+    manageBackupLink: "Backup & Restore",
   },
   local: {
     badge: "Saved on Device",
-    importButton: "Import Deck (JSON)",
-    dropPrompt: "Drag & drop JSON deck file or click to browse",
+    importButton: "Import Deck File",
+    dropPrompt: "Drag & drop deck file or click to browse",
     savingPrompt: "Saving to browser…",
     privacyNotice: "Stored securely in your local browser without uploading to any server.",
     securityTag: "100% Private (Local-Only)",
@@ -235,7 +241,7 @@ Please structure your response across the following 4 steps:
     loadingDeck: "Loading local deck data…",
     notFoundTitle: "Deck Not Found",
     notFoundDesc: "This deck is not on the server and hasn't been added to your browser yet. Please import the JSON file on the home page first.",
-    recordsHeader: (count: number) => `Device Records (${count})`,
+    recordsHeader: (count: number) => `Exam Records (${count})`,
     passedBadge: "Passed",
     needsReviewBadge: "Needs Review",
     scoreDetail: (correct: number, total: number) => `(${correct} of ${total} correct)`,
@@ -250,8 +256,8 @@ Please structure your response across the following 4 steps:
     deleteDeckFailed: "Failed to delete local deck.",
     confirmDeleteRecord: "Are you sure you want to delete this local exam record?",
     deleteRecordSuccess: "Exam record deleted successfully.",
-    exportBackup: "Export Backup (JSON)",
-    restoreBackup: "Restore Backup (JSON)",
+    exportBackup: "Save Backup File",
+    restoreBackup: "Restore from Backup",
     restoreSuccess: (decks: number, records: number) => `Backup data restored successfully. (${decks} decks, ${records} exam records)`,
     restoreFailed: "Failed to restore backup data.",
     invalidBackupFile: "Invalid backup JSON file format.",

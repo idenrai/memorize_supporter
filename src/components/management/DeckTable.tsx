@@ -19,6 +19,7 @@ import {
 import { useT } from '@/hooks/useT'
 import { toast } from 'sonner'
 import type { Deck } from '@/types/deck'
+import ConfirmModal from '@/components/ui/ConfirmModal'
 
 type SortKey = keyof Deck | 'cards'
 
@@ -37,6 +38,7 @@ export default function DeckTable() {
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'asc' | 'desc' } | null>(null)
   const [localDecks, setLocalDecks] = useState<LocalDeck[]>([])
   const [isLoadingSamples, setIsLoadingSamples] = useState(false)
+  const [deletingDeck, setDeletingDeck] = useState<{ id: string; title: string } | null>(null)
 
   const refreshLocalDecks = useCallback(async () => {
     try {
@@ -91,9 +93,14 @@ export default function DeckTable() {
     }
   }
 
-  // Delete Deck
-  const handleDelete = (id: string, title: string) => {
-    if (!confirm(t.local.confirmDeleteDeckWithName(title))) return
+  // Delete Deck Modal Controls
+  const handleRequestDelete = (id: string, title: string) => {
+    setDeletingDeck({ id, title })
+  }
+
+  const handleConfirmDelete = () => {
+    if (!deletingDeck) return
+    const { id } = deletingDeck
 
     startTransition(async () => {
       try {
@@ -106,6 +113,8 @@ export default function DeckTable() {
         }
       } catch {
         toast.error(t.common.error)
+      } finally {
+        setDeletingDeck(null)
       }
     })
   }
@@ -262,7 +271,7 @@ export default function DeckTable() {
                   <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => handleDelete(deck.id, deck.title)}
+                        onClick={() => handleRequestDelete(deck.id, deck.title)}
                         disabled={isPending}
                         className="text-red-400/70 hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500"
                         title={t.management.delete}
@@ -296,6 +305,23 @@ export default function DeckTable() {
           aria-hidden="true"
         />
       </div>
+
+      {/* Custom Accessible Confirm Modal */}
+      <ConfirmModal
+        isOpen={deletingDeck !== null}
+        title={t.management.confirmDeleteDeckTitle}
+        description={
+          deletingDeck
+            ? t.management.confirmDeleteDeckDesc(deletingDeck.title)
+            : ""
+        }
+        confirmText={t.management.confirmDeleteDeckButton}
+        cancelText={t.management.cancel}
+        isDestructive={true}
+        isLoading={isPending}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeletingDeck(null)}
+      />
     </div>
   )
 }

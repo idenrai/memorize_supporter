@@ -81,6 +81,7 @@ export type LocalDbEventType =
   | "backup_restored"
 
 let dbChannel: BroadcastChannel | null = null
+const localListeners = new Set<(event: LocalDbEventType) => void>()
 
 function getChannel(): BroadcastChannel | null {
   if (typeof window === "undefined" || !("BroadcastChannel" in window)) return null
@@ -91,6 +92,16 @@ function getChannel(): BroadcastChannel | null {
 }
 
 export function notifyLocalDbChange(event: LocalDbEventType): void {
+  // 1. Dispatch synchronously to in-tab subscribers (snapshot to avoid concurrent modification issues)
+  Array.from(localListeners).forEach((callback) => {
+    try {
+      callback(event)
+    } catch (err) {
+      console.error("Local DB listener error", err)
+    }
+  })
+
+  // 2. Broadcast across other tabs via BroadcastChannel
   try {
     const channel = getChannel()
     if (channel) {
@@ -103,18 +114,27 @@ export function notifyLocalDbChange(event: LocalDbEventType): void {
 
 export function onLocalDbChange(callback: (event: LocalDbEventType) => void): () => void {
   if (typeof window === "undefined") return () => {}
-  const channel = getChannel()
-  if (!channel) return () => {}
 
+  // Register in-tab listener
+  localListeners.add(callback)
+
+  // Register cross-tab BroadcastChannel listener
+  const channel = getChannel()
   const handler = (msg: MessageEvent) => {
     if (msg.data?.type) {
       callback(msg.data.type as LocalDbEventType)
     }
   }
 
-  channel.addEventListener("message", handler)
+  if (channel) {
+    channel.addEventListener("message", handler)
+  }
+
   return () => {
-    channel.removeEventListener("message", handler)
+    localListeners.delete(callback)
+    if (channel) {
+      channel.removeEventListener("message", handler)
+    }
   }
 }
 

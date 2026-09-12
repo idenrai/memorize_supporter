@@ -35,14 +35,6 @@ function DeckListRow({
             <span className="shrink-0">{typeLabel}</span>
             <span className="w-1 h-1 bg-zinc-700 rounded-full shrink-0" />
             <span className="shrink-0 tabular-nums">{deck._count.cards} {t.home.cards}</span>
-            {deck.isLocal && (
-              <>
-                <span className="w-1 h-1 bg-zinc-700 rounded-full shrink-0" />
-                <span className="text-2xs font-semibold px-2 py-0.5 rounded-full text-indigo-300 bg-indigo-500/20 border border-indigo-500/30 shrink-0">
-                  {t.local.badge}
-                </span>
-              </>
-            )}
           </span>
         </div>
       </div>

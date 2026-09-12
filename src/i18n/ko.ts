@@ -67,21 +67,19 @@ export const ko: Translations = {
     promptCopyFailed: "클립보드 복사에 실패했습니다.",
     desc: "교재, 필기노트, 단어 목록 등 학습하고 싶은 자료를 AI에게 전달하여 즉시 학습 가능한 덱으로 변환해 보세요. 아래 템플릿 프롬프트를 복사해 ChatGPT나 Claude에 붙여넣기만 하면 됩니다.",
     promptFormat: (content) => `당신은 교육 자료와 노트를 디지털 학습 덱(JSON)으로 정밀하게 변환하는 전문 교육 데이터 엔지니어입니다.
-제시된 학습 내용을 분석하여 아래 [필수 스키마 구조]를 엄격히 따르는 유효한 JSON 배열로 변환해 주세요.
+제시된 학습 내용을 분석하여 아래 [필수 스키마 구조]를 엄격히 따르는 단일 JSON 객체로 변환해 주세요.
 
-[규칙]
-1. 오직 유효한 JSON 배열([ ... ])만 출력할 것.
-2. 마크다운 코드 블록(\`\`\`json)이나 서두/결론 문구를 일절 포함하지 말고 '[' 문자로 시작해 ']' 문자로 끝낼 것.
-3. 모든 객체는 반드시 아래 제공된 스키마의 필드 구조를 준수할 것.
-4. 내용이 없는 필드는 생략하지 말고 null 또는 적절한 기본값을 사용할 것.
+[출력 규칙]
+1. 마크다운 코드 블록(\`\`\`json)이나 서두, 인사말, 해설 등 부가적인 텍스트를 일절 포함하지 말 것.
+2. 반드시 '{' 문자로 시작하여 '}' 문자로 끝나는 순수 단일 JSON 객체만 출력할 것.
+3. 아래 [필수 스키마 및 예시 구조]에 정의된 모든 필드 구조(title, description, type, cards 등)를 엄격히 준수할 것.
+4. 내용이나 정보가 없는 필드는 임의로 생략하지 말고 null 또는 적절한 기본값을 사용할 것.
 
 [필수 스키마 및 예시 구조]
 ${content}
 
 [변환할 학습 내용]
-(여기에 교재 내용, 단어 목록 또는 필기 노트를 붙여넣으세요)
-
-※ 주의: 설명 문구 없이 오직 '[' 로 시작하는 순수 JSON 데이터만 출력하세요.`,
+(여기에 교재 내용, 단어 목록 또는 필기 노트를 붙여넣으세요)`,
     selectTemplate: "학습 유형 선택",
     templateFlashcardDesc: "질문과 정답을 빠르게 뒤집어 확인하는 기본 암기 카드",
     templateQuizDesc: "보기 중 정답을 고르고 해설을 확인할 수 있는 객관식 문제",
@@ -95,7 +93,7 @@ ${content}
     delete: "삭제",
     deleteFailed: "삭제에 실패했습니다.",
     deleteSuccess: "성공적으로 삭제되었습니다.",
-    desc: "준비한 학습 덱(JSON)을 업로드 및 관리하고, 시험 응시 기록과 학습 진도를 포함한 기기 전체 데이터를 안전하게 백업하거나 복원할 수 있습니다.",
+    desc: "준비한 학습 덱을 관리하고, 학습 데이터와 시험 기록을 안전하게 백업하거나 복원할 수 있습니다.",
     edit: "수정",
     editFailed: "수정에 실패했습니다.",
     editSuccess: "성공적으로 수정되었습니다.",
@@ -127,8 +125,8 @@ ${content}
     visible: "표시",
     addSampleDecks: "체험용 샘플 덱 추가",
     sampleDecksAdded: "샘플 덱이 성공적으로 추가되었습니다.",
-    uploadDropzoneTitle: "새로운 학습 덱(JSON) 가져오기",
-    uploadDropzoneDesc: "여기로 JSON 파일을 드래그하여 놓거나 클릭하여 선택하세요.",
+    uploadDropzoneTitle: "새로운 학습 덱 가져오기",
+    uploadDropzoneDesc: "여기로 덱 파일을 드래그하여 놓거나 클릭하여 선택하세요.",
     privacyBadge: "데이터는 외부 서버로 전송되지 않고 브라우저에만 안전하게 보관됩니다.",
     totalDecks: (count: number) => `총 ${count}개의 학습 덱`,
     sampleDecksAlreadyAdded: "이미 모든 샘플 덱이 등록되어 있습니다.",
@@ -136,11 +134,17 @@ ${content}
     emptyDecksTitle: "등록된 학습 덱이 없습니다",
     emptyDecksDesc: "상단 업로드 영역에 새 JSON 덱을 등록하거나, 상단 툴바의 '체험용 샘플 덱 추가'를 이용해 보세요.",
     aiPromptGenerator: "AI 프롬프트 생성기",
-    backupSectionTitle: "전체 데이터 백업 및 복원 (통합 아카이브)",
-    backupSectionDesc: "현재 기기의 브라우저(IndexedDB)에 저장된 모든 학습 덱, 문제 카드, 개별 진도율, 시험 응시 기록 전체를 하나의 JSON 파일로 안전하게 백업하거나 이전 백업 파일로부터 복원합니다.",
-    backupDownload: "기기 전체 데이터 백업(JSON)",
-    backupRestore: "백업 파일 복원(JSON)",
-    storageStatus: (usage, persisted) => `기기 저장소 사용량: ${usage} (${persisted ? "영구 보관 허용됨" : "임시 보관"})`,
+    backupSectionTitle: "데이터 백업 및 복원",
+    backupSectionDesc: "학습 덱과 시험 기록을 파일로 백업해 안전하게 보관하거나, 다른 기기에서 복원할 수 있습니다.",
+    backupDownload: "백업 파일 다운로드",
+    backupRestore: "백업 파일 불러오기",
+    storageStatus: (usage) => `저장 공간 충분 (사용량: ${usage})`,
+    storageTooltip: (usage, quota) => `브라우저 저장 공간이 충분합니다. (사용량: ${usage} / 한도: ${quota})`,
+    validationErrorTitle: "덱 파일 형식 오류",
+    validationErrorDesc: "선택한 파일이 올바른 덱 규격에 맞지 않아 등록되지 않았습니다.",
+    confirmDeleteDeckTitle: "학습 덱 삭제",
+    confirmDeleteDeckDesc: (title: string) => `'${title}' 덱을 삭제하시겠습니까? 기기에 저장된 학습 진도와 시험 기록도 함께 영구 삭제됩니다.`,
+    confirmDeleteDeckButton: "삭제",
   },
   quiz: {
     askAi: "AI에게 심층 해설 요청하기",
@@ -218,14 +222,16 @@ ${explanation || '없음'}
     detailsNotAvailable: "상세 기록을 제공할 수 없습니다.",
     legacyRecordDesc: "이 시험 기록은 상세 기록 기능이 추가되기 전에 생성되었기 때문에 문항별 내역을 표시할 수 없습니다.",
     confirmDeleteRecord: "정말로 이 시험 기록을 삭제하시겠습니까?",
+    confirmDeleteRecordTitle: "시험 기록 삭제",
+    confirmDeleteRecordDesc: "정말로 이 시험 기록을 삭제하시겠습니까? 삭제된 시험 기록은 복구할 수 없습니다.",
     deleteSuccess: "기록이 삭제되었습니다.",
     deleteFailed: "기록 삭제에 실패했습니다.",
-    manageBackupLink: "전체 데이터 백업 및 복원 관리",
+    manageBackupLink: "데이터 백업 및 복원",
   },
   local: {
     badge: "내 기기 저장",
-    importButton: "덱 파일(JSON) 가져오기",
-    dropPrompt: "덱 파일(JSON)을 드래그하거나 클릭하여 선택",
+    importButton: "덱 파일 가져오기",
+    dropPrompt: "덱 파일을 드래그하거나 클릭하여 선택",
     savingPrompt: "브라우저에 저장 중…",
     privacyNotice: "서버로 전송되지 않고 본인 브라우저(내 기기)에 안전하게 저장됩니다.",
     securityTag: "개인 학습 데이터·커스텀 덱 완벽 보호 (Local-Only)",
@@ -235,7 +241,7 @@ ${explanation || '없음'}
     loadingDeck: "로컬 덱 데이터를 불러오는 중…",
     notFoundTitle: "덱을 찾을 수 없습니다",
     notFoundDesc: "이 덱은 서버에 등록되어 있지 않거나, 브라우저 로컬 저장소에 아직 추가되지 않았습니다. 홈 화면에서 JSON 파일을 먼저 가져와 주세요.",
-    recordsHeader: (count: number) => `내 기기 저장 기록 (${count})`,
+    recordsHeader: (count: number) => `시험 기록 (${count})`,
     passedBadge: "합격",
     needsReviewBadge: "복습 필요",
     scoreDetail: (correct: number, total: number) => `(${correct} / ${total} 문제 정답)`,
@@ -250,8 +256,8 @@ ${explanation || '없음'}
     deleteDeckFailed: "로컬 덱 삭제에 실패했습니다.",
     confirmDeleteRecord: "이 로컬 시험 기록을 삭제하시겠습니까?",
     deleteRecordSuccess: "시험 기록이 삭제되었습니다.",
-    exportBackup: "기기 데이터 백업(JSON)",
-    restoreBackup: "백업 복원(JSON)",
+    exportBackup: "데이터 백업 파일 저장",
+    restoreBackup: "백업 파일 불러오기",
     restoreSuccess: (decks: number, records: number) => `백업 데이터가 성공적으로 복원되었습니다. (덱 ${decks}개, 시험 기록 ${records}개)`,
     restoreFailed: "백업 데이터 복원에 실패했습니다.",
     invalidBackupFile: "올바른 백업 JSON 파일 형식이 아닙니다.",
