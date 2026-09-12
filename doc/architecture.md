@@ -13,6 +13,8 @@
 - **목적**: 사용자가 플래시카드(핀포인트 팁), 객관식 문제, 영단어 등을 효율적으로 암기할 수 있도록 돕는 범용 암기 애플리케이션입니다. 인지 과학적 원리(Active Recall, Spaced Repetition)와 포커스 모드 디자인을 채택하여 학습 효율을 극대화합니다.
 - **핵심 컴포넌트**:
   - `DeckGallery`: `useDeferredValue`를 활용한 렌더링 최적화와 함께 실시간 덱 검색 및 시리즈 필터링을 담당하는 클라이언트 컴포넌트
+  - `DeckEmptyState` (`src/components/home/DeckEmptyState.tsx`): 덱이 없을 때 최초 환영 온보딩, 3단계 학습 가이드 카드 및 샘플 덱 체험 액션을 전담하는 독립 프레젠테이션 컴포넌트
+  - `ExamCardReview` (`src/components/cards/ExamCardReview.tsx`): 시험 모드 완료 후 개별 문항의 정답/오답 상세 리뷰 및 모달 오버레이를 전담하는 컴포넌트
   - `UploadZone`: 서버 전송 없이 브라우저 IndexedD   - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어 (고집중 Precision Canvas 단일 레이어 보더 및 시맨틱 뱃지 적용)
    - `ConfirmModal`: 파괴적 변경(덱 삭제, 복원 확인, 시험 기록 삭제) 시 브라우저 기본 팝업을 대체하여 WAI-ARIA Focus Trap, Return Focus, ESC 키 취소, 모바일 뷰포트 안전 스크롤(`max-h-[85vh]`) 및 정밀 버튼 디자인을 제공하는 접근성 중심의 프리미엄 확인 모달
    - `PageHeader` (`src/components/common/PageHeader.tsx`): 소개, 시험 기록, 데이터 관리, 데이터 준비 등 모든 서브 페이지의 일관된 시맨틱 뱃지, 단색 볼드 타이틀, 보조 설명 및 우측 액션 슬롯을 일원화한 공통 헤더 컴포넌트
@@ -192,6 +194,8 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **Purpose**: A general-purpose memorization application designed to help users efficiently memorize flashcards (pinpoint tips), multiple-choice questions, and vocabulary. It maximizes learning efficiency by adopting cognitive science principles (Active Recall, Spaced Repetition) and a focus-mode design.
 - **Core Components**:
   - `DeckGallery`: Client-side component for real-time deck search and series filtering, optimized with `useDeferredValue`.
+  - `DeckEmptyState` (`src/components/home/DeckEmptyState.tsx`): Presentation component dedicated to the initial onboarding hero, 3-step visual guide, and sample deck import action.
+  - `ExamCardReview` (`src/components/cards/ExamCardReview.tsx`): Dedicated component handling modal overlays and question-by-question review of correct/incorrect answers following exam completion.
   - `UploadZone`: Drag & Drop JSON importer in the data management page, supporting single and multi-file batch uploads directly into browser IndexedDB without server transmission.
   - `DeckPlayer`, `Flashcard`, `VocabularyCard`, `PracticeQuizCard`: Frontend interactive card renderer (handling micro-animations and feedback).
   - `DeckClientLoader`: Client-side deck runner that dynamically retrieves and prioritizes cards from IndexedDB for local-only decks.
