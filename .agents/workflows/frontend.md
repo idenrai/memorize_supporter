@@ -16,6 +16,7 @@ description: 프론트엔드 UI/UX 컴포넌트 신규 생성, 수정 및 리팩
   - 프론트엔드 상태, Props, 컴포저블 훅 등의 정밀한 타입 검증이 필요하면 `.agents/skills/typescript-expert/SKILL.md`를 참조합니다.
   - 컴포넌트 수정 후 UI 및 런타임 동작을 최종 확인할 때는 `.agents/skills/next-dev-loop/SKILL.md`를 바탕으로 라이브 검증을 수행합니다.
   - **로컬 퍼스트 & 클라이언트 DB 연동 시:** 브라우저 로컬 모드(BYOD), 클라이언트 상태 동기화, IndexedDB 연동, `BroadcastChannel` 다중 탭 이벤트 수신 및 스토리지 용량 진단(`getStorageEstimate`) UI 구현 시 `.agents/skills/local-first/SKILL.md`를 참조합니다.
+  - **AI 프롬프트 생성기 및 템플릿 UI 작업 시:** 데이터 준비 덱 생성기(`aiPromptGenerator`), 덱 변환 프롬프트(`promptFormat`), 오답 튜터 질문(`aiDeepPrompt`) 등 AI 프롬프트와 관련된 컴포넌트나 다국어 템플릿을 신규 생성/수정할 때는 반드시 `.agents/workflows/prompt.md` 워크플로우를 참조하여 템플릿 품질과 일관성을 보장합니다.
 
 ## 2. Visual Design & UI/UX (공통 지침 - 항상 준수)
 - **컴포넌트 수정 및 생성 시:** 기존 프로젝트의 톤앤매너(색상, 여백, 타이포그래피 등) 일관성을 엄격히 유지합니다.
