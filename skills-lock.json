@@ -31,6 +31,12 @@
       "skillPath": "skills/nextjs-best-practices/SKILL.md",
       "computedHash": "5344522f15f544513456e77b858377368f24e680732af5efeb5a67bbab021bc1"
     },
+    "project-structure-refactoring": {
+      "source": "myatminlu/vector-skills",
+      "sourceType": "github",
+      "skillPath": "skills/project-structure-refactoring/SKILL.md",
+      "computedHash": "52c5a7889323f7a018fbf4f00516e8bf4f7d5b2519da30371b0620dcf59a76ce"
+    },
     "prompt-engineering-patterns": {
       "source": "wshobson/agents",
       "sourceType": "github",

@@ -71,7 +71,7 @@
   - **강제 단언 0% 유지**: 코드베이스 전반에서 `as any` 및 `as unknown as`를 완전히 배제하여 컴파일 타임 및 런타임 무결성을 100% 보장합니다.
 
 - **데이터 검증 및 에러 처리 (Zero-Trust)**:
-  - **공유 스키마 (Zod)**: 클라이언트의 입력값은 절대 신뢰하지 않습니다. 5MB 용량 제한 검사부터 미식별 필드 제거까지, 모든 페이로드는 비즈니스 로직에 도달하기 전 반드시 재사용 가능한 Zod 스키마(`src/lib/schemas.ts`, `src/schemas/deck.ts`)를 통해 엄격하게 검증됩니다.
+  - **공유 스키마 (Zod)**: 클라이언트의 입력값은 절대 신뢰하지 않습니다. 5MB 용량 제한 검사부터 미식별 필드 제거까지, 모든 페이로드는 비즈니스 로직에 도달하기 전 반드시 재사용 가능한 Zod 스키마(`src/schemas/`)를 통해 엄격하게 검증됩니다.
 
 - **데이터베이스 아키텍처 (100% Zero-Database & Local-First)**:
   - **Zero-Server Database**: 서버 측 데이터베이스(Prisma, SQLite, PostgreSQL 등)를 일체 사용하지 않으며, 서버리스 환경(Vercel 등)에서의 DB 연결 오류나 500 렌더링 충돌 위험을 원천 차단(0%)합니다.
@@ -254,7 +254,7 @@ This document defines the system architecture of the `memorize_supporter` projec
   - **Zero Unsafe Assertions**: Ensures 0% `as any` or `as unknown as` assertions across the entire codebase.
 
 - **Data Validation & Error Handling (Zero-Trust)**:
-  - **Shared Schema (Zod)**: Client inputs are never trusted. Every payload (e.g., 5MB limit check, unknown field stripping) is strictly parsed through reusable Zod schemas (`src/lib/schemas.ts`, `src/schemas/deck.ts`) *before* reaching the business logic.
+  - **Shared Schema (Zod)**: Client inputs are never trusted. Every payload (e.g., 5MB limit check, unknown field stripping) is strictly parsed through reusable Zod schemas (`src/schemas/`) *before* reaching the business logic.
 
 - **Database Architecture (100% Zero-Database & Local-First)**:
   - **Zero-Server Database**: Does not use any server-side database (Prisma, SQLite, PostgreSQL, etc.), eliminating 100% of serverless DB connection errors and 500 rendering crashes.
