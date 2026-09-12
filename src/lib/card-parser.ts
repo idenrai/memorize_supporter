@@ -1,4 +1,4 @@
-import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSchema } from "@/lib/schemas"
+import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSchema } from "@/schemas"
 import type { CardData } from "@/types/card"
 
 export interface RawDbCard {
