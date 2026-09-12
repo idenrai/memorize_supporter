@@ -29,11 +29,11 @@ The repository maintains Single Source of Truth (SSoT) guidelines under `.agents
 
 | Workflow | Activation | Primary Focus |
 | :--- | :--- | :--- |
-| Frontend Engineering | `/frontend` | UI/UX components, Tailwind CSS v4 canonical styling, accessibility, and zero-hardcoding i18n synchronization. |
+| Frontend Engineering | `/frontend` | UI/UX components, design system planning (anti-slop Design Read, 3 Dials, CLI design-system generation), SVG logo pipeline, hard layout discipline (hero viewport, navigation, bento grid, eyebrow restraint), Tailwind CSS v4 canonical styling, accessibility audit, and zero-hardcoding i18n synchronization. |
 | Backend Engineering | `/backend` | Next.js Server Actions, Route Handlers, Local-First storage pooling, and zero-trust validation. |
 | Prompt Engineering | `/prompt` | Prompt architecture, Few-Shot demonstrations, CoT reasoning, structured JSON schema enforcement, and i18n template synchronization. |
 
 엔지니어링 작업 영역별 주요 워크플로우 매트릭스:
-- 프론트엔드 워크플로우 (`/frontend`): UI/UX 컴포넌트, Tailwind CSS v4 스타일링, 웹 접근성 감사 및 i18n 동기화.
+- 프론트엔드 워크플로우 (`/frontend`): UI/UX 컴포넌트, 디자인 시스템 기획(안티-슬롭 Design Read, 3대 다이얼, CLI 디자인 시스템 자동 생성), SVG 로고 파이프라인, 하드 레이아웃 규율(히어로 뷰포트, 네비게이션, 벤토 그리드, 아이브로우 절제), Tailwind CSS v4 스타일링, 웹 접근성 감사 및 i18n 동기화.
 - 백엔드 워크플로우 (`/backend`): Server Actions, Route Handlers, 로컬 스토리지 풀링 및 제로 트러스트 검증.
 - 프롬프트 엔지니어링 워크플로우 (`/prompt`): 프롬프트 아키텍처, 퓨샷(Few-Shot) 시연, 단계적 추론(CoT), 구조화된 JSON 스키마 강제 및 다국어 템플릿 동기화.
