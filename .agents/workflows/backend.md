@@ -1,12 +1,12 @@
 ---
-description: 백엔드 아키텍처 설계, API 개발 및 리팩토링
+description: 백엔드 아키텍처 설계, API 개발 및 비즈니스 로직 구현
 ---
 
 # Backend Engineering Workflow
 
 **Activation:** `/backend` (또는 백엔드 서버, REST API, Serverless Function 등 백엔드 영역의 생성, 수정, 아키텍처 결정을 진행할 때)
 
-이 워크플로우는 백엔드와 관련된 아키텍처 설계, API 개발, 리팩토링 및 성능 최적화의 모든 라이프사이클에 적용되는 마스터 가이드라인입니다. 단순한 코딩을 넘어 **의사결정(Decision-making)과 보안 검증(Security Validation)**에 초점을 맞춥니다.
+이 워크플로우는 백엔드와 관련된 아키텍처 설계, API 개발, 비즈니스 로직 구현 및 성능 최적화의 모든 라이프사이클에 적용되는 마스터 가이드라인입니다. 단순한 코딩을 넘어 **의사결정(Decision-making)과 보안 검증(Security Validation)**에 초점을 맞춥니다.
 
 ## 1. 기술 스택 및 아키텍처 확인 (필수)
 - 작업 시작 전 반드시 `.agents/rules/project-context.md`를 읽고 현재 프로젝트에 설정된 **백엔드 언어, 프레임워크, 데이터베이스, 배포 환경**을 확인합니다.
@@ -21,6 +21,10 @@ description: 백엔드 아키텍처 설계, API 개발 및 리팩토링
 ## 2. Architecture & Design
 - 복잡해지는 비즈니스 로직은 단일 책임 원칙(SRP)에 따라 적절한 계층(예: Controller/Router, Service, Repository)으로 분리하여 관리합니다.
 - 데이터베이스 설계 및 변경 시, 기존 스키마와의 호환성을 고려하고 필요 시 마이그레이션 스크립트를 작성합니다.
+
+> [!TIP]
+> **순수 리팩토링 위임 (Handoff to `/refactor`):**
+> API 인터페이스 및 비즈니스 동작을 100% 보존한 채 백엔드 파일 경로 이동, 계층 구조 개편, 중복 제거, 코드 스멜 개선 등 순수 리팩토링을 진행할 때는 본 워크플로우 대신 반드시 `[.agents/workflows/refactor.md](file:///Users/idenrai/project/memorize_supporter/.agents/workflows/refactor.md)` 워크플로우를 실행하십시오.
 
 ## 3. Security & Validation (Zero-Trust)
 - **모든 경계에서 검증:** 클라이언트로부터 들어오는 입력(Query params, Body, Headers)을 절대 신뢰하지 않습니다.

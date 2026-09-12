@@ -15,10 +15,10 @@
 ## 🔄 Workflows (상황별 참조 트리거)
 특정 작업이나 상황이 발생했을 때, 해당하는 워크플로우나 에이전트 지침을 로드하세요.
 
-- **프론트엔드 UI/UX 컴포넌트 신규 생성, 수정 및 리팩토링 시 (/frontend):** `.agents/workflows/frontend.md` 읽기
-- **백엔드 아키텍처 설계, API 개발 및 리팩토링 시 (/backend):** `.agents/workflows/backend.md` 읽기
+- **프론트엔드 UI/UX 컴포넌트 신규 생성, 수정 및 디자인 시스템 고도화 시 (/frontend):** `.agents/workflows/frontend.md` 읽기
+- **백엔드 아키텍처 설계, API 개발 및 비즈니스 로직 구현 시 (/backend):** `.agents/workflows/backend.md` 읽기
 - **AI 프롬프트 작성, 템플릿 설계 및 최적화 시 (/prompt, /prompt-engineering):** `.agents/workflows/prompt.md` 읽기
-- **프로젝트 폴더 구조 및 소스코드 전면 리팩토링 시 (/refactor):** `.agents/workflows/refactor.md` 읽기
+- **프로젝트 폴더 구조 및 소스코드 전면 리팩토링 시 (/refactor):** `.agents/workflows/refactor.md` 읽기 (동작 보존 및 코드 스멜 제거)
 - **빌드 검토 및 오류 해결 시:** `.agents/workflows/build-guard.md` 및 `.agents/workflows/build-check.md` 읽기
 - **단위 테스트 작성 및 검증 시:** `.agents/workflows/test-writer.md` 읽기
 - **코드 리뷰 요청 시:** `.agents/workflows/review.md` 읽기
