@@ -113,8 +113,39 @@ memorize_supporter/
 - CSS 변수는 `top-[var(--header-height)]` 대신 **`top-(--header-height)`**로 바인딩합니다.
 - 임의의 hex 코드 대신 `globals.css`의 `@theme` 토큰 및 시맨틱 컬러를 활용합니다.
 
-### 5) 다국어 동기화 (i18n Strict Synchronization)
-- 모든 UI 텍스트는 하드코딩을 엄격히 금지하며, `src/i18n/dictionaries/`의 `ko.json`, `en.json`, `ja.json` 3개 파일에 누락 없이 동기화한 후 `useT()` 훅을 통해 렌더링합니다.
+### 5) 다국어 동기화 및 UI 텍스트 하드코딩 절대 금지 (Zero Hardcoded UI Text Policy)
+- **절대 원칙:** 사용자 대면 인터페이스에 노출되는 문자열, 스크린 리더가 읽는 접근성 텍스트, 브라우저 탭 제목/메타데이터 등 **모든 UI 텍스트의 인라인 하드코딩을 전면 금지**합니다.
+- **적용 대상 (전수 적용):**
+  - 버튼 텍스트, 헤딩(h1~h6), 단락 본문, 폼 라벨, 뱃지, 태그, 힌트 문구
+  - 입력창 `placeholder`, 툴팁, 드롭다운 옵션명
+  - 접근성 라벨 (`aria-label`, `aria-roledescription`, `title` 속성)
+  - 알림 및 피드백 메시지 (토스트 알림, 에러 메시지, 확인 모달 질문/버튼)
+  - 라우트별 메타데이터 (`generateMetadata`의 `title`, `description`, OpenGraph 등)
+- **동기화 3대 파일 (Strict Tri-Lingual Sync):**
+  - `src/i18n/types.ts`: 신규 번역 키의 TypeScript 인터페이스 정의
+  - `src/i18n/ko.ts`: 한국어 번역 리소스
+  - `src/i18n/en.ts`: 영어 번역 리소스
+  - `src/i18n/ja.ts`: 일본어 번역 리소스
+  - ※ 3개 국어 파일 중 단 하나라도 키가 누락되거나 타입이 불일치하면 TypeScript 빌드가 실패하도록 엄격히 유지합니다.
+- **Good vs Bad 패턴 예시 (Few-Shot Examples):**
+  ```tsx
+  // ❌ BAD: UI 텍스트, aria-label, placeholder 인라인 하드코딩
+  <button aria-label="닫기">종료</button>
+  <input placeholder="검색어를 입력하세요..." />
+  <section aria-label="Core Philosophies">
+  const title = `소개 - Memorize Supporter`;
+
+  // ✅ GOOD: i18n 딕셔너리 키 바인딩 및 동적 치환
+  <button aria-label={t.common.close}>{t.common.exit}</button>
+  <input placeholder={t.home.searchPlaceholder} />
+  <section aria-label={t.about.corePhilosophiesTitle}>
+  const title = `${t.common.about} - ${t.home.title}`;
+  ```
+- **예외 사항:**
+  - 순수 기술 규격 명칭(예: `React 19`, `Next.js`, `Tailwind CSS v4`, `Zod`, `IndexedDB` 등 고유명사 기술 스택 목록)
+  - 코드 식별자, 내부 로그 메시지(`console.error`), 프로토콜 키값
+- **자가 점검(Self-Verification):**
+  - 프론트엔드 작업 완료 전 `git diff`를 검토하여 한글/영어/일본어 자연어 문자열이 JSX 컴포넌트 내에 리터럴로 직접 삽입되지 않았는지 전수 점검합니다.
 
 ### 6) 무결성 보장 (Lint & Spellcheck Diagnostics)
 - `npm run lint` 실행 시 **0 error / 0 warning**을 상시 유지합니다.

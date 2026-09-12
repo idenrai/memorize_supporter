@@ -8,6 +8,7 @@
 - 프로젝트 전체 아키텍처 및 스택: `.agents/rules/project-context.md` 읽기 (주의: 만약 해당 문서가 아직 초기 템플릿 상태(Placeholder)라면, 어떠한 코드도 작성하지 말고 사용자에게 `/plan` 워크플로우를 먼저 실행하여 기술 스택을 확정할 것을 강제하세요.)
 - 프로젝트 보안 및 데이터 취급 원칙: `.agents/rules/security.md` 읽기
 - GitHub 커밋 규칙: `.agents/rules/git-commit-rules.md` 읽기
+- **UI 텍스트 하드코딩 절대 금지 (Zero Hardcoded UI Text Policy - 절대 준수):** 버튼, 제목, 본문, 라벨, 뱃지, 태그, 힌트, placeholder, `aria-label`, 토스트, 메타데이터 등 사용자가 보거나 스크린 리더가 읽는 모든 UI 문자열의 인라인 하드코딩을 엄격히 금지합니다. 모든 텍스트는 반드시 `src/i18n/types.ts`에 정의하고 `ko.ts`, `en.ts`, `ja.ts` 3개 국어 딕셔너리에 100% 동기화한 뒤 `useT()`/`getT()`를 통해서만 참조해야 합니다.
 - **원격 푸시 및 PR 생성 제한 (절대 준수):** 에이전트는 어떠한 경우에도 임의로 `git push`를 실행하거나 Pull Request를 생성해서는 안 됩니다. 원격 푸시 및 PR 생성은 오직 사용자가 `/pr`, `/solve-issue` 명령어를 명시적으로 입력하거나 푸시를 직접 지시했을 때만 수행할 수 있습니다. (로컬 커밋 및 빌드 검증 완료 후 작업을 중단하고 사용자에게 보고할 것)
 - **오픈소스 스킬 탐색 (필수):** 새로운 지시를 받으면, 코딩이나 계획 수립에 앞서 `npx skills find [키워드]` 명령어로 필요한 도구나 가이드라인(Skill)이 있는지 검색하세요. 적합한 스킬이 발견되면 `npx skills add <package> -y`를 통해 프로젝트에 설치 및 적용한 후 작업을 진행하세요.
 

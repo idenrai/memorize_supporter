@@ -19,7 +19,8 @@
   - `ExamResultView`: 문항별 오답 상세 복습, 시각적 선택지 비교 및 '틀린 문제만 다시 풀기'를 지원하는 시험 결과 뷰어
   - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어
   - `ConfirmModal`: 파괴적 변경(덱 삭제, 시험 기록 삭제) 시 브라우저 기본 팝업을 대체하여 WAI-ARIA Focus Trap, Return Focus, ESC 키 취소 및 백드롭 블러를 제공하는 접근성 중심의 프리미엄 확인 모달
-  - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 단일 JSON 객체 스키마 규격 및 체계적인 [출력 규칙]을 갖춘 템플릿을 생성/검증하는 관리 도구
+    - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 단일 JSON 객체 스키마 규격 및 체계적인 [출력 규칙]을 갖춘 템플릿을 생성/검증하는 관리 도구
+  - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): 인지 과학 및 Local-First 철학, 인터랙티브 3D 플립 카드 데모, 6대 기능 덱, 키보드 단축키 안내를 제공하는 브랜드 소개 뷰어
   - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
   - `CardParser` (`src/lib/card-parser.ts`): 원시 JSON 및 카드 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
 
@@ -27,15 +28,16 @@
 
 - **프레임워크 및 라우팅 방식**:
   - Next.js (App Router) / React 19
-  - Server Components(데이터 패칭: `app/[lang]/deck/[deckId]/page.tsx`)와 Client Components(인터랙션: `Flashcard.tsx`)를 명확히 분리하여 렌더링 성능을 최적화합니다.
+  - Server Components(데이터 패칭: `app/[lang]/deck/[deckId]/page.tsx`, 정적 메타데이터: `app/[lang]/about/page.tsx`)와 Client Components(인터랙션: `Flashcard.tsx`, `AboutClient.tsx`)를 명확히 분리하여 렌더링 성능을 최적화합니다.
 
 - **카드 출제 전략 (Card Selection Strategy)**:
   - **1순위 (미출제 문제)**: 학습 기록이 없는 카드를 최우선 출제하여 덱 전체 커버리지를 확보합니다.
   - **2순위 (오답 문제)**: 틀린 이력이 있는 카드를 추산된 '틀린 횟수'가 높은 순으로 배치하여 약점을 집중 타격합니다.
   - **3순위 (일반 문제)**: 완벽히 맞힌 카드는 '풀이 횟수'가 적은 순으로 출제하여 우연히 맞힌 지식을 확실히 굳힌 뒤, 장기 기억화된 카드를 나중에 복습하도록 설계되었습니다.
 
-- **다국어 처리 및 UX 라이팅 전략 (i18n Strategy)**:
+- **다국어 처리 및 UI 하드코딩 제로 전략 (i18n & Zero Hardcoded UI Text Policy)**:
   - **URL 기반 단일 진실 공급원(SSoT)**: URL 기반 동적 라우팅(`app/[lang]/...`)을 활용합니다. 전역 상태 관리자(Zustand 등)를 배제하여 SSR 렌더링 시점의 쿠키 분석에 의존하지 않고, Hydration 에러를 원천 차단합니다.
+  - **UI 텍스트 하드코딩 절대 금지 (Zero Hardcoded UI Text Policy)**: 버튼, 헤딩, 본문, 뱃지, 태그, 힌트, placeholder, `aria-label`, 토스트 및 메타데이터를 포함하여 사용자 대면 및 스크린 리더용 모든 UI 문자열의 인라인 하드코딩을 엄격히 금지합니다.
   - **엄격한 타입 안전 다국어 사전**: `src/i18n/types.ts`를 단일 진실 공급원으로 삼아 한국어(`ko.ts`), 영어(`en.ts`), 일본어(`ja.ts`) 3개 국어의 번역 사전을 완전 동기화하고, 실제 사용자 흐름에 맞춘 직관적인 UX 카피라이팅을 적용합니다.
   - **프록시 기반 로캘 라우팅**: Next.js 16 규칙에 따라 `src/proxy.ts`를 사용하여 동적 로캘 라우팅을 처리합니다. 다국어 상수(locales)는 `src/i18n/settings.ts`로 분리하여 애플리케이션 전체에서 일관되게 관리합니다.
 
@@ -199,6 +201,7 @@ This document defines the system architecture of the `memorize_supporter` projec
   - `LocalRecordsView`: Unified exam records interface for on-device quiz history, featuring custom accessible modal confirmation on record deletion and one-click JSON backup export.
   - `ConfirmModal`: Premium accessible confirmation modal replacing native browser confirm dialogs for destructive actions (deck/record deletion), equipped with WAI-ARIA Focus Trap, Return Focus, Escape dismissal, and backdrop blur.
   - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, and real-time schema validation with single JSON object schema enforcement and unified [Output Rules].
+  - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): Brand and product introduction interface presenting cognitive science and Local-First philosophies, an interactive 3D flip card demo, 6 core feature decks, and keyboard shortcuts guidance.
   - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private user study materials, forgetting curves, and quiz scores.
   - `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
 
@@ -206,15 +209,16 @@ This document defines the system architecture of the `memorize_supporter` projec
 
 - **Framework and Routing Strategy**:
   - Next.js (App Router) / React 19
-  - Optimizes rendering performance by strictly separating Server Components (data fetching: `app/[lang]/deck/[deckId]/page.tsx`) and Client Components (interactions: `Flashcard.tsx`).
+  - Optimizes rendering performance by strictly separating Server Components (data fetching: `app/[lang]/deck/[deckId]/page.tsx`, static metadata: `app/[lang]/about/page.tsx`) and Client Components (interactions: `Flashcard.tsx`, `AboutClient.tsx`).
 
 - **Card Selection Strategy**:
   - **Priority 1 (Unasked)**: Cards with no learning history are presented first to ensure full coverage of the deck.
   - **Priority 2 (Incorrect)**: Cards with a history of incorrect answers are prioritized next, sorted descending by their estimated failed count to target weaknesses.
   - **Priority 3 (General)**: Cards perfectly answered are presented last, sorted ascending by their review count to solidify newer knowledge before re-testing heavily drilled cards.
 
-- **i18n Strategy & Product UX Writing**:
+- **i18n Strategy & Zero Hardcoded UI Text Policy**:
   - **URL as Single Source of Truth (SSoT)**: Uses dynamic routing (`app/[lang]/...`) to manage the current language state. This prevents hydration errors caused by resolving language through cookies or local storage during SSR.
+  - **Zero Hardcoded UI Text Policy**: Strictly prohibits inline hardcoding of any UI strings visible to users or read by screen readers, including buttons, headings, body text, badges, tags, hints, placeholders, `aria-label`, toasts, and page metadata.
   - **Strictly Typed Translations (SSoT)**: Managed via `src/i18n/types.ts` as the single source of truth, synchronizing Korean (`ko.ts`), English (`en.ts`), and Japanese (`ja.ts`) with 100% type safety and natural product-oriented UX copywriting.
   - **Locale Routing via Proxy**: Adheres to Next.js 16 conventions by using `src/proxy.ts` for dynamic locale routing. Locale constants are isolated in `src/i18n/settings.ts` to maintain a single source of truth across the application.
 
