@@ -31,11 +31,29 @@
       "skillPath": "skills/nextjs-best-practices/SKILL.md",
       "computedHash": "5344522f15f544513456e77b858377368f24e680732af5efeb5a67bbab021bc1"
     },
+    "project-structure-refactoring": {
+      "source": "myatminlu/vector-skills",
+      "sourceType": "github",
+      "skillPath": "skills/project-structure-refactoring/SKILL.md",
+      "computedHash": "52c5a7889323f7a018fbf4f00516e8bf4f7d5b2519da30371b0620dcf59a76ce"
+    },
     "prompt-engineering-patterns": {
       "source": "wshobson/agents",
       "sourceType": "github",
       "skillPath": "plugins/llm-application-dev/skills/prompt-engineering-patterns/SKILL.md",
       "computedHash": "de45b8066301dda62d6912dfe54c4062bad1f4259a7231a9e98c55b10c49fa2e"
+    },
+    "refactoring-patterns": {
+      "source": "wondelai/skills",
+      "sourceType": "github",
+      "skillPath": "refactoring-patterns/SKILL.md",
+      "computedHash": "b896bb518a3c6233e93c3a3d319f0e98b9eb0c65813c432e4452d8287942cd1b"
+    },
+    "safe-refactor": {
+      "source": "juliusbrussee/caveman",
+      "sourceType": "github",
+      "skillPath": "skills/safe-refactor/SKILL.md",
+      "computedHash": "9df34a21a7a2c18ce13dbbe4a3f66b4e91df9e4bc33c1c9da8a80261583367ec"
     },
     "sticky-and-fixed-elements": {
       "source": "dembrandt/dembrandt-skills",

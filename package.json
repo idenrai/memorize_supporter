@@ -2,6 +2,10 @@
   "name": "memorize-supporter",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "scripts": {
     "check:node": "node scripts/check-node.js",
     "predev": "npm run check:node",
@@ -28,8 +32,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sonner": "^2.0.7",
-    "zod": "^4.4.3",
-    "zustand": "^5.0.14"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

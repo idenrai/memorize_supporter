@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSchema } from "@/lib/schemas"
+import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSchema } from "../schemas/index.ts"
 
 export type FlashcardContent = z.infer<typeof FlashcardContentSchema>
 export type PracticeQuizContent = z.infer<typeof PracticeQuizContentSchema>

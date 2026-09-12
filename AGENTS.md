@@ -15,9 +15,10 @@
 ## 🔄 Workflows (상황별 참조 트리거)
 특정 작업이나 상황이 발생했을 때, 해당하는 워크플로우나 에이전트 지침을 로드하세요.
 
-- **프론트엔드 UI/UX 컴포넌트 신규 생성, 수정 및 리팩토링 시 (/frontend):** `.agents/workflows/frontend.md` 읽기
-- **백엔드 아키텍처 설계, API 개발 및 리팩토링 시 (/backend):** `.agents/workflows/backend.md` 읽기
+- **프론트엔드 UI/UX 컴포넌트 신규 생성, 수정 및 디자인 시스템 고도화 시 (/frontend):** `.agents/workflows/frontend.md` 읽기
+- **백엔드 아키텍처 설계, API 개발 및 비즈니스 로직 구현 시 (/backend):** `.agents/workflows/backend.md` 읽기
 - **AI 프롬프트 작성, 템플릿 설계 및 최적화 시 (/prompt, /prompt-engineering):** `.agents/workflows/prompt.md` 읽기
+- **프로젝트 폴더 구조 및 소스코드 전면 리팩토링 시 (/refactor):** `.agents/workflows/refactor.md` 읽기 (동작 보존 및 코드 스멜 제거)
 - **빌드 검토 및 오류 해결 시:** `.agents/workflows/build-guard.md` 및 `.agents/workflows/build-check.md` 읽기
 - **단위 테스트 작성 및 검증 시:** `.agents/workflows/test-writer.md` 읽기
 - **코드 리뷰 요청 시:** `.agents/workflows/review.md` 읽기
@@ -45,3 +46,6 @@ AI가 특정 도구나 기능이 필요할 때 로드하세요.
 - **코드를 변경한 후 로컬 런타임(Next.js 환경)에서 직접 검증 및 확인이 필요할 시:** `.agents/skills/next-dev-loop/SKILL.md` 읽기
 - **복잡한 TypeScript 타입 분석, 성능 최적화 및 고급 비즈니스 로직 작성 시:** `.agents/skills/typescript-expert/SKILL.md` 읽기
 - **로컬 퍼스트(Local-First) 아키텍처, 브라우저 저장소(IndexedDB, OPFS) 설계, 다중 탭 동기화 및 오프라인 영구 보관 필요 시:** `.agents/skills/local-first/SKILL.md` 읽기
+- **프로젝트 및 폴더/모듈 구조 리팩토링 및 클린 아키텍처 설계 시:** `.agents/skills/project-structure-refactoring/SKILL.md` 읽기
+- **코드 스멜 진단 및 마틴 파울러 리팩토링 패턴 적용 시:** `.agents/skills/refactoring-patterns/SKILL.md` 읽기
+- **행위 보존 및 안전한 무중단 점진적 리팩토링 검증 시:** `.agents/skills/safe-refactor/SKILL.md` 읽기

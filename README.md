@@ -35,7 +35,7 @@
 | **Frontend Framework** | [Next.js 16 (App Router, Turbopack)](https://nextjs.org/) / [React 19](https://react.dev/) |
 | **Language** | [TypeScript 5](https://www.typescriptlang.org/) |
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) (`@tailwindcss/postcss`) |
-| **State & Animation** | [Zustand 5](https://zustand-demo.pmnd.rs/), [Framer Motion 12](https://www.framer.com/motion/) |
+| **State & Animation** | React 19 Hooks, [Framer Motion 12](https://www.framer.com/motion/) |
 | **Client Storage** | [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) (100% Local-First 영구 보관), Zero-Server Database |
 | **Icons & Toast** | [Lucide React](https://lucide.dev/), [Sonner](https://sonner.emilkowal.ski/) |
 | **Data Validation** | [Zod](https://zod.dev/) |
@@ -131,7 +131,7 @@ npm run build       # Next.js Turbopack 프로덕션 빌드
 | **Frontend Framework** | [Next.js 16 (App Router, Turbopack)](https://nextjs.org/) / [React 19](https://react.dev/) |
 | **Language** | [TypeScript 5](https://www.typescriptlang.org/) |
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) (`@tailwindcss/postcss`) |
-| **State & Animation** | [Zustand 5](https://zustand-demo.pmnd.rs/), [Framer Motion 12](https://www.framer.com/motion/) |
+| **State & Animation** | React 19 Hooks, [Framer Motion 12](https://www.framer.com/motion/) |
 | **Client Storage** | [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) (100% Local-First Persistent Storage), Zero-Server Database |
 | **Icons & Toast** | [Lucide React](https://lucide.dev/), [Sonner](https://sonner.emilkowal.ski/) |
 | **Data Validation** | [Zod](https://zod.dev/) |

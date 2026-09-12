@@ -21,7 +21,7 @@
 | **Language** | TypeScript | 5.x (`strict: true`, 강제 단언 0% 지향) |
 | **Styling** | Tailwind CSS v4 | `@tailwindcss/postcss`, `@theme` 토큰 기반 CSS 변수 바인딩 |
 | **Animations & Icons** | Framer Motion / Lucide React | 12.x / 최신 아이콘 세트 |
-| **State Management** | RSC / React Hooks / Zustand | 5.x (클라이언트 전역 상태 보조) |
+| **State Management** | RSC / React 19 Hooks | 클라이언트 컴포넌트 및 IndexedDB 로컬 상태 연동 |
 | **Backend & Actions** | Next.js Server Actions / API Routes | `src/actions/` (쿠키 동기화 및 `/api/sample-decks` 정적 제공) |
 | **Schema Validation** | Zod | 3.x/4.x (런타임-컴파일타임 일체형 검증) |
 | **Database & Client Storage** | IndexedDB (Native Web API) | 100% Local-First 영구 보관 (Zero-Server Database, Schema v2, Connection Pooling, BroadcastChannel Sync) |
@@ -70,22 +70,30 @@ memorize_supporter/
 │   │   ├── icon.tsx            # 동적 파비콘 및 앱 아이콘
 │   │   └── apple-icon.tsx      # 애플 터치 아이콘
 │   ├── components/             # 프레젠테이션 및 인터랙티브 UI 컴포넌트
-│   │   ├── cards/              # DeckPlayer, DeckClientLoader, QuizHeader, ExamResultView 등
-│   │   ├── home/               # DeckGallery, SearchAndFilter
-│   │   ├── layout/             # Header, Navigation
-│   │   ├── management/         # DeckTable, UploadZone, BackupRestoreCard
-│   │   ├── preparation/        # DataPreparationClient, JsonEditor, TemplateSelector
-│   │   └── ui/                 # CustomSelect 등 공통 UI 요소
-│   ├── hooks/                  # 커스텀 리액트 훅 (useT.ts 등)
+│   │   ├── about/              # AboutClient
+│   │   ├── cards/              # 학습 플레이어 (DeckClientLoader, DeckPlayer, QuizHeader, ExamResultView 등)
+│   │   ├── common/             # BrandLogo, NetworkStatusBadge, PageHeader
+│   │   ├── home/               # DeckGallery, DeckGrid, DeckList, DeckCard, SearchAndFilter
+│   │   ├── layout/             # Header, LanguageSwitch, ScrollToTop
+│   │   ├── management/         # DataManagementClient, DeckTable, UploadZone, BackupRestoreCard
+│   │   ├── preparation/        # DataPreparationClient
+│   │   ├── pwa/                # ServiceWorkerRegister
+│   │   ├── records/            # LocalRecordsView, LocalExamResultDetail
+│   │   └── ui/                 # ConfirmModal, CustomSelect 등 공통 UI 요소
+│   ├── hooks/                  # 커스텀 리액트 훅 (useT.ts, useNetworkStatus.ts 등)
 │   ├── i18n/                   # 다국어 딕셔너리 (ko.ts, en.ts, ja.ts) 및 타입
-│   ├── lib/                    # 핵심 인프라 및 도메인 파서
+│   ├── lib/                    # 핵심 인프라 및 도메인 파서 (순수 유틸리티 계층)
 │   │   ├── card-parser.ts      # Zod 기반 도메인 파서 (단일 진실 공급원)
 │   │   ├── client-db.ts        # IndexedDB 클라이언트 저장소 파사드
-│   │   ├── db/                 # 도메인별 DB 서브모듈 (deck, card, progress, exams, backup)
+│   │   ├── db/                 # 도메인별 DB 서브모듈 (deck, progress, exams, backup, core)
 │   │   ├── format.ts           # 텍스트 포맷터 유틸리티
-│   │   ├── schemas.ts          # Zod 콘텐츠 스키마 (Flashcard, PracticeQuiz, Vocabulary)
-│   │   └── static-decks.ts     # 공개 샘플 덱 파일시스템 로더
-│   ├── types/                  # 공통 도메인 타입 정의 (card.ts, deck.ts, record.ts)
+│   │   ├── static-decks.ts     # 공개 샘플 덱 파일시스템 로더
+│   │   └── storage-format.ts   # 스토리지 용량 포맷팅 유틸리티
+│   ├── schemas/                # Zod 런타임 유효성 검증 스키마 (SSoT)
+│   │   ├── card-content.ts     # 플래시카드, 퀴즈, 단어장 콘텐츠 스키마
+│   │   ├── deck.ts             # 덱 및 기본 카드 구조 스키마
+│   │   └── index.ts            # 스키마 통합 배럴
+│   ├── types/                  # 공통 도메인 타입 정의 (card.ts, deck.ts, preparation.ts)
 │   └── proxy.ts (middleware)  # 다국어 로캘 감지 및 리다이렉트 미들웨어
 ├── package.json
 ├── tsconfig.json

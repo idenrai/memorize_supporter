@@ -7,7 +7,7 @@ import type { Lang } from '@/i18n/types'
 import { LANG_NAMES } from '@/i18n/types'
 import { useT } from '@/hooks/useT'
 
-import CustomSelect from './ui/CustomSelect'
+import CustomSelect from '@/components/ui/CustomSelect'
 
 const LANG_LABELS: Record<Lang, string> = {
   ko: "KO",

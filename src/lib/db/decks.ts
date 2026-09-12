@@ -1,5 +1,5 @@
 import { openDB, notifyLocalDbChange, generateSimpleId } from "./core"
-import { DeckSchema } from "@/schemas/deck"
+import { DeckSchema } from "@/schemas"
 import type { RawDbCard } from "../card-parser"
 import { z } from "zod"
 
