@@ -17,11 +17,13 @@ description: 프론트엔드 UI/UX 컴포넌트 신규 생성, 수정 및 리팩
   - 컴포넌트 수정 후 UI 및 런타임 동작을 최종 확인할 때는 `.agents/skills/next-dev-loop/SKILL.md`를 바탕으로 라이브 검증을 수행합니다.
   - **로컬 퍼스트 & 클라이언트 DB 연동 시:** 브라우저 로컬 모드(BYOD), 클라이언트 상태 동기화, IndexedDB 연동, `BroadcastChannel` 다중 탭 이벤트 수신 및 스토리지 용량 진단(`getStorageEstimate`) UI 구현 시 `.agents/skills/local-first/SKILL.md`를 참조합니다.
 
-## 2. Visual Design & UI/UX (공통 지침)
+## 2. Visual Design & UI/UX (공통 지침 - 항상 준수)
 - **컴포넌트 수정 및 생성 시:** 기존 프로젝트의 톤앤매너(색상, 여백, 타이포그래피 등) 일관성을 엄격히 유지합니다.
 - **반응형 검증:** 항상 모바일 우선(Mobile-first) 레이아웃을 고려하며, 선택된 CSS 프레임워크의 반응형 유틸리티를 활용하여 여백과 크기를 세밀하게 조정합니다.
-- UI/UX 변경 시 항상 `.agents/skills/ui-ux-pro-max/SKILL.md`와 `.agents/skills/frontend-design/SKILL.md`를 우선 참조하여 퀄리티 컨트롤을 적용합니다.
-- UI 텍스트 작성 시 '디자인 속 글쓰기' 가이드(능동태, 명확한 동사, 일관성 있는 사이니지)를 준수합니다.
+- **UI/UX & 웹 접근성 스킬 상시 필수 적용:**
+  - UI/UX 설계, 컴포넌트 룩앤필 및 레이아웃 변경 시 반드시 `.agents/skills/ui-ux-pro-max/SKILL.md` 및 `.agents/skills/frontend-design/SKILL.md`를 우선 참조하여 프로 수준의 디자인 완성도를 도출합니다.
+  - 작업 완료 전 반드시 `.agents/skills/web-design-guidelines/SKILL.md`를 통해 웹 접근성(WAI-ARIA, 색상 대비 4.5:1 이상, 명시적 트랜지션, 최소 터치 타겟 44px, 모션 리듀스 등) 적합성을 필수로 감사(Audit)합니다.
+- **UI 텍스트 작성 시:** '디자인 속 글쓰기' 가이드(능동태, 명확한 동사, 일관성 있는 사이니지)를 준수하며 제로 하드코딩 원칙을 철저히 지킵니다.
 
 ## 3. 구조화 및 리팩토링
 - 모든 컴포넌트와 모듈은 해당 기술 스택의 모범 사례(Best Practices)에 맞춰 작성합니다.

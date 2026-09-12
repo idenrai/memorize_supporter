@@ -143,66 +143,90 @@ export default function LocalRecordsView({
           return (
             <div
               key={record.id}
-              className="bg-zinc-950/70 backdrop-blur-xl hover:bg-zinc-900/80 border border-white/5 hover:border-zinc-700/80 rounded-3xl p-6 transition-all duration-300 flex flex-col justify-between gap-4 shadow-sm hover:shadow-lg"
+              className="group relative flex flex-col rounded-3xl p-px overflow-hidden hover-glow-indigo"
             >
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs text-zinc-400 flex items-center gap-1.5 font-medium">
-                    <Calendar size={14} className="text-zinc-500" />
-                    {new Date(record.createdAt).toLocaleString(lang, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit"
-                    })}
-                  </span>
+              {/* Outer gradient border background */}
+              <div className="absolute inset-0 bg-linear-to-br from-zinc-800 via-zinc-900 to-black opacity-100 transition-opacity duration-300 group-hover:opacity-0" />
+              <div
+                className={`absolute inset-0 bg-linear-to-br ${
+                  isPassed
+                    ? "from-emerald-500/30 via-teal-500/20 to-indigo-500/30"
+                    : "from-amber-500/30 via-rose-500/20 to-purple-500/30"
+                } opacity-0 transition-opacity duration-300 group-hover:opacity-100 blur-md`}
+              />
 
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${isPassed
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                          : "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                        }`}
-                    >
-                      {isPassed ? t.local.passedBadge : t.local.needsReviewBadge}
+              {/* Inner Card Container */}
+              <div className="relative h-full flex flex-col justify-between bg-zinc-950/90 backdrop-blur-xl rounded-[23px] p-6 border border-white/5">
+                {/* Subtle Ambient Glow Bubble */}
+                <div className="absolute inset-0 overflow-hidden rounded-[23px] pointer-events-none z-0">
+                  <div
+                    className={`absolute -top-10 -right-10 size-32 rounded-full blur-3xl opacity-15 group-hover:opacity-40 transition-opacity duration-500 ${
+                      isPassed ? "bg-emerald-500/20" : "bg-amber-500/20"
+                    }`}
+                  />
+                </div>
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs text-zinc-400 flex items-center gap-1.5 font-medium">
+                      <Calendar size={14} className="text-zinc-500" aria-hidden="true" />
+                      {new Date(record.createdAt).toLocaleString(lang, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => setDeletingRecordId(record.id)}
-                      className="text-zinc-500 hover:text-rose-400 p-1 rounded-md transition-colors"
-                      title={t.management.delete}
-                      aria-label={t.management.delete}
+
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-2xs font-bold uppercase tracking-widest px-3 py-1 rounded-full border shadow-inner backdrop-blur-md ${
+                          isPassed
+                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                            : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                        }`}
+                      >
+                        {isPassed ? t.local.passedBadge : t.local.needsReviewBadge}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setDeletingRecordId(record.id)}
+                        className="text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 p-1.5 rounded-full transition-colors"
+                        title={t.management.delete}
+                        aria-label={t.management.delete}
+                      >
+                        <Trash2 size={14} aria-hidden="true" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span
+                      className={`text-4xl sm:text-5xl font-extrabold tracking-tight tabular-nums ${
+                        isPassed ? "text-emerald-400" : "text-amber-400"
+                      }`}
                     >
-                      <Trash2 size={14} />
-                    </button>
+                      {record.score}%
+                    </span>
+                    <span className="text-xs sm:text-sm font-medium text-zinc-400 tabular-nums">
+                      {t.local.scoreDetail(record.correct, record.total)}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-baseline gap-2 mb-1">
-                  <span
-                    className={`text-4xl font-extrabold tracking-tight tabular-nums ${isPassed ? "text-emerald-400" : "text-amber-400"
-                      }`}
+                <div className="relative z-10 pt-4 mt-4 border-t border-zinc-800/80 flex items-center justify-between">
+                  <span className="text-xs text-zinc-500 truncate max-w-50 font-mono">
+                    {t.local.deckIdLabel}: {record.deckId}
+                  </span>
+                  <Link
+                    href={`/${lang}/deck/${record.deckId}?mode=exam`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 transition-colors shadow-xs"
                   >
-                    {record.score}%
-                  </span>
-                  <span className="text-sm font-medium text-zinc-400 tabular-nums">
-                    {t.local.scoreDetail(record.correct, record.total)}
-                  </span>
+                    <span>{t.local.retake}</span>
+                    <ArrowRight size={13} aria-hidden="true" />
+                  </Link>
                 </div>
-              </div>
-
-              <div className="pt-3 border-t border-zinc-800/60 flex items-center justify-between">
-                <span className="text-xs text-zinc-500 truncate max-w-50">
-                  {t.local.deckIdLabel}: {record.deckId}
-                </span>
-                <Link
-                  href={`/${lang}/deck/${record.deckId}?mode=exam`}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
-                >
-                  <span>{t.local.retake}</span>
-                  <ArrowRight size={13} />
-                </Link>
               </div>
             </div>
           )

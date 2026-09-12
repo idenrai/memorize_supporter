@@ -50,7 +50,7 @@ export default async function AboutPage({
   const validLang = lang as Lang
 
   return (
-    <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-12 pb-16">
+    <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-12 pb-16">
       <AboutClient lang={validLang} />
     </main>
   )
