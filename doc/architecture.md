@@ -17,8 +17,9 @@
   - `DeckPlayer` 및 세부 카드 컴포넌트들(`Flashcard`, `VocabularyCard`, `PracticeQuizCard`): 프론트엔드 인터랙티브 카드 렌더러 (마이크로 애니메이션, 피드백 처리)
   - `DeckClientLoader`: 로컬 전용 덱 접근 시 IndexedDB로부터 카드를 로드하여 서버와 동일한 SRS 우선순위로 플레이어를 구동하는 클라이언트 로더
   - `ExamResultView`: 문항별 오답 상세 복습, 시각적 선택지 비교 및 '틀린 문제만 다시 풀기'를 지원하는 시험 결과 뷰어
-  - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어
-  - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 템플릿을 생성/검증하는 관리 도구
+  - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어
+  - `ConfirmModal`: 파괴적 변경(덱 삭제, 시험 기록 삭제) 시 브라우저 기본 팝업을 대체하여 WAI-ARIA Focus Trap, Return Focus, ESC 키 취소 및 백드롭 블러를 제공하는 접근성 중심의 프리미엄 확인 모달
+  - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 단일 JSON 객체 스키마 규격 및 체계적인 [출력 규칙]을 갖춘 템플릿을 생성/검증하는 관리 도구
   - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
   - `CardParser` (`src/lib/card-parser.ts`): 원시 JSON 및 카드 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
 
@@ -51,7 +52,8 @@
   - **단일 진실 공급원(SSoT) 스티키 헤더 및 공통 `QuizHeader` 컴포넌트**: 전역 헤더 높이 토큰과 완벽히 연동되는 재사용 가능한 `QuizHeader`(및 `QuizHeader.Skeleton`)를 도입하여 스크롤 시 글로벌 네비게이션 바로 아래(`sticky top-(--header-height) z-30`)에 안정적으로 고정됩니다. 상단 기준 정렬을 확립하여 문제 카드와의 비정상적 여백을 해소하고, 누적 레이아웃 시프트(CLS) 없는 일관된 학습 환경을 보장합니다.
   - **끊김 없는 문제 검토 네비게이션 및 단축키**: 시험 기록 및 오답 검토 화면에서 목록으로 나가지 않고도 전후 문제로 즉시 이동할 수 있도록 상단 Sticky 헤더와 하단 액션 버튼을 양방향 제공하며, 키보드 좌우 방향키(`←`, `→`), `Escape`, `Enter` 단축키를 완벽 지원합니다.
   - Vercel Web Interface Guidelines를 엄격하게 준수하여 시맨틱 HTML, WAI-ARIA 속성(`role="group"`, `aria-pressed`, `aria-label`), 견고한 키보드 포커스(`focus-visible`), 고정폭 수치 폰트(`tabular-nums`), 그리고 모바일 터치 피드백(`active:scale-95`) 등 최고 수준의 접근성을 보장합니다.
-  - 네이티브 브라우저 엘리먼트를 대체하는 접근성 높은 커스텀 UI 컴포넌트(예: React Portal 기반의 `CustomSelect`)를 구현하여, 모든 플랫폼에서 일관된 프리미엄 룩(글래스모피즘)을 유지하는 동시에 엄격한 WAI-ARIA 콤보박스 표준과 키보드 Type-ahead 네비게이션을 지원합니다.
+  - 네이티브 브라우저 엘리먼트를 대체하는 접근성 높은 커스텀 UI 컴포넌트(예: React Portal 기반의 `CustomSelect`, WAI-ARIA Focus Trap 및 Return Focus를 완비한 `ConfirmModal`)를 구현하여, 모든 플랫폼에서 일관된 프리미엄 룩(글래스모피즘)을 유지하는 동시에 엄격한 WAI-ARIA 다이얼로그 표준과 키보드 네비게이션을 지원합니다.
+  - **스토리지 지표 카피라이팅 최적화**: 브라우저 할당량 대비 현재 사용량을 `저장 공간 충분 (사용량: X MB)`으로 표기하여, 사용자에게 '남은 여유 공간'으로 오해되는 문제를 원천 차단하고 스토리지 건전성을 직관적으로 전달합니다.
   - `framer-motion`을 도입하여 180도 3D 플립, Scale Pop 등 시각적 피드백을 제공합니다.
 
 - **PWA 및 메타데이터 전략**:
@@ -82,7 +84,8 @@
 - **클라이언트 사이드 통합 임포트 (`src/lib/client-db.ts` & Web Upload)**:
   - 사용자가 단어장/퀴즈 JSON 파일을 웹 UI(홈 화면 또는 데이터 관리 탭)에 Drag & Drop하면, 파일이 서버로 전송되지 않고 브라우저 메모리 상에서 Zod 스키마로 즉시 파싱 및 유효성 검증됩니다.
   - **데이터 무결성 보장 (Stable ID & Upsert)**: 문항의 텍스트 콘텐츠(Question/Front)를 기반으로 고유한 해시 식별자를 생성하여 IndexedDB에 저장합니다. 이를 통해 카드를 추가하거나 수정하더라도 기존 카드의 고유 ID가 유지되어 망각 곡선 복습 기록(`progress`)이 안전하게 보존됩니다.
-  - **다중 탭 실시간 동기화**: `BroadcastChannel`(`memorize_db_events`) API를 통해 여러 탭이 열려 있어도 덱 추가/삭제, 시험 기록 저장 시 모든 탭이 실시간으로 동기화됩니다.
+  - **동일 탭 및 다중 탭 하이브리드 실시간 동기화**: `BroadcastChannel`(`memorize_db_events`)과 인메모리 `localListeners` 세트의 방어적 스냅샷 순회(`Array.from(localListeners)`)를 결합하여, 여러 탭뿐만 아니라 데이터를 수정한 현재 탭에서도 새로고침 없이 즉시 화면이 갱신되는 반응형 UX를 보장합니다.
+  - **AI 프롬프트 생성기 최상위 객체 규격화**: 실제 덱 템플릿 및 Zod 스키마와 100% 일치하도록 단일 JSON 객체(`{ ... }`) 출력 지시와 분산된 주의사항을 통합한 `[출력 규칙]`을 정의하여 LLM의 생성 정밀도를 극대화했습니다.
 
 ```mermaid
 sequenceDiagram
@@ -193,8 +196,9 @@ This document defines the system architecture of the `memorize_supporter` projec
   - `DeckPlayer`, `Flashcard`, `VocabularyCard`, `PracticeQuizCard`: Frontend interactive card renderer (handling micro-animations and feedback).
   - `DeckClientLoader`: Client-side deck runner that dynamically retrieves and prioritizes cards from IndexedDB for local-only decks.
   - `ExamResultView`: Comprehensive exam review interface supporting question-by-question replay, visual color-coded answer comparison, and "Retry Incorrect Only" session trigger.
-  - `LocalRecordsView`: Unified exam records interface for on-device quiz history, featuring local record deletion and one-click JSON backup export.
-  - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, and real-time schema validation.
+  - `LocalRecordsView`: Unified exam records interface for on-device quiz history, featuring custom accessible modal confirmation on record deletion and one-click JSON backup export.
+  - `ConfirmModal`: Premium accessible confirmation modal replacing native browser confirm dialogs for destructive actions (deck/record deletion), equipped with WAI-ARIA Focus Trap, Return Focus, Escape dismissal, and backdrop blur.
+  - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, and real-time schema validation with single JSON object schema enforcement and unified [Output Rules].
   - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private user study materials, forgetting curves, and quiz scores.
   - `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
 
@@ -227,7 +231,8 @@ This document defines the system architecture of the `memorize_supporter` projec
   - **SSoT Sticky Header & Unified `QuizHeader` Component**: Implements a reusable `QuizHeader` (and matching `QuizHeader.Skeleton`) that sticks beneath the global navigation bar (`sticky top-(--header-height) z-30 backdrop-blur-md`). This resolves header collision, eliminates vertical gaps by replacing dynamic `my-auto` margins with consistent top alignment, and unifies progress tracking across practice, exam, and review modes without layout shift (CLS).
   - **Seamless Review Navigation & Shortcuts**: In exam history and question review views, provides dual navigation controls (sticky top header and card bottom action buttons) along with full keyboard navigation (`ArrowLeft`/`ArrowRight` for prev/next question, `Escape` for list view, `Enter`/`Space` for progression) to review question details consecutively without navigating back and forth.
   - Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, WAI-ARIA attributes (`role="group"`, `aria-pressed`, `aria-label`), robust keyboard navigation focus states (`focus-visible`), fixed-width numeric typography (`tabular-nums`), and touch feedback (`active:scale-95`).
-  - Implements custom accessible UI components (e.g., `CustomSelect` using React Portals) to replace native browser elements, ensuring a consistent premium look (glassmorphism) across all platforms while maintaining strict WAI-ARIA combobox standards and keyboard type-ahead navigation.
+  - Implements custom accessible UI components (e.g., `CustomSelect` using React Portals, `ConfirmModal` with WAI-ARIA Focus Trap and Return Focus) to replace native browser elements, ensuring a consistent premium look (glassmorphism) across all platforms while maintaining strict WAI-ARIA standards and keyboard accessibility.
+  - **Storage Indicator Copywriting Optimization**: Formats storage status as `Storage Healthy (X MB used)` to prevent user confusion regarding remaining quota versus active usage.
   - Provides visual feedback such as a 180-degree 3D flip and Scale Pop by integrating `framer-motion`.
 
 - **PWA & Metadata Strategy**:
@@ -258,7 +263,8 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **Client-Side Unified Import (`src/lib/client-db.ts` & Web Upload)**:
   - When users drag & drop custom JSON study materials into the Web UI (Upload Zone on the Data Management page), files are decoded and validated in memory using Zod schemas with 0 bytes transmitted to any server.
   - **Data Integrity Guarantee (Stable ID & Upsert)**: Generates a deterministic MD5 hash identifier based on question/front text content. Even if cards are reorganized or updated, card IDs remain stable, safely preserving Ebbinghaus forgetting curve progress (`progress`).
-  - **Multi-Tab Real-time Synchronization**: The `BroadcastChannel` API (`memorize_db_events`) immediately propagates deck creations, deletions, and exam completions to all open browser tabs without manual page reloads.
+  - **Hybrid In-Tab & Cross-Tab Real-time Synchronization**: Combines cross-tab `BroadcastChannel` with an in-memory `localListeners` set using snapshot iteration (`Array.from(localListeners)`). This ensures instant UI updates without manual reloads both in the active tab and across background tabs.
+  - **AI Prompt Single Object Schema Alignment**: Enforces single JSON object (`{ ... }`) generation matching the exact deck schema and unifies all behavioral constraints under `[Output Rules]` for high LLM compliance.
 
 ```mermaid
 sequenceDiagram

@@ -131,7 +131,13 @@ export interface Translations {
     backupSectionDesc: string;
     backupDownload: string;
     backupRestore: string;
-    storageStatus: (usage: string, persisted: boolean) => string;
+    storageStatus: (usage: string) => string;
+    storageTooltip: (usage: string, quota: string) => string;
+    validationErrorTitle: string;
+    validationErrorDesc: string;
+    confirmDeleteDeckTitle: string;
+    confirmDeleteDeckDesc: (title: string) => string;
+    confirmDeleteDeckButton: string;
   };
   quiz: {
     askAi: string;
@@ -193,6 +199,8 @@ export interface Translations {
     detailsNotAvailable: string;
     legacyRecordDesc: string;
     confirmDeleteRecord: string;
+    confirmDeleteRecordTitle: string;
+    confirmDeleteRecordDesc: string;
     deleteSuccess: string;
     deleteFailed: string;
     manageBackupLink: string;

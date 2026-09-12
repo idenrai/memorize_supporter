@@ -5,16 +5,15 @@ import {
   getLocalExamResults,
   deleteLocalExamResult,
   onLocalDbChange,
-  getStorageEstimate,
-  type LocalExamResult,
-  type StorageEstimateResult
+  type LocalExamResult
 } from "@/lib/client-db"
-import { Trophy, Calendar, ArrowRight, Trash2, HardDrive, Database } from "lucide-react"
+import { Trophy, Calendar, ArrowRight, Trash2, Database } from "lucide-react"
 import Link from "next/link"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import { toast } from "sonner"
 import { PASS_MARK_PERCENT } from "@/lib/constants"
+import ConfirmModal from "@/components/ui/ConfirmModal"
 
 export default function LocalRecordsView({
   deckId,
@@ -28,7 +27,8 @@ export default function LocalRecordsView({
   const t = useT()
   const [localRecords, setLocalRecords] = useState<LocalExamResult[]>([])
   const [loading, setLoading] = useState(true)
-  const [storageInfo, setStorageInfo] = useState<StorageEstimateResult | null>(null)
+  const [deletingRecordId, setDeletingRecordId] = useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     let isCancelled = false
@@ -37,8 +37,6 @@ export default function LocalRecordsView({
       try {
         const results = await getLocalExamResults(deckId)
         if (!isCancelled) setLocalRecords(results)
-        const estimate = await getStorageEstimate()
-        if (!isCancelled) setStorageInfo(estimate)
       } catch (e) {
         console.warn("Failed to load local exam results", e)
       } finally {
@@ -52,9 +50,6 @@ export default function LocalRecordsView({
         getLocalExamResults(deckId).then((results) => {
           if (!isCancelled) setLocalRecords(results)
         })
-        getStorageEstimate().then((estimate) => {
-          if (!isCancelled) setStorageInfo(estimate)
-        })
       }
     })
 
@@ -64,16 +59,22 @@ export default function LocalRecordsView({
     }
   }, [deckId])
 
-  const handleDeleteRecord = async (id: string) => {
-    if (!window.confirm(t.records.confirmDeleteRecord)) return
+  const handleConfirmDeleteRecord = async () => {
+    if (!deletingRecordId) return
+    setIsDeleting(true)
     try {
-      const ok = await deleteLocalExamResult(id)
+      const ok = await deleteLocalExamResult(deletingRecordId)
       if (ok) {
-        setLocalRecords((prev) => prev.filter((r) => r.id !== id))
+        setLocalRecords((prev) => prev.filter((r) => r.id !== deletingRecordId))
         toast.success(t.records.deleteSuccess)
+      } else {
+        toast.error(t.records.deleteFailed)
       }
     } catch {
       toast.error(t.records.deleteFailed)
+    } finally {
+      setIsDeleting(false)
+      setDeletingRecordId(null)
     }
   }
 
@@ -120,20 +121,9 @@ export default function LocalRecordsView({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full text-indigo-300 bg-indigo-500/20 border border-indigo-500/30">
-            {t.local.recordsHeader(localRecords.length)}
-          </span>
-          {storageInfo && storageInfo.usageMB > 0 && (
-            <span
-              className="text-2xs text-zinc-400 font-medium bg-zinc-800/60 hover:bg-zinc-800 px-2.5 py-1 rounded-full border border-zinc-700/40 inline-flex items-center gap-1.5 cursor-help transition-colors"
-              title={storageInfo.persisted ? t.local.persistentStorageDesc : t.local.temporaryStorageDesc}
-            >
-              <HardDrive size={12} className={storageInfo.persisted ? "text-emerald-400" : "text-zinc-500"} />
-              <span>{t.local.storageEstimate(`${storageInfo.usageMB} MB`, storageInfo.persisted)}</span>
-            </span>
-          )}
-        </div>
+        <span className="text-xs font-semibold px-2.5 py-1 rounded-full text-indigo-300 bg-indigo-500/20 border border-indigo-500/30">
+          {t.local.recordsHeader(localRecords.length)}
+        </span>
 
         <div className="flex items-center gap-2">
           <Link
@@ -179,7 +169,7 @@ export default function LocalRecordsView({
                     </span>
                     <button
                       type="button"
-                      onClick={() => handleDeleteRecord(record.id)}
+                      onClick={() => setDeletingRecordId(record.id)}
                       className="text-zinc-500 hover:text-rose-400 p-1 rounded-md transition-colors"
                       title={t.management.delete}
                       aria-label={t.management.delete}
@@ -218,6 +208,19 @@ export default function LocalRecordsView({
           )
         })}
       </div>
+
+      {/* Custom Confirm Modal for Exam Record Deletion */}
+      <ConfirmModal
+        isOpen={deletingRecordId !== null}
+        title={t.records.confirmDeleteRecordTitle}
+        description={t.records.confirmDeleteRecordDesc}
+        confirmText={t.management.delete}
+        cancelText={t.management.cancel}
+        isDestructive={true}
+        isLoading={isDeleting}
+        onConfirm={handleConfirmDeleteRecord}
+        onCancel={() => setDeletingRecordId(null)}
+      />
     </div>
   )
 }

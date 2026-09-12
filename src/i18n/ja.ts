@@ -67,21 +67,19 @@ export const ja: Translations = {
     promptCopyFailed: "クリップボードへのコピーに失敗しました。",
     desc: "教材やノート、単語リストなど学習したい素材をAIに渡して、すぐに学習できるデッキに変換しましょう。テンプレートをコピーしてChatGPTやClaudeに貼り付けるだけで作成できます。",
     promptFormat: (content) => `あなたは教育素材や講義ノートをデジタル学習デッキ(JSON)に高精度で構造化する専門データエンジニアです。
-提示された学習素材を分析し、以下の【必須スキーマ構造】に厳格に従う有効なJSON配列として出力してください。
+提示された学習素材を分析し、以下の【必須スキーマ構造】に厳格に従う単一の有効なJSONオブジェクトとして出力してください。
 
-【厳格なルール】
-1. 有効なJSON配列（[ ... ]）のみを出力すること。
-2. マークダウンのコードブロック(\`\`\`json)や前後の挨拶・説明文は一切含めず、'[' 文字で開始して ']' 文字で終了すること。
-3. すべてのオブジェクトは提示されたスキーマのキー構造を完全に遵守すること。
+【出力ルール】
+1. マークダウンのコードブロック(\`\`\`json)や前後の挨拶・解説文は一切含めないこと。
+2. 必ず '{' 文字で開始し、'}' 文字で終了する純粋な単一JSONオブジェクトのみを出力すること。
+3. 以下の【必須スキーマおよび構成例】で定義されたすべてのフィールド(title, description, type, series, cards など)の構造を厳格に遵守すること。
 4. 情報がない項目は省略せず、nullまたは論理的なデフォルト値を設定すること。
 
 【必須スキーマおよび構成例】
 ${content}
 
 【変換対象の学習素材】
-（ここに教科書の内容、単語リスト、またはメモを貼り付けてください）
-
-※注意：解説や前置きは一切不要です。純粋な '[' から始まるJSON配列のみを出力してください。`,
+（ここに教科書の内容、単語リスト、またはメモを貼り付けてください）`,
     selectTemplate: "学習形式を選択",
     templateFlashcardDesc: "表と裏をすばやくめくって確認する基本の暗記カード",
     templateQuizDesc: "選択肢から正解を選び、解説を確認できる選択式問題",
@@ -95,7 +93,7 @@ ${content}
     delete: "削除",
     deleteFailed: "削除に失敗しました。",
     deleteSuccess: "正常に削除されました。",
-    desc: "準備した学習デッキ（JSON）の取り込みや管理、試験の受験記録や学習進捗を含む端末データ全体のバックアップ・復元を一括で行えます。",
+    desc: "準備した学習デッキの取り込みや管理、試験の受験記録や学習進捗を含む学習データのバックアップ・復元を一括で行えます。",
     edit: "編集",
     editFailed: "編集に失敗しました。",
     editSuccess: "正常に編集されました。",
@@ -127,8 +125,8 @@ ${content}
     visible: "表示",
     addSampleDecks: "お試しサンプルデッキを追加",
     sampleDecksAdded: "サンプルデッキが正常に追加されました。",
-    uploadDropzoneTitle: "新しい学習デッキ(JSON)を取り込む",
-    uploadDropzoneDesc: "ここにJSONファイルをドラッグ＆ドロップするか、クリックして選択してください。",
+    uploadDropzoneTitle: "新しい学習デッキを取り込む",
+    uploadDropzoneDesc: "ここにデッキファイルをドラッグ＆ドロップするか、クリックして選択してください。",
     privacyBadge: "データは外部サーバーに送信されず、お使いのブラウザにのみ安全に保存されます。",
     totalDecks: (count: number) => `合計 ${count} 個の学習デッキ`,
     sampleDecksAlreadyAdded: "すでにすべてのサンプルデッキが追加されています。",
@@ -136,11 +134,17 @@ ${content}
     emptyDecksTitle: "登録された学習デッキがありません",
     emptyDecksDesc: "上部のアップロードエリアに新しいJSONデッキを追加するか、ツールバーの「お試しサンプルデッキを追加」をご利用ください。",
     aiPromptGenerator: "AIプロンプト生成ツール",
-    backupSectionTitle: "端末データ全体のバックアップ・復元（統合アーカイブ）",
-    backupSectionDesc: "現在お使いのブラウザ(IndexedDB)に保存されているすべての学習デッキ、カード、学習進捗、試験の受験記録を1つのJSONファイルとして安全に書き出したり、以前のバックアップから復元します。",
-    backupDownload: "端末データ全体のバックアップ(JSON)",
-    backupRestore: "バックアップファイルの復元(JSON)",
-    storageStatus: (usage, persisted) => `端末ストレージ使用量: ${usage} (${persisted ? "永続保存有効" : "一時保存"})`,
+    backupSectionTitle: "データのバックアップと復元",
+    backupSectionDesc: "学習デッキと試験記録をファイルにバックアップして安全に保管したり、他の端末で復元できます。",
+    backupDownload: "バックアップを保存",
+    backupRestore: "バックアップを復元",
+    storageStatus: (usage) => `容量十分（使用中: ${usage}）`,
+    storageTooltip: (usage, quota) => `ブラウザの保存容量は十分です。（使用量: ${usage} / 上限: ${quota}）`,
+    validationErrorTitle: "デッキファイルの形式エラー",
+    validationErrorDesc: "選択されたファイルが正しいデッキ形式に合致していないため登録されませんでした。",
+    confirmDeleteDeckTitle: "学習デッキの削除",
+    confirmDeleteDeckDesc: (title: string) => `デッキ「${title}」を削除してもよろしいですか？端末に保存された学習進捗と試験記録も一緒に完全に削除されます。`,
+    confirmDeleteDeckButton: "削除",
   },
   quiz: {
     askAi: "AIに詳しい解説を尋ねる",
@@ -218,14 +222,16 @@ ${explanation || 'なし'}
     detailsNotAvailable: "詳細な記録は利用できません",
     legacyRecordDesc: "この試験記録は詳細記録機能が追加される前に作成されたため、問題ごとの履歴は表示できません。",
     confirmDeleteRecord: "本当にこの試験記録を削除しますか？",
+    confirmDeleteRecordTitle: "試験記録の削除",
+    confirmDeleteRecordDesc: "本当にこの試験記録を削除しますか？削除した記録は元に戻せません。",
     deleteSuccess: "試験記録が正常に削除されました。",
     deleteFailed: "試験記録の削除に失敗しました。",
-    manageBackupLink: "端末データ全体のバックアップ・復元管理",
+    manageBackupLink: "バックアップと復元",
   },
   local: {
     badge: "端末に保存",
-    importButton: "デッキ(JSON)を取り込む",
-    dropPrompt: "JSONデッキファイルをドラッグまたはクリックして選択",
+    importButton: "デッキファイルを取り込む",
+    dropPrompt: "デッキファイルをドラッグまたはクリックして選択",
     savingPrompt: "ブラウザに保存中…",
     privacyNotice: "サーバーには送信されず、お使いの端末ブラウザに安全に保存されます。",
     securityTag: "個人学習データ・非公開デッキを保護 (ローカル専用)",
@@ -235,7 +241,7 @@ ${explanation || 'なし'}
     loadingDeck: "ローカルデッキを読み込み中…",
     notFoundTitle: "デッキが見つかりません",
     notFoundDesc: "このデッキはサーバーに存在しないか、ブラウザに追加されていません。ホーム画面でJSONファイルを先に取り込んでください。",
-    recordsHeader: (count: number) => `端末保存の記録 (${count})`,
+    recordsHeader: (count: number) => `試験記録 (${count})`,
     passedBadge: "合格",
     needsReviewBadge: "要復習",
     scoreDetail: (correct: number, total: number) => `(${correct} / ${total} 問正解)`,
@@ -250,8 +256,8 @@ ${explanation || 'なし'}
     deleteDeckFailed: "ローカルデッキの削除に失敗しました。",
     confirmDeleteRecord: "このローカル試験記録を削除しますか？",
     deleteRecordSuccess: "試験記録を削除しました。",
-    exportBackup: "端末データのバックアップ(JSON)",
-    restoreBackup: "バックアップ復元(JSON)",
+    exportBackup: "バックアップファイルを保存",
+    restoreBackup: "バックアップを復元",
     restoreSuccess: (decks: number, records: number) => `バックアップデータが正常に復元されました。（デッキ ${decks}個、試験記録 ${records}個）`,
     restoreFailed: "バックアップデータの復元に失敗しました。",
     invalidBackupFile: "無効なバックアップJSONファイル形式です。",
