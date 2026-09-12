@@ -1,19 +1,15 @@
-import DataPreparationClient from './DataPreparationClient'
+import DataPreparationClient from '@/components/preparation/DataPreparationClient'
 import templateFlashcards from '../../../../input/templates/_template_flashcards.json'
 import templatePracticeQuiz from '../../../../input/templates/_template_practice_quiz.json'
 import templateVocabulary from '../../../../input/templates/_template_vocabulary.json'
 import { getT } from "@/i18n"
 import type { Lang } from "@/i18n/types"
+import type { TemplateData } from "@/types/preparation"
 
 import { FileJson } from 'lucide-react'
 import PageHeader from '@/components/common/PageHeader'
 
-export type TemplateData = {
-  id: string
-  name: string
-  description: string
-  content: string
-}
+export type { TemplateData }
 
 export default async function DataPreparationPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;

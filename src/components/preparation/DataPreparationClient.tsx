@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Copy, Check, Download, Layers, CheckSquare, BookOpen, Terminal, FileCode } from 'lucide-react'
-import type { TemplateData } from './page'
+import type { TemplateData } from '@/types/preparation'
 import { useT } from '@/hooks/useT'
 import { toast } from 'sonner'
 

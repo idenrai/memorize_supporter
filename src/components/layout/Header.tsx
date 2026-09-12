@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { Database, FileJson, Info, LayoutDashboard, Trophy } from "lucide-react"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
-import LanguageSwitch from "@/components/LanguageSwitch"
+import LanguageSwitch from "./LanguageSwitch"
 import BrandLogo from "@/components/common/BrandLogo"
 import NetworkStatusBadge from "@/components/common/NetworkStatusBadge"
 

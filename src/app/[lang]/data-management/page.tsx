@@ -1,4 +1,4 @@
-import DataManagementClient from './DataManagementClient'
+import DataManagementClient from '@/components/management/DataManagementClient'
 import { getT } from '@/i18n'
 import type { Lang } from '@/i18n/types'
 import { Database } from 'lucide-react'
