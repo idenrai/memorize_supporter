@@ -69,7 +69,7 @@ export default function DataPreparationClient({ templates }: { templates: Templa
         <label className="block text-2xs font-bold text-zinc-400 mb-3 tracking-widest uppercase">
           {t.prep.selectTemplate}
         </label>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
           {templates.map(template => {
             const isSelected = selectedTemplate?.id === template.id
             const fieldsPreview = getTemplateFields(template.id)
@@ -85,9 +85,9 @@ export default function DataPreparationClient({ templates }: { templates: Templa
                 }`}
               >
                 <div>
-                  <h3 className="text-xs sm:text-sm font-semibold text-zinc-100 mb-1.5 whitespace-nowrap tracking-tight">
+                  <span className="block text-xs sm:text-sm font-semibold text-zinc-100 mb-1.5 whitespace-nowrap tracking-tight">
                     {template.name}
-                  </h3>
+                  </span>
 
                   <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed font-normal mb-3 min-h-10">
                     {template.description}
