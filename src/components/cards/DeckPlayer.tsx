@@ -7,7 +7,7 @@ import VocabularyCard from "./VocabularyCard"
 import MultipleChoiceQuizCard from "./MultipleChoiceQuizCard"
 import ExamResultView from "./ExamResultView"
 import QuizHeader from "./QuizHeader"
-import { ArrowLeft, Trophy, Target } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { CardData, FlashcardContent, isQuizCard } from "@/types/card"
 import type { Lang } from "@/i18n/types"
@@ -15,7 +15,6 @@ import { updateLocalProgress, saveLocalExamResult } from "@/lib/client-db"
 import { useT } from "@/hooks/useT"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
-import { PASS_MARK_PERCENT } from "@/lib/constants"
 
 interface DeckPlayerProps {
   deckId: string
@@ -114,8 +113,6 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
       setCompleted(false)
     }
 
-    const PASS_MARK = PASS_MARK_PERCENT
-        
     if (mode === 'exam') {
       return (
         <ExamResultView
@@ -136,18 +133,6 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
         animate={{ opacity: 1, y: 0 }}
         className="flex-1 flex flex-col items-center justify-center gap-5 max-w-md mx-auto w-full py-8"
       >
-        <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-2 border shadow-xs ${
-          accuracy >= PASS_MARK 
-            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' 
-            : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-        }`}>
-          {accuracy >= PASS_MARK ? (
-            <Trophy size={36} aria-hidden="true" />
-          ) : (
-            <Target size={36} aria-hidden="true" />
-          )}
-        </div>
-
         <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-100 text-center tracking-tight">
           {t.quiz.quizCompleted}
         </h2>

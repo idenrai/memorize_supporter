@@ -65,6 +65,8 @@ export const ja: Translations = {
     sampleDecksLoadFailed: "サンプルデッキの読み込みに失敗しました。",
     clickToStudy: "クリックして学習を開始",
     clickToStartExam: "クリックして試験を開始",
+    examNotSupported: "試験非対応 (選択問題専用)",
+    examNotSupportedDesc: "試験モードは選択式クイズデッキのみ対応しています。",
   },
   prep: {
     aiPrompt: "AI生成プロンプト",

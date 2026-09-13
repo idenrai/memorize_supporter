@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, useIsPresent } from "framer-motion"
-import { Check, X } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import { formatText } from "@/lib/format"
+import CardFeedbackActions from "./CardFeedbackActions"
 
 interface VocabularyCardProps {
   word: string
@@ -44,33 +44,64 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
     }
   }, [isPresent])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handlersRef = useRef({
+    isFlipped,
+    isFeedback,
+    handleFlip,
+    handleFeedback,
+  })
+
+  useEffect(() => {
+    handlersRef.current = {
+      isFlipped,
+      isFeedback,
+      handleFlip,
+      handleFeedback,
+    }
+  })
+
+  useEffect(() => {
     if (!isPresent) return
 
-    const target = e.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-      return
-    }
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return
+      }
 
-    if (!isFlipped) {
-      e.preventDefault()
-      handleFlip()
-    } else {
-      if (e.code === 'ArrowLeft' && !isFeedback) {
-        e.preventDefault()
-        handleFeedback("incorrect")
-      } else if (e.code === 'ArrowRight' && !isFeedback) {
-        e.preventDefault()
-        handleFeedback("correct")
+      const h = handlersRef.current
+
+      if (!h.isFlipped) {
+        if (e.code === 'Space' || e.key === 'Enter') {
+          e.preventDefault()
+          h.handleFlip()
+        }
+      } else {
+        if ((e.code === 'ArrowLeft' || e.key === 'ArrowLeft') && !h.isFeedback) {
+          e.preventDefault()
+          h.handleFeedback("incorrect")
+        } else if ((e.code === 'ArrowRight' || e.key === 'ArrowRight') && !h.isFeedback) {
+          e.preventDefault()
+          h.handleFeedback("correct")
+        }
       }
     }
-  }
+
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeyDown)
+    }
+  }, [isPresent])
 
   return (
     <div 
       ref={containerRef}
       tabIndex={0}
-      onKeyDown={handleKeyDown}
       className="w-full max-w-2xl h-80 perspective-1000 select-none font-sans antialiased focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500/50 rounded-2xl"
     >
       <motion.div
@@ -119,36 +150,10 @@ export default function VocabularyCard({ word, meaning, example, onNext }: Vocab
             )}
           </div>
           
-          <div className="flex items-center justify-center gap-4 pt-4 border-t border-zinc-800">
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={(e) => {
-                e.stopPropagation()
-                handleFeedback("incorrect")
-              }}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-rose-500 text-xs sm:text-sm font-semibold"
-            >
-              <X size={16} aria-hidden="true" />
-              <span>{t.quiz.hard}</span>
-              <span className="kbd-badge ml-1">←</span>
-            </motion.button>
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={(e) => {
-                e.stopPropagation()
-                handleFeedback("correct")
-              }}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 text-xs sm:text-sm font-semibold"
-            >
-              <Check size={16} aria-hidden="true" />
-              <span>{t.quiz.easy}</span>
-              <span className="kbd-badge ml-1">→</span>
-            </motion.button>
-          </div>
+          <CardFeedbackActions
+            onFeedback={handleFeedback}
+            disabled={Boolean(isFeedback)}
+          />
         </div>
       </motion.div>
     </div>
