@@ -14,9 +14,10 @@
 - **핵심 컴포넌트**:
   - `DeckGallery`: `useDeferredValue`를 활용한 렌더링 최적화와 함께 실시간 덱 검색 및 시리즈 필터링을 담당하는 클라이언트 컴포넌트
   - `DeckEmptyState` (`src/components/home/DeckEmptyState.tsx`): 덱이 없을 때 최초 환영 온보딩, 3단계 학습 가이드 카드 및 샘플 덱 체험 액션을 전담하는 독립 프레젠테이션 컴포넌트
-  - `ExamCardReview` (`src/components/cards/ExamCardReview.tsx`): 시험 모드 완료 후 개별 문항의 정답/오답 상세 리뷰 및 모달 오버레이를 전담하는 컴포넌트
-  - `UploadZone`: 서버 전송 없이 브라우저 IndexedD   - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어 (고집중 Precision Canvas 단일 레이어 보더 및 시맨틱 뱃지 적용)
-   - `PageHeader` (`src/components/common/PageHeader.tsx`): 시험 기록, 데이터 관리, 데이터 준비 등 서브 페이지의 불필요한 장식용 태그 뱃지를 배제하고 대시보드와 일관된 볼드 H1 타이틀, 보조 설명 및 선택적 액션 슬롯을 일원화한 미니멀 공통 헤더 컴포넌트
+  - `UploadZone` (`src/components/management/UploadZone.tsx`): 서버 전송 없이 브라우저 메모리 상에서 드래그 앤 드롭으로 JSON 덱을 검증 및 임포트하는 Precision 업로드 패널 (진행 상태 바 및 직관적 유효성 검사 에러 패널 탑재)
+  - `LocalRecordsView` (`src/components/records/LocalRecordsView.tsx`): 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어 (WAI-ARIA `role="meter"` 기반 시험 점수 게이지 및 합격 기준선 뱃지 적용)
+  - `DataManagementLink` (`src/components/common/DataManagementLink.tsx`): 대시보드와 로컬 시험 기록 화면에서 데이터 관리 페이지로 이동하는 단일 진실 공급원(SSoT) 링크 컴포넌트 (모바일 터치 타겟 규격 및 일관된 데이터베이스 아이콘 적용)
+  - `PageHeader` (`src/components/common/PageHeader.tsx`): 시험 기록, 데이터 관리, 데이터 준비 등 서브 페이지의 불필요한 장식용 태그 뱃지를 배제하고 대시보드와 일관된 볼드 H1 타이틀, 보조 설명 및 선택적 액션 슬롯을 일원화한 미니멀 공통 헤더 컴포넌트
    - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 단일 JSON 객체 스키마 규격 및 체계적인 [출력 규칙]을 갖춘 학습 덱 템플릿을 생성/검증/다운로드하는 관리 도구 (프롬프트/JSON 탭 분기, `aria-pressed` WAI-ARIA 토글, `md:grid-cols-3` 반응형 레이아웃 및 맞춤 복사 기능 지원)
    - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): 인지 과학 및 Local-First 철학, 인터랙티브 3D 플립 카드 데모, 불필요한 아이콘 박스와 중복 뱃지를 걷어낸 미니멀 6대 기능 카드(안정적 ID 기반), 키보드 단축키 및 엔지니어링 기술 사양 테이블(React 19 + Zod 상태 검증, 100% i18n 지원)을 제공하는 브랜드 소개 뷰어
    - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
@@ -52,8 +53,9 @@
   - **전체 선택지 하이라이트 및 해설 강화**: 퀴즈 해설 및 결과 검토 화면에서 문제의 전체 선택지를 렌더링하고, 실제 정답(초록색), 사용자가 고른 오답(빨간색), 미선택 보기를 아이콘과 뱃지로 3중 강조하여 오답 원인을 직관적으로 학습할 수 있도록 지원합니다.
   - **단일 진실 공급원(SSoT) 스티키 헤더 및 공통 `QuizHeader` 컴포넌트**: 전역 헤더 높이 토큰과 완벽히 연동되는 재사용 가능한 `QuizHeader`를 도입하여 스크롤 시 글로벌 네비게이션 바로 아래(`sticky top-(--header-height) z-30`)에 안정적으로 고정됩니다. WAI-ARIA `role="progressbar"`, `aria-valuenow`, `aria-valuemin="0"`, `aria-valuemax="100"`, 다국어 `aria-label`을 완비하여 시각 장애 사용자에게도 실시간 진행 상태를 명확히 전달합니다.
   - **전역 문제 검토 네비게이션 및 시각적 키 뱃지 (`kbd-badge`)**: 시험 기록 및 오답 검토 화면에서 최상위 키보드 리스너(`Escape`, `←`, `→`)를 완비하여 플래시카드, 어휘, 퀴즈 전 종류에서 즉시 탐색이 가능하며, 헤더와 버튼에 `Esc`, `←`, `→` 시각적 키 뱃지를 일관되게 병기하여 키보드 우선 사용자의 인지 속도를 극대화했습니다.
-  - **스트레칭 링크(Stretched Link) 기반 탭 스톱(Tab Stop) 최적화**: 덱 카드(`DeckCard`) 및 덱 리스트(`DeckListRow`)의 메인 타이틀 링크에 `after:absolute after:inset-0`를 적용하여 카드 전체 영역을 클릭 가능하게 확장하고, 하단 보조 버튼에 `tabIndex={-1} aria-hidden="true"`를 부여하여 키보드 탐색 시 동일 링크가 2회 중복 포커스되는 UX 피로도를 원천 해소했습니다.
-  - Vercel Web Interface Guidelines를 철저하게 준수하여 시맨틱 HTML, WAI-ARIA 속성(`role="group"`, `role="progressbar"`, `aria-pressed`, `aria-label`), 장식용 SVG 아이콘 `aria-hidden="true"` 전수 적용, 견고한 키보드 포커스 대체 링(`focus-visible:ring-2 focus-visible:ring-indigo-500`), 고정폭 수치 폰트(`tabular-nums`), 그리고 모바일 터치 피드백(`active:scale-[0.98]`) 등 최고 수준의 접근성을 보장합니다.
+  - **스트레칭 링크(Stretched Link) 기반 탭 스톱(Tab Stop) 최적화**: 덱 카드(`DeckCard`) 및 덱 리스트(`DeckList`)의 메인 타이틀 링크에 `after:absolute after:inset-0`를 적용하여 카드 전체 영역을 클릭 가능하게 확장하고, 하단 보조 버튼에 `tabIndex={-1} aria-hidden="true"`를 부여하여 키보드 탐색 시 동일 링크가 2회 중복 포커스되는 UX 피로도를 원천 해소했습니다.
+  - **컨텍스트 인지형 시험 모드 UI (Context-Aware Exam Mode UI)**: 홈 대시보드(`DeckCard`, `DeckList`, `SearchAndFilter`)에서 시험 모드 활성화 시 퀴즈 덱에만 동적 라벨("출제 문항 수", "전체 문항", "시험 응시", "클릭하여 시험 시작") 및 강조 인디고 액션 스타일을 적용하고, 비퀴즈 덱(플래시카드, 단어장)은 "학습하기"로 명확히 분리 유지하여 사용자의 인지 혼란을 원천 차단합니다.
+  - Vercel Web Interface Guidelines를 철저하게 준수하여 시맨틱 HTML, 점수 게이지 바의 `role="meter"`(`aria-valuenow`, `aria-valuemin="0"`, `aria-valuemax="100"`), 템플릿 카드 묶음의 `role="group"`(`aria-labelledby`), `aria-pressed`, 장식용 SVG 아이콘 `aria-hidden="true"` 전수 적용, 견고한 키보드 포커스 대체 링(`focus-visible:ring-2 focus-visible:ring-indigo-500`), 고정폭 수치 폰트(`tabular-nums`), 그리고 모바일 터치 피드백(`min-h-[36px]`, `active:scale-[0.98]`) 등 최고 수준의 접근성을 보장합니다.
   - 네이티브 브라우저 팝업을 전면 퇴출하고 WAI-ARIA Focus Trap 및 Return Focus를 완비한 `ConfirmModal`을 도입하여 모든 플랫폼에서 일관된 고집중 Precision 테마를 유지하는 동시에 엄격한 WAI-ARIA 다이얼로그 표준을 충족합니다.
   - `framer-motion`을 도입하여 180도 3D 플립, Scale Pop 등 절제된 시각적 피드백을 제공합니다.
 
@@ -69,6 +71,7 @@
 
 - **도메인 타입 아키텍처 ("Parse, Don't Validate")**:
   - **중앙화된 도메인 파서 (`src/lib/card-parser.ts`)**: DB에 저장된 원시 카드 문자열은 컴포넌트나 액션에서 `as unknown as CardData`와 같은 위험한 타입 단언으로 임의 캐스팅되지 않습니다. 모든 레코드는 `parseCardData(card)` 및 `parseCardDataList(cards)`를 통해 Zod 스키마로 런타임 검증된 후 정식 `CardData` 판별 유니온 타입으로 승격됩니다.
+  - **퀴즈 타입 정규화 및 하위 호환성 (Tolerant Normalization via `QUIZ_TYPES`)**: 퀴즈 덱의 공식 표준 타입을 `multiple_choice_quiz`로 승격하고, 기존 사용자의 데이터 보존을 위해 `practice_quiz`를 하위 호환 허용 타입으로 유지합니다. `src/types/card.ts`의 `QUIZ_TYPES = ['multiple_choice_quiz', 'practice_quiz'] as const` 및 `isQuizType(type)` 헬퍼를 단일 진실 공급원(SSoT)으로 삼아 파서, DB 및 UI 컴포넌트 전반의 타입 무결성을 보장합니다.
   - **강제 단언 0% 유지**: 코드베이스 전반에서 `as any` 및 `as unknown as`를 완전히 배제하여 컴파일 타임 및 런타임 무결성을 100% 보장합니다.
 
 - **데이터 검증 및 에러 처리 (Zero-Trust)**:
@@ -194,13 +197,9 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **Core Components**:
   - `DeckGallery`: Client-side component for real-time deck search and series filtering, optimized with `useDeferredValue`.
   - `DeckEmptyState` (`src/components/home/DeckEmptyState.tsx`): Presentation component dedicated to the initial onboarding hero, 3-step visual guide, and sample deck import action.
-  - `ExamCardReview` (`src/components/cards/ExamCardReview.tsx`): Dedicated component handling modal overlays and question-by-question review of correct/incorrect answers following exam completion.
-  - `UploadZone`: Drag & Drop JSON importer in the data management page, supporting single and multi-file batch uploads directly into browser IndexedDB without server transmission.
-  - `DeckPlayer`, `Flashcard`, `VocabularyCard`, `PracticeQuizCard`: Frontend interactive card renderer (handling micro-animations and feedback).
-  - `DeckClientLoader`: Client-side deck runner that dynamically retrieves and prioritizes cards from IndexedDB for local-only decks.
-  - `ExamResultView`: Comprehensive exam review interface supporting question-by-question replay, visual color-coded answer comparison, and "Retry Incorrect Only" session trigger.
-  - `LocalRecordsView`: Unified exam records interface for on-device quiz history, upgraded with tactile double-layer deck card styling, ambient glow, and custom accessible modal confirmation on record deletion.
-  - `ConfirmModal`: Premium accessible confirmation modal replacing native browser confirm dialogs for destructive actions (deck/record deletion), equipped with WAI-ARIA Focus Trap, Return Focus, Escape dismissal, mobile safe scroll (`max-h-[85vh]`), and pill-shaped action buttons.
+  - `UploadZone` (`src/components/management/UploadZone.tsx`): Precision drag-and-drop importer on the data management page, validating and importing JSON decks directly into browser IndexedDB without server transmission, equipped with a live progress bar and inline error breakdown.
+  - `LocalRecordsView` (`src/components/records/LocalRecordsView.tsx`): Unified on-device exam records viewer, equipped with accessible WAI-ARIA `role="meter"` score progress bars, passing benchmark tags, custom modal confirmation for deletion, and full JSON backup export.
+  - `DataManagementLink` (`src/components/common/DataManagementLink.tsx`): Single Source of Truth (SSoT) navigation link connecting the dashboard and local records pages to data management, compliant with mobile touch target guidelines and featuring unified database iconography.
   - `PageHeader` (`src/components/common/PageHeader.tsx`): Minimalist sub-page header component aligning sub-pages (records, data-management, data-preparation) with the dashboard layout by eliminating decorative eyebrow badge noise and standardizing bold H1 headings, descriptions, and optional action slots.
   - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, real-time schema validation with single JSON object schema enforcement, unified [Output Rules], `aria-pressed` WAI-ARIA toggle state, and `md:grid-cols-3` responsive layout.
   - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): Brand and product introduction interface presenting cognitive science and Local-First philosophies, an interactive 3D flip card demo, 6 refined feature cards stripped of redundant badges/icon boxes, keyboard shortcuts guidance, and an engineering technical specifications table (React 19 + Zod state validation, 100% i18n support).
@@ -237,8 +236,9 @@ This document defines the system architecture of the `memorize_supporter` projec
   - **Comprehensive Explanation & Visual Highlights**: In quiz result/review views, displays all available choices (`content.options`) with color-coded and badged visual highlights (Emerald for correct answers, Rose for user-selected incorrect answers, and neutral for unpicked choices) to reinforce Active Recall.
   - **SSoT Sticky Header & Unified `QuizHeader` Component**: Implements a reusable `QuizHeader` (and matching `QuizHeader.Skeleton`) that sticks beneath the global navigation bar (`sticky top-(--header-height) z-30`). Fully equipped with WAI-ARIA `role="progressbar"`, `aria-valuenow`, `aria-valuemin="0"`, `aria-valuemax="100"`, and localized `aria-label` to communicate live progression clearly to screen reader users.
   - **Seamless Review Navigation & Shortcuts**: In exam history and question review views, provides top-level window keyboard listeners (`Escape`, `ArrowLeft`, `ArrowRight`) enabling immediate navigation across flashcards, vocabulary, and quizzes, paired with visible keyboard badges (`kbd-badge` for `Esc`, `←`, `→`) to maximize cognitive speed for keyboard-first users.
-  - **Stretched Link Tab Stop Optimization**: In deck cards (`DeckCard`) and deck list rows (`DeckListRow`), applies `after:absolute after:inset-0` to the primary title link to stretch clickable area over the entire card, while assigning `tabIndex={-1} aria-hidden="true"` to secondary CTA buttons, eliminating redundant double tab stops during keyboard navigation.
-  - Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, WAI-ARIA attributes (`role="group"`, `role="progressbar"`, `aria-pressed`, `aria-label`), universal `aria-hidden="true"` on decorative SVG icons, robust keyboard focus replacement rings (`focus-visible:ring-2 focus-visible:ring-indigo-500`), fixed-width numeric typography (`tabular-nums`), and mobile touch feedback (`active:scale-[0.98]`).
+  - **Stretched Link Tab Stop Optimization**: In deck cards (`DeckCard`) and deck list items (`DeckList`), applies `after:absolute after:inset-0` to the primary title link to stretch clickable area over the entire card, while assigning `tabIndex={-1} aria-hidden="true"` to secondary CTA buttons, eliminating redundant double tab stops during keyboard navigation.
+  - **Context-Aware Exam Mode UI**: When exam mode is toggled on the home dashboard (`DeckCard`, `DeckList`, `SearchAndFilter`), dynamic contextual copywriting ("Question Count", "All Questions", "Take Exam", "Click to Start Exam") and indigo button emphasis are selectively rendered only for quiz decks, while non-quiz decks (flashcards, vocabulary) remain cleanly separated under study mode ("Study") to prevent cognitive dissonance.
+  - Adheres strictly to Vercel Web Interface Guidelines for accessibility, including proper semantic HTML, accessible score progress meters (`role="meter"`, `aria-valuenow`, `aria-valuemin="0"`, `aria-valuemax="100"`), template selector groups (`role="group"`, `aria-labelledby`, `aria-pressed`), universal `aria-hidden="true"` on decorative SVG icons, robust keyboard focus replacement rings (`focus-visible:ring-2 focus-visible:ring-indigo-500`), fixed-width numeric typography (`tabular-nums`), and mobile touch feedback (`min-h-[36px]`, `active:scale-[0.98]`).
   - Eliminates native browser alert/confirm popups in favor of accessible `ConfirmModal` dialogs featuring WAI-ARIA Focus Trap and Return Focus.
   - Provides visual feedback such as a 180-degree 3D flip and Scale Pop by integrating `framer-motion`.
 
@@ -254,6 +254,7 @@ This document defines the system architecture of the `memorize_supporter` projec
 
 - **Domain Type Architecture: "Parse, Don't Validate"**:
   - **Centralized Domain Parser (`src/lib/card-parser.ts`)**: Raw card strings stored in the database are never blindly cast using unsafe assertions like `as unknown as CardData`. All records are validated at runtime against Zod schemas and promoted to the strictly-typed `CardData` discriminated union.
+  - **Quiz Type Normalization & Backward Compatibility (Tolerant Normalization via `QUIZ_TYPES`)**: Promotes `multiple_choice_quiz` as the official canonical standard while transparently maintaining backward compatibility for legacy `practice_quiz` files. Governed by `QUIZ_TYPES = ['multiple_choice_quiz', 'practice_quiz'] as const` and `isQuizType(type)` in `src/types/card.ts` as the single source of truth across parsers, IndexedDB, and UI components.
   - **Zero Unsafe Assertions**: Ensures 0% `as any` or `as unknown as` assertions across the entire codebase.
 
 - **Data Validation & Error Handling (Zero-Trust)**:

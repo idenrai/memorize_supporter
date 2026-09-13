@@ -6,9 +6,9 @@ This document provides a high-level overview of the `memorize_supporter` project
 
 ## Core Capabilities
 
-`memorize_supporter` is a universal cognitive learning web application designed to help users memorize knowledge efficiently using Active Recall and spaced repetition principles across flashcards, 4-choice practice quizzes, and vocabulary lists.
+`memorize_supporter` is a universal cognitive learning web application designed to help users memorize knowledge efficiently using Active Recall and spaced repetition principles across flashcards, multiple-choice quizzes, and vocabulary lists.
 
-`memorize_supporter`는 플래시카드, 4지선다형 연습 퀴즈, 어휘 목록 등 다양한 형태의 지식을 능동적 회상(Active Recall)과 분산 반복 원리를 통해 효과적으로 암기할 수 있도록 지원하는 범용 인지 학습 웹 애플리케이션입니다.
+`memorize_supporter`는 플래시카드, 객관식 퀴즈, 어휘 목록 등 다양한 형태의 지식을 능동적 회상(Active Recall)과 분산 반복 원리를 통해 효과적으로 암기할 수 있도록 지원하는 범용 인지 학습 웹 애플리케이션입니다.
 
 - **Practice & Exam Modes**: Interactive card flips, exam scoring, and detailed review tracking.
   연습 및 시험 모드: 인터랙티브 카드 플립, 시험 점수 산출 및 문항별 오답 상세 기록.

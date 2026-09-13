@@ -1,5 +1,5 @@
 import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSchema } from "../schemas/index.ts"
-import type { CardData } from "@/types/card"
+import { type CardData, isQuizType } from "../types/card.ts"
 
 export interface RawDbCard {
   id: string
@@ -31,12 +31,13 @@ export function parseCardData(card: RawDbCard): CardData | null {
         return { id: card.id, type: 'flashcard', content: result.data }
       }
       logCardParseError(card.id, 'flashcard', result.error.format())
-    } else if (card.type === 'practice_quiz' || card.type === 'multiple_choice') {
+    } else if (isQuizType(card.type)) {
       const result = PracticeQuizContentSchema.safeParse(parsed)
       if (result.success) {
-        return { id: card.id, type: 'practice_quiz', content: result.data }
+        const resolvedType = card.type === 'practice_quiz' ? 'practice_quiz' : 'multiple_choice_quiz'
+        return { id: card.id, type: resolvedType, content: result.data }
       }
-      logCardParseError(card.id, 'practice_quiz', result.error.format())
+      logCardParseError(card.id, card.type, result.error.format())
     } else if (card.type === 'vocabulary') {
       const result = VocabularyContentSchema.safeParse(parsed)
       if (result.success) {
@@ -70,6 +71,7 @@ export function parseCardDataList(cards: RawDbCard[]): CardData[] {
  */
 export function getCardTitle(card: CardData, fallback = ""): string {
   switch (card.type) {
+    case "multiple_choice_quiz":
     case "practice_quiz":
       return card.content.question
     case "vocabulary":

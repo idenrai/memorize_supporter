@@ -24,10 +24,12 @@ export interface Translations {
     reload: string;
     settings: string;
     study: string;
+    takeExam: string;
     updateAvailable: string;
   };
   home: {
     allCards: string;
+    allQuestions: string;
     allSeries: string;
     cards: string;
     defaultDesc: (count: number) => string;
@@ -41,6 +43,7 @@ export interface Translations {
     searchDecks: string;
     subtitle: string;
     studyLimit: string;
+    examLimit: string;
     practiceMode: string;
     examMode: string;
     title: string;
@@ -66,6 +69,7 @@ export interface Translations {
     sampleDecksAlreadyAdded: string;
     sampleDecksLoadFailed: string;
     clickToStudy: string;
+    clickToStartExam: string;
   };
   prep: {
     aiPrompt: string;
@@ -92,6 +96,7 @@ export interface Translations {
     fieldsQuiz: string;
     fieldsVocab: string;
     copyJson: string;
+    compatNote: string;
   };
   management: {
     cancel: string;
@@ -156,6 +161,7 @@ export interface Translations {
     checkTemplatesInPrep: string;
     sortBy: (column: string) => string;
     schemaLabel: string;
+    browseFiles: string;
   };
   quiz: {
     askAi: string;
@@ -233,6 +239,7 @@ export interface Translations {
     examReviewTitle: string;
     examReviewSubtitle: (deckTitle: string) => string;
     examSessionInfo: (date: string, count: number) => string;
+    passCriteriaNotice: (passMark: number) => string;
   };
   local: {
     badge: string;

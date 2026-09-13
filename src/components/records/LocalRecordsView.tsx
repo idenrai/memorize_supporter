@@ -7,13 +7,14 @@ import {
   onLocalDbChange,
   type LocalExamResult
 } from "@/lib/client-db"
-import { Trophy, Calendar, ArrowRight, Trash2, Database } from "lucide-react"
+import { Trophy, Calendar, ArrowRight, Trash2 } from "lucide-react"
 import Link from "next/link"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import { toast } from "sonner"
 import { PASS_MARK_PERCENT } from "@/lib/constants"
 import ConfirmModal from "@/components/ui/ConfirmModal"
+import DataManagementLink from "@/components/common/DataManagementLink"
 
 export default function LocalRecordsView({
   deckId,
@@ -117,19 +118,18 @@ export default function LocalRecordsView({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
-        <span className="text-xs font-semibold px-2.5 py-1 rounded-lg text-zinc-300 bg-zinc-800 border border-zinc-700/60">
-          {t.local.recordsHeader(localRecords.length)}
-        </span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg text-zinc-300 bg-zinc-800 border border-zinc-700/60">
+            {t.local.recordsHeader(localRecords.length)}
+          </span>
+          <span className="text-2xs text-zinc-400 font-medium px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center gap-1.5">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+            {t.records.passCriteriaNotice(PASS_MARK)}
+          </span>
+        </div>
 
         <div className="flex items-center gap-2">
-          <Link
-            href={`/${lang}/data-management`}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-colors"
-            title={t.records.manageBackupLink}
-          >
-            <Database size={13} className="text-indigo-400" aria-hidden="true" />
-            <span>{t.records.manageBackupLink}</span>
-          </Link>
+          <DataManagementLink lang={lang} />
         </div>
       </div>
 
@@ -188,10 +188,35 @@ export default function LocalRecordsView({
                     {t.local.scoreDetail(record.correct, record.total)}
                   </span>
                 </div>
+
+                <div className="mt-3 space-y-1">
+                  <div
+                    role="meter"
+                    aria-valuenow={record.score}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={t.local.scoreDetail(record.correct, record.total)}
+                    className="relative w-full h-1.5 bg-zinc-800/80 rounded-full overflow-hidden"
+                  >
+                    <div
+                      className={`h-full transition-all duration-300 ${
+                        isPassed ? "bg-emerald-500" : "bg-amber-500"
+                      }`}
+                      style={{ width: `${Math.min(100, Math.max(0, record.score))}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between items-center text-2xs text-zinc-400 font-mono">
+                    <span>0%</span>
+                    <span className="text-zinc-300 font-medium">
+                      {t.records.passCriteriaNotice(PASS_MARK)}
+                    </span>
+                    <span>100%</span>
+                  </div>
+                </div>
               </div>
 
               <div className="pt-4 mt-4 border-t border-zinc-800 flex items-center justify-between flex-wrap gap-2">
-                <span className="text-2xs text-zinc-500 truncate max-w-40 font-mono">
+                <span className="text-2xs text-zinc-400 truncate max-w-40 font-mono">
                   {t.local.deckIdLabel}: {record.deckId}
                 </span>
                 <div className="flex items-center gap-2">

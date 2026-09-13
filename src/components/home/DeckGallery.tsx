@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useMemo, useDeferredValue, useCallback, useEffect } from "react"
-import Link from "next/link"
-import { Search, ArrowRight, FolderKanban } from "lucide-react"
+import { Search } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import type { Lang } from "@/i18n/types"
 import {
@@ -19,6 +18,7 @@ import DeckGrid from "./DeckGrid"
 import DeckList from "./DeckList"
 import DeckEmptyState from "./DeckEmptyState"
 import ConfirmModal from "@/components/ui/ConfirmModal"
+import DataManagementLink from "@/components/common/DataManagementLink"
 
 interface DeckGalleryProps {
   initialDecks?: Deck[]
@@ -228,14 +228,7 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
         <div className="text-xs sm:text-sm font-medium text-zinc-400">
           {t.management.totalDecks(allDecks.length)}
         </div>
-        <Link
-          href={`/${lang}/data-management`}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-colors"
-        >
-          <FolderKanban size={13} className="text-indigo-400" aria-hidden="true" />
-          <span>{t.home.manageDecks}</span>
-          <ArrowRight size={12} aria-hidden="true" />
-        </Link>
+        <DataManagementLink lang={lang} showArrow />
       </div>
 
       <SearchAndFilter 
