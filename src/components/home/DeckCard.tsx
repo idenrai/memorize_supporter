@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Layers, History, Trash2, ArrowRight } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import { isQuizType } from "@/types/card"
+import { getDeckTypeLabel, getDeckTypeBadgeClass } from "@/lib/deck-utils"
 
 interface DeckCardProps {
   deck: string
@@ -35,12 +36,7 @@ export default function DeckCard({
   const isQuiz = isQuizType(type)
   const isExamTarget = globalIsExamMode && isQuiz
 
-  const typeLabel =
-    isQuiz
-      ? t.quiz.practiceQuiz
-      : type === 'vocabulary'
-      ? t.quiz.vocabulary
-      : t.quiz.flashcard
+  const typeLabel = getDeckTypeLabel(type, t)
 
   const studyUrl = `/${lang}/deck/${deck}?limit=${globalLimit}${
     isExamTarget ? '&mode=exam' : ''
@@ -51,7 +47,7 @@ export default function DeckCard({
       {/* Top Meta Bar */}
       <div className="flex items-center justify-between gap-2 mb-3">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-2xs font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700/60">
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-2xs font-semibold border ${getDeckTypeBadgeClass(type)}`}>
             {typeLabel}
           </span>
           <span className="inline-flex items-center gap-1 text-2xs font-medium text-zinc-400">

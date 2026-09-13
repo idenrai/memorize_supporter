@@ -47,8 +47,8 @@ describe("DeckSchema & CardSchema Validation", () => {
     assert.strictEqual(parsed.cards.length, 1);
   });
 
-  it("successfully parses practice quiz cards with nullable fields", () => {
-    const cardInput = {
+  it("successfully parses multiple_choice_quiz and practice_quiz cards with nullable fields", () => {
+    const cardInputLegacy = {
       id: "q1",
       type: "practice_quiz",
       question: "What is 2 + 2?",
@@ -59,11 +59,22 @@ describe("DeckSchema & CardSchema Validation", () => {
       category: null
     };
 
-    const parsed = CardSchema.parse(cardInput);
-    assert.strictEqual(parsed.question, "What is 2 + 2?");
-    assert.deepStrictEqual(parsed.answers, [1]);
-    assert.strictEqual(parsed.answer, null);
-    assert.strictEqual(parsed.explanation, null);
+    const parsedLegacy = CardSchema.parse(cardInputLegacy);
+    assert.strictEqual(parsedLegacy.question, "What is 2 + 2?");
+    assert.deepStrictEqual(parsedLegacy.answers, [1]);
+    assert.strictEqual(parsedLegacy.answer, null);
+    assert.strictEqual(parsedLegacy.explanation, null);
+
+    const cardInputStandard = {
+      id: "q2",
+      type: "multiple_choice_quiz",
+      question: "What is 3 + 3?",
+      options: ["5", "6", "7"],
+      answers: [1]
+    };
+    const parsedStandard = CardSchema.parse(cardInputStandard);
+    assert.strictEqual(parsedStandard.question, "What is 3 + 3?");
+    assert.deepStrictEqual(parsedStandard.answers, [1]);
   });
 
   it("rejects deck with empty title", () => {

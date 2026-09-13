@@ -1,4 +1,4 @@
-import { FlashcardContentSchema, PracticeQuizContentSchema, VocabularyContentSchema } from "../schemas/index.ts"
+import { FlashcardContentSchema, MultipleChoiceQuizContentSchema, VocabularyContentSchema } from "../schemas/index.ts"
 import { type CardData, isQuizType } from "../types/card.ts"
 
 export interface RawDbCard {
@@ -32,7 +32,7 @@ export function parseCardData(card: RawDbCard): CardData | null {
       }
       logCardParseError(card.id, 'flashcard', result.error.format())
     } else if (isQuizType(card.type)) {
-      const result = PracticeQuizContentSchema.safeParse(parsed)
+      const result = MultipleChoiceQuizContentSchema.safeParse(parsed)
       if (result.success) {
         const resolvedType = card.type === 'practice_quiz' ? 'practice_quiz' : 'multiple_choice_quiz'
         return { id: card.id, type: resolvedType, content: result.data }

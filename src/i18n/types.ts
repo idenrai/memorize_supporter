@@ -6,6 +6,9 @@ export const LANG_NAMES: Record<Lang, string> = {
   ja: "日本語",
 };
 
+/**
+ * Single source of truth for all application UI translations.
+ */
 export interface Translations {
   common: {
     about: string;

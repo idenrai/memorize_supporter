@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   FlashcardContentSchema,
+  MultipleChoiceQuizContentSchema,
   PracticeQuizContentSchema,
   VocabularyContentSchema,
 } from "../../src/schemas/card-content.ts";
@@ -35,18 +36,22 @@ describe("Card Content Schemas Validation", () => {
     });
   });
 
-  describe("PracticeQuizContentSchema", () => {
-    it("successfully validates valid practice quiz content", () => {
+  describe("MultipleChoiceQuizContentSchema", () => {
+    it("successfully validates valid multiple-choice quiz content", () => {
       const valid = {
         question: "What is 1 + 1?",
         options: ["1", "2", "3"],
         answers: [1],
         explanation: "Basic arithmetic",
       };
-      const parsed = PracticeQuizContentSchema.parse(valid);
+      const parsed = MultipleChoiceQuizContentSchema.parse(valid);
       assert.strictEqual(parsed.question, "What is 1 + 1?");
       assert.deepStrictEqual(parsed.answers, [1]);
       assert.strictEqual(parsed.explanation, "Basic arithmetic");
+    });
+
+    it("ensures backward compatibility alias PracticeQuizContentSchema works identically", () => {
+      assert.strictEqual(PracticeQuizContentSchema, MultipleChoiceQuizContentSchema);
     });
 
     it("allows optional fields to be omitted", () => {
@@ -55,14 +60,14 @@ describe("Card Content Schemas Validation", () => {
         options: ["A", "B"],
         answers: [0],
       };
-      const parsed = PracticeQuizContentSchema.parse(valid);
+      const parsed = MultipleChoiceQuizContentSchema.parse(valid);
       assert.strictEqual(parsed.explanation, undefined);
       assert.strictEqual(parsed.category, undefined);
     });
 
     it("rejects non-array options or answers", () => {
       assert.throws(() =>
-        PracticeQuizContentSchema.parse({
+        MultipleChoiceQuizContentSchema.parse({
           question: "Invalid",
           options: "not-an-array",
           answers: [0],

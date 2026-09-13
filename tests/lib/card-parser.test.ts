@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { getCardTitle, parseCardData, parseCardDataList } from "../../src/lib/card-parser.ts";
-import { type CardData, isQuizType } from "../../src/types/card.ts";
+import { type CardData, isQuizType, isQuizCard } from "../../src/types/card.ts";
 
 describe("card-parser utility", () => {
   describe("isQuizType helper", () => {
@@ -22,6 +22,41 @@ describe("card-parser utility", () => {
       assert.strictEqual(isQuizType(""), false);
     });
   });
+
+  describe("isQuizCard type guard", () => {
+    it("returns true for multiple_choice_quiz and practice_quiz cards", () => {
+      const practiceCard: CardData = {
+        id: "1",
+        type: "practice_quiz",
+        content: { question: "Q1", options: ["A", "B"], answers: [0] },
+      };
+      const mcCard: CardData = {
+        id: "2",
+        type: "multiple_choice_quiz",
+        content: { question: "Q2", options: ["A", "B"], answers: [1] },
+      };
+      assert.strictEqual(isQuizCard(practiceCard), true);
+      assert.strictEqual(isQuizCard(mcCard), true);
+    });
+
+    it("returns false for non-quiz cards or falsy inputs", () => {
+      const flashcard: CardData = {
+        id: "3",
+        type: "flashcard",
+        content: { front: "F", back: "B" },
+      };
+      const vocabCard: CardData = {
+        id: "4",
+        type: "vocabulary",
+        content: { word: "W", meaning: "M" },
+      };
+      assert.strictEqual(isQuizCard(flashcard), false);
+      assert.strictEqual(isQuizCard(vocabCard), false);
+      assert.strictEqual(isQuizCard(null), false);
+      assert.strictEqual(isQuizCard(undefined), false);
+    });
+  });
+
   describe("getCardTitle", () => {
     it("extracts question for practice_quiz card", () => {
       const card: CardData = {

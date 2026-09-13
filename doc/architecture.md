@@ -14,6 +14,7 @@
 - **핵심 컴포넌트**:
   - `DeckGallery`: `useDeferredValue`를 활용한 렌더링 최적화와 함께 실시간 덱 검색 및 시리즈 필터링을 담당하는 클라이언트 컴포넌트
   - `DeckEmptyState` (`src/components/home/DeckEmptyState.tsx`): 덱이 없을 때 최초 환영 온보딩, 3단계 학습 가이드 카드 및 샘플 덱 체험 액션을 전담하는 독립 프레젠테이션 컴포넌트
+  - `DeckPlayer`, `Flashcard`, `VocabularyCard`, `MultipleChoiceQuizCard`: 플래시카드, 단어장, 객관식 퀴즈 카드의 인터랙티브 렌더링 및 모션 피드백을 전담하는 학습 카드 컴포넌트군
   - `UploadZone` (`src/components/management/UploadZone.tsx`): 서버 전송 없이 브라우저 메모리 상에서 드래그 앤 드롭으로 JSON 덱을 검증 및 임포트하는 Precision 업로드 패널 (진행 상태 바 및 직관적 유효성 검사 에러 패널 탑재)
   - `LocalRecordsView` (`src/components/records/LocalRecordsView.tsx`): 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어 (WAI-ARIA `role="meter"` 기반 시험 점수 게이지 및 합격 기준선 뱃지 적용)
   - `DataManagementLink` (`src/components/common/DataManagementLink.tsx`): 대시보드와 로컬 시험 기록 화면에서 데이터 관리 페이지로 이동하는 단일 진실 공급원(SSoT) 링크 컴포넌트 (모바일 터치 타겟 규격 및 일관된 데이터베이스 아이콘 적용)
@@ -22,6 +23,7 @@
    - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): 인지 과학 및 Local-First 철학, 인터랙티브 3D 플립 카드 데모, 불필요한 아이콘 박스와 중복 뱃지를 걷어낸 미니멀 6대 기능 카드(안정적 ID 기반), 키보드 단축키 및 엔지니어링 기술 사양 테이블(React 19 + Zod 상태 검증, 100% i18n 지원)을 제공하는 브랜드 소개 뷰어
    - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
    - `CardParser` (`src/lib/card-parser.ts`): 원시 JSON 및 카드 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
+   - `DeckUtils` (`src/lib/deck-utils.ts`): 덱 및 카드의 유형 라벨(`getDeckTypeLabel`)과 시각적 계층 뱃지 클래스(`getDeckTypeBadgeClass`)를 제공하는 단일 진실 공급원(SSoT) 유틸리티 (레거시 `practice_quiz`와 신규 `multiple_choice_quiz` 하위 호환 매핑 및 3개 국어 다국어 동기화 지원)
 
 ### 2. 프론트엔드 (Frontend)
 
@@ -197,6 +199,7 @@ This document defines the system architecture of the `memorize_supporter` projec
 - **Core Components**:
   - `DeckGallery`: Client-side component for real-time deck search and series filtering, optimized with `useDeferredValue`.
   - `DeckEmptyState` (`src/components/home/DeckEmptyState.tsx`): Presentation component dedicated to the initial onboarding hero, 3-step visual guide, and sample deck import action.
+  - `DeckPlayer`, `Flashcard`, `VocabularyCard`, `MultipleChoiceQuizCard`: Interactive card presentation and feedback engine for flashcards, vocabulary, and multiple-choice quizzes.
   - `UploadZone` (`src/components/management/UploadZone.tsx`): Precision drag-and-drop importer on the data management page, validating and importing JSON decks directly into browser IndexedDB without server transmission, equipped with a live progress bar and inline error breakdown.
   - `LocalRecordsView` (`src/components/records/LocalRecordsView.tsx`): Unified on-device exam records viewer, equipped with accessible WAI-ARIA `role="meter"` score progress bars, passing benchmark tags, custom modal confirmation for deletion, and full JSON backup export.
   - `DataManagementLink` (`src/components/common/DataManagementLink.tsx`): Single Source of Truth (SSoT) navigation link connecting the dashboard and local records pages to data management, compliant with mobile touch target guidelines and featuring unified database iconography.
@@ -205,6 +208,7 @@ This document defines the system architecture of the `memorize_supporter` projec
   - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): Brand and product introduction interface presenting cognitive science and Local-First philosophies, an interactive 3D flip card demo, 6 refined feature cards stripped of redundant badges/icon boxes, keyboard shortcuts guidance, and an engineering technical specifications table (React 19 + Zod state validation, 100% i18n support).
   - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private user study materials, forgetting curves, and quiz scores.
   - `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
+  - `DeckUtils` (`src/lib/deck-utils.ts`): Single Source of Truth (SSoT) utility providing localized human-readable deck/card type labels (`getDeckTypeLabel`) and visual hierarchy badge classes (`getDeckTypeBadgeClass`), seamlessly mapping legacy `practice_quiz` and `multiple_choice_quiz` across English, Korean, and Japanese.
 
 ### 2. Frontend
 
@@ -318,7 +322,7 @@ sequenceDiagram
 
 - **PWA Service Worker & Offline App Shell Caching (`public/sw.js`, `src/components/pwa/ServiceWorkerRegister.tsx`)**:
   - Coupled with the IndexedDB data layer, a native Service Worker ensures that static App Shell bundles and Next.js JS/CSS chunks are cached, enabling full application startup and card study even in airplane mode.
-  - Uses Cache-First for static assets (`/_next/static/*`), Network-First with Cache Fallback for HTML navigations, and Stale-While-Revalidate for sample deck APIs, with an LRU dynamic cache pruning policy (50 entries max) to prevent storage bloat.
+  - Uses Cache-First for static assets (`/_next/static/*`), Network-First with Cache Fallback for HTML page navigation requests, and Stale-While-Revalidate for sample deck APIs, with an LRU dynamic cache pruning policy (50 entries max) to prevent storage bloat.
   - Features an update prompt banner triggering `SKIP_WAITING` and one-click reload when a new service worker version is detected, while `NetworkStatusBadge` in the header provides real-time offline status and reconnection toasts.
 
 ### 6. Infrastructure & Deployment
