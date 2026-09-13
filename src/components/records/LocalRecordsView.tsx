@@ -7,7 +7,7 @@ import {
   onLocalDbChange,
   type LocalExamResult
 } from "@/lib/client-db"
-import { Trophy, Calendar, ArrowRight, Trash2 } from "lucide-react"
+import { Calendar, ArrowRight, Trash2 } from "lucide-react"
 import Link from "next/link"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
@@ -91,20 +91,17 @@ export default function LocalRecordsView({
     if (hideEmptyState) return null
 
     return (
-      <div className="text-center p-8 sm:p-12 w-full card-precision flex flex-col items-center justify-center min-h-80 sm:min-h-96">
-        <div className="w-14 h-14 bg-zinc-800 border border-zinc-700/80 text-indigo-400 rounded-2xl flex items-center justify-center mb-5 shadow-xs">
-          <Trophy size={26} aria-hidden="true" />
-        </div>
-        <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-100 mb-2 tracking-tight break-keep text-balance">
+      <div className="text-center p-8 sm:p-12 w-full card-precision flex flex-col items-center justify-center">
+        <h3 className="text-lg sm:text-xl font-bold text-zinc-100 mb-2 tracking-tight break-keep text-balance">
           {t.records.empty}
         </h3>
-        <p className="text-sm text-zinc-400 mb-6 leading-relaxed break-keep text-balance max-w-md font-normal">
+        <p className="text-xs sm:text-sm text-zinc-400 mb-6 leading-relaxed break-keep text-balance max-w-md font-normal">
           {t.records.emptyDesc}
         </p>
         <div className="flex items-center justify-center">
           <Link
             href={`/${lang}`}
-            className="px-6 py-2.5 btn-primary rounded-xl text-xs sm:text-sm font-semibold"
+            className="px-5 py-2.5 btn-primary rounded-xl text-xs sm:text-sm font-semibold"
           >
             {t.common.study}
           </Link>

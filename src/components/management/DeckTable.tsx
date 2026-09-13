@@ -3,18 +3,19 @@
 import { useState, useTransition, useMemo, useEffect, useCallback, useRef } from 'react'
 import {
   Trash2,
+  Pencil,
   ChevronUp,
   ChevronDown,
   ChevronsUpDown,
   Plus,
-  Loader2,
-  FolderOpen
+  Loader2
 } from 'lucide-react'
 import {
   deleteLocalDeck,
   getLocalDecks,
   onLocalDbChange,
   importSampleDecks,
+  updateLocalDeckMetadata,
   type LocalDeck
 } from '@/lib/client-db'
 import { useT } from '@/hooks/useT'
@@ -23,6 +24,7 @@ import type { Deck } from '@/types/deck'
 import type { Translations } from '@/i18n/types'
 import { getDeckTypeLabel, getDeckTypeBadgeClass } from '@/lib/deck-utils'
 import ConfirmModal from '@/components/ui/ConfirmModal'
+import EditDeckModal from '@/components/management/EditDeckModal'
 
 type SortKey = keyof Deck | 'cards'
 
@@ -43,6 +45,8 @@ export default function DeckTable() {
   const [localDecks, setLocalDecks] = useState<LocalDeck[]>([])
   const [isLoadingSamples, setIsLoadingSamples] = useState(false)
   const [deletingDeck, setDeletingDeck] = useState<{ id: string; title: string } | null>(null)
+  const [editingDeck, setEditingDeck] = useState<{ id: string; title: string; series: string | null } | null>(null)
+  const [isUpdating, setIsUpdating] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
   const tableContainerRef = useRef<HTMLDivElement>(null)
 
@@ -62,6 +66,26 @@ export default function DeckTable() {
     }
   }, [])
 
+  const handleSaveEdit = async (updates: { title: string; series: string | null }) => {
+    if (!editingDeck) return
+    setIsUpdating(true)
+    try {
+      const ok = await updateLocalDeckMetadata(editingDeck.id, updates)
+      if (ok) {
+        toast.success(t.management.deckUpdateSuccess)
+        setEditingDeck(null)
+        refreshLocalDecks()
+      } else {
+        toast.error(t.common.error)
+      }
+    } catch (e) {
+      console.error('Failed to update deck:', e)
+      toast.error(t.common.error)
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
   useEffect(() => {
     let isCancelled = false
 
@@ -76,7 +100,12 @@ export default function DeckTable() {
       })
 
     const unsubscribe = onLocalDbChange((event) => {
-      if (event === 'deck_created' || event === 'deck_deleted' || event === 'backup_restored') {
+      if (
+        event === 'deck_created' ||
+        event === 'deck_deleted' ||
+        event === 'backup_restored' ||
+        event === 'deck_updated'
+      ) {
         refreshLocalDecks()
       }
     })
@@ -288,13 +317,13 @@ export default function DeckTable() {
             <tbody className="divide-y divide-zinc-800/60 bg-transparent">
               {sortedDecks.map((deck) => (
                 <tr key={deck.id} className="hover:bg-zinc-900/50 transition-colors">
-                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap max-w-37.5 sm:max-w-62.5 lg:max-w-xs">
+                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap max-w-44 sm:max-w-72 lg:max-w-md">
                     <div title={deck.title}>
                       <div className="text-sm font-semibold text-zinc-100 truncate">{deck.title}</div>
                       <div className="text-2xs text-zinc-500 mt-0.5 font-mono truncate">{deck.id}</div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-xs text-zinc-300 max-w-30 sm:max-w-50 truncate" title={deck.series || ''}>
+                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-xs text-zinc-300 max-w-36 sm:max-w-56 truncate" title={deck.series || ''}>
                     {deck.series || <span className="text-zinc-600 italic">-</span>}
                   </td>
                   <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-xs">
@@ -308,8 +337,19 @@ export default function DeckTable() {
                   <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-right text-xs font-medium">
                     <div className="flex justify-end gap-1">
                       <button
+                        type="button"
+                        onClick={() => setEditingDeck({ id: deck.id, title: deck.title, series: deck.series ?? null })}
+                        disabled={isPending || isUpdating}
+                        className="text-zinc-400 hover:text-indigo-400 hover:bg-indigo-500/10 p-1.5 rounded-lg transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500"
+                        title={t.management.editDeck}
+                        aria-label={`${deck.title} ${t.management.editDeck}`}
+                      >
+                        <Pencil size={15} aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => handleRequestDelete(deck.id, deck.title)}
-                        disabled={isPending}
+                        disabled={isPending || isUpdating}
                         className="text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 p-1.5 rounded-lg transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-rose-500"
                         title={t.management.delete}
                         aria-label={`${deck.title} ${t.management.delete}`}
@@ -323,9 +363,8 @@ export default function DeckTable() {
               {sortedDecks.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-zinc-500 text-sm">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <FolderOpen size={32} className="text-zinc-600 mb-1 opacity-60" aria-hidden="true" />
-                      <p className="text-zinc-200 font-bold text-sm">{t.management.emptyDecksTitle}</p>
+                    <div className="flex flex-col items-center justify-center gap-1.5">
+                      <p className="text-zinc-200 font-semibold text-sm">{t.management.emptyDecksTitle}</p>
                       <p className="text-zinc-400 text-xs max-w-md leading-relaxed break-keep font-normal">
                         {t.management.emptyDecksDesc}
                       </p>
@@ -353,6 +392,16 @@ export default function DeckTable() {
         isLoading={isPending}
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeletingDeck(null)}
+      />
+
+      {/* Accessible Edit Deck Modal */}
+      <EditDeckModal
+        key={editingDeck?.id}
+        isOpen={editingDeck !== null}
+        deck={editingDeck}
+        isLoading={isUpdating}
+        onSave={handleSaveEdit}
+        onClose={() => setEditingDeck(null)}
       />
     </div>
   )

@@ -1,6 +1,5 @@
 import { getT } from "@/i18n"
 import type { Lang } from "@/i18n/types"
-import { Target } from "lucide-react"
 import Link from "next/link"
 import PageHeader from "@/components/common/PageHeader"
 import LocalRecordsView from "@/components/records/LocalRecordsView"
@@ -25,9 +24,9 @@ export default async function RecordsPage({
         action={
           deckId ? (
             <div className="flex items-center gap-2 mt-2 sm:mt-0">
-              <div className="px-3.5 py-1.5 bg-zinc-900/80 border border-white/10 rounded-full flex items-center gap-2 text-zinc-300 text-xs font-semibold shadow-inner">
-                <Target size={14} className="text-blue-400" aria-hidden="true" />
-                <span className="font-mono">{deckId}</span>
+              <div className="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center gap-1.5 text-zinc-300 text-xs">
+                <span className="text-zinc-500 font-mono">deck:</span>
+                <span className="font-mono text-zinc-200 font-medium">{deckId}</span>
               </div>
               <Link
                 href={`/${validLang}/records`}

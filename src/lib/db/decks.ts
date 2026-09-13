@@ -382,3 +382,54 @@ export async function importMultipleJsonToLocalDb(
     results,
   }
 }
+
+/**
+ * Update title and series of an existing local deck in IndexedDB
+ */
+export async function updateLocalDeckMetadata(
+  deckId: string,
+  updates: { title: string; series?: string | null }
+): Promise<boolean> {
+  if (typeof window === "undefined") return false
+  const trimmedTitle = updates.title.trim()
+  if (!trimmedTitle) return false
+
+  const trimmedSeries = updates.series !== undefined
+    ? (updates.series?.trim() || null)
+    : undefined
+
+  try {
+    const db = await openDB()
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("decks", "readwrite")
+      const store = tx.objectStore("decks")
+      const getReq = store.get(deckId)
+
+      getReq.onsuccess = () => {
+        if (!getReq.result) {
+          return resolve(false)
+        }
+
+        const existing = getReq.result as Record<string, unknown>
+        existing.title = trimmedTitle
+        if (trimmedSeries !== undefined) {
+          existing.series = trimmedSeries
+        }
+
+        const putReq = store.put(existing)
+        putReq.onsuccess = () => {
+          notifyLocalDbChange("deck_updated")
+          resolve(true)
+        }
+        putReq.onerror = () => reject(putReq.error)
+      }
+
+      getReq.onerror = () => reject(getReq.error)
+      tx.onerror = () => reject(tx.error)
+    })
+  } catch (err) {
+    console.error("Failed to update local deck metadata:", err)
+    return false
+  }
+}
+

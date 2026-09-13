@@ -69,6 +69,11 @@ export interface Translations {
     manageDecks: string;
     loadingSamples: string;
     alreadyHaveJson: string;
+    quickStartSampleTitle: string;
+    quickStartSampleDesc: string;
+    quickStartCustomTitle: string;
+    quickStartCustomDesc: string;
+    clearSearch: string;
     sampleDecksAlreadyAdded: string;
     sampleDecksLoadFailed: string;
     clickToStudy: string;
@@ -167,6 +172,13 @@ export interface Translations {
     sortBy: (column: string) => string;
     schemaLabel: string;
     browseFiles: string;
+    editDeck: string;
+    editDeckTitle: string;
+    editDeckSeries: string;
+    editDeckSeriesPlaceholder: string;
+    deckTitleRequired: string;
+    deckUpdateSuccess: string;
+    saveChanges: string;
   };
   quiz: {
     askAi: string;

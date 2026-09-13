@@ -13,6 +13,12 @@
       "skillPath": "skills/taste-skill/SKILL.md",
       "computedHash": "6d838b246d0e35d0b53f4f23f98ba7a1dd561937e64f7d0c7553b0928e376c3e"
     },
+    "empty-state": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/empty-state/SKILL.md",
+      "computedHash": "90a8a8c06bcaa0457391070d70d9f53e6863ddd6942a2cc5d1350a5dea913724"
+    },
     "keyboard": {
       "source": "mgifford/accessibility-skills",
       "sourceType": "github",

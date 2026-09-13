@@ -7,7 +7,7 @@ import type { CardData } from "@/types/card"
 import type { Lang } from "@/i18n/types"
 import { useT } from "@/hooks/useT"
 import ExamResultView from "@/components/cards/ExamResultView"
-import { Trophy, ArrowLeft, Calendar, FileText } from "lucide-react"
+import { ArrowLeft, Calendar, FileText } from "lucide-react"
 import Link from "next/link"
 
 interface LocalExamResultDetailProps {
@@ -93,11 +93,8 @@ export default function LocalExamResultDetail({ examId, lang }: LocalExamResultD
 
   if (!record) {
     return (
-      <main className="flex-1 flex flex-col items-center justify-center min-h-125 w-full p-4">
-        <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center mb-4 text-zinc-500">
-          <Trophy size={24} aria-hidden="true" />
-        </div>
-        <h3 className="text-lg font-bold text-zinc-300 mb-2">{t.records.empty}</h3>
+      <main className="flex-1 flex flex-col items-center justify-center min-h-100 w-full p-4 text-center">
+        <h3 className="text-lg font-bold text-zinc-200 mb-2">{t.records.empty}</h3>
         <Link
           href={`/${lang}/records`}
           className="mt-4 px-5 py-2 btn-secondary rounded-xl text-xs font-semibold"
@@ -110,14 +107,11 @@ export default function LocalExamResultDetail({ examId, lang }: LocalExamResultD
 
   if (playingCards.length === 0) {
     return (
-      <main className="flex-1 flex flex-col items-center justify-center min-h-125 w-full p-4">
-        <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center mb-4 text-zinc-500">
-          <ArrowLeft size={20} aria-hidden="true" />
-        </div>
-        <h3 className="text-lg font-bold text-zinc-300 mb-2">
+      <main className="flex-1 flex flex-col items-center justify-center min-h-100 w-full p-4 text-center">
+        <h3 className="text-lg font-bold text-zinc-200 mb-2">
           {t.records.detailsNotAvailable}
         </h3>
-        <p className="text-zinc-500 mb-6 max-w-md text-center text-xs leading-relaxed font-normal">
+        <p className="text-zinc-400 mb-6 max-w-md text-center text-xs leading-relaxed font-normal">
           {t.records.legacyRecordDesc}
         </p>
         <Link
