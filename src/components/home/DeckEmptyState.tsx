@@ -6,7 +6,7 @@ import {
   ArrowRight,
   FileText,
   Brain,
-  FolderKanban,
+  Database,
   Library
 } from "lucide-react"
 import { useT } from "@/hooks/useT"
@@ -110,7 +110,7 @@ export default function DeckEmptyState({
               href={`/${lang}/data-management`}
               className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors inline-flex items-center gap-1.5"
             >
-              <FolderKanban size={13} aria-hidden="true" />
+              <Database size={13} aria-hidden="true" />
               <span>{t.home.alreadyHaveJson}</span>
             </Link>
           </div>

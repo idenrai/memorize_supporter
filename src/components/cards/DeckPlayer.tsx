@@ -244,7 +244,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
                 onNext={handleNext}
               />
             )}
-            {currentCard.type === 'practice_quiz' && (
+            {(currentCard.type === 'practice_quiz' || currentCard.type === 'multiple_choice_quiz') && (
               <PracticeQuizCard 
                 content={currentCard.content}
                 onNext={handleNext}

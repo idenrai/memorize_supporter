@@ -1,6 +1,7 @@
 import { openDB, notifyLocalDbChange, generateSimpleId } from "./core"
 import { DeckSchema } from "@/schemas"
 import type { RawDbCard } from "../card-parser"
+import { isQuizType } from "@/types/card"
 import { z } from "zod"
 
 export type { RawDbCard }
@@ -240,7 +241,7 @@ export async function importJsonToLocalDb(
           meaning: item.meaning || "",
           example: item.example || ""
         })
-      } else if (cardType === "practice_quiz" || item.question) {
+      } else if (isQuizType(cardType) || item.question) {
         stableId = stableId || `${deckId}_quiz_${generateSimpleId(item.question || String(index))}`
         serializedContent = JSON.stringify({
           category: item.category || "",

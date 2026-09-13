@@ -11,11 +11,11 @@
 
 ## 🇰🇷 한국어
 
-**Memorize Supporter**는 핀포인트 팁, 4지선다형 퀴즈, 영단어 등 다양한 유형의 지식을 효과적으로 학습하고 오래 기억할 수 있도록 돕는 범용 인지 과학 기반 암기 지원 웹 애플리케이션입니다.
+**Memorize Supporter**는 플래시카드, 객관식 퀴즈, 영단어 등 다양한 유형의 지식을 효과적으로 학습하고 오래 기억할 수 있도록 돕는 범용 인지 과학 기반 암기 지원 웹 애플리케이션입니다.
 
 ### ✨ 주요 기능
 
-- **다양한 학습 모드**: 플래시카드(Flashcards), 4지선다형 연습 퀴즈(Practice Quiz), 단어장(Vocabulary) 지원
+- **다양한 학습 모드**: 플래시카드(Flashcards), 객관식 퀴즈(Multiple-Choice Quiz), 단어장(Vocabulary) 지원
 - **Active Recall & SRS (간격 반복)**: 능동적 인출 훈련 및 결과(Hard/Easy)에 따른 에빙하우스 망각 곡선 기반 자동 복습 주기 계산
 - **브라우저 로컬 저장 모드 (BYOD: Bring Your Own Data)**: 개인 소장 학습 데이터(JSON)를 드래그&드롭하여 서버 전송 없이 브라우저(IndexedDB)에만 안전하게 저장하고 학습
 - **로컬 데이터 백업/복원 및 관리 (Backup, Restore & Delete)**: 기기에 저장된 시험 기록 및 덱을 개별/일괄 삭제하고, 원클릭으로 종합 JSON 백업 파일 다운로드 및 복원(Restore)
@@ -111,7 +111,7 @@ npm run build       # Next.js Turbopack 프로덕션 빌드
 
 ### ✨ Key Features
 
-- **Multiple Study Modes**: Flashcards, Practice Quiz (4-choice questions), and Vocabulary.
+- **Multiple Study Modes**: Flashcards, Multiple-Choice Quiz, and Vocabulary.
 - **Active Recall & Spaced Repetition (SRS)**: Promotes proactive knowledge retrieval and automatically schedules optimal review intervals based on difficulty (Hard/Easy).
 - **Local-First BYOD Mode (Bring Your Own Data)**: Drag-and-drop custom study JSON files directly into browser IndexedDB without sending data to servers.
 - **On-Device Data Backup, Restore & Deletion**: Clean deletion of local decks/records and one-click JSON backup export and restoration.

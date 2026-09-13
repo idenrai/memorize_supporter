@@ -1,35 +1,48 @@
 "use client"
 
 import Link from "next/link"
-import { History, Trash2 } from "lucide-react"
-import type { Lang, Translations } from "@/i18n/types"
+import { Layers, History, Trash2, CheckSquare, Languages } from "lucide-react"
 import { useT } from "@/hooks/useT"
+import { isQuizType } from "@/types/card"
 import type { Deck } from "@/types/deck"
+import type { Lang } from "@/i18n/types"
 
-function DeckListRow({
-  deck,
-  lang,
-  t,
-  globalLimit,
-  globalIsExamMode,
-  onDelete
-}: {
+interface DeckListItemProps {
   deck: Deck
   lang: Lang
-  t: Translations
   globalLimit: number
   globalIsExamMode: boolean
   onDelete?: (deckId: string) => void
-}) {
+}
+
+function DeckListItem({
+  deck,
+  lang,
+  globalLimit,
+  globalIsExamMode,
+  onDelete
+}: DeckListItemProps) {
+  const t = useT()
+
+  const isQuiz = isQuizType(deck.type)
+  const isExamTarget = globalIsExamMode && isQuiz
+
   const typeLabel =
-    deck.type === 'practice_quiz'
+    isQuiz
       ? t.quiz.practiceQuiz
       : deck.type === 'vocabulary'
       ? t.quiz.vocabulary
       : t.quiz.flashcard
 
+  const Icon =
+    isQuiz
+      ? CheckSquare
+      : deck.type === 'vocabulary'
+      ? Languages
+      : Layers
+
   const studyUrl = `/${lang}/deck/${deck.id}?limit=${globalLimit}${
-    globalIsExamMode && deck.type === 'practice_quiz' ? '&mode=exam' : ''
+    isExamTarget ? '&mode=exam' : ''
   }`
 
   return (
@@ -38,8 +51,8 @@ function DeckListRow({
         href={studyUrl}
         className="flex items-center gap-4 flex-1 overflow-hidden min-w-0 group rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500"
       >
-        <div className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-800 text-indigo-400 font-bold shrink-0 border border-zinc-700/60">
-          {deck.type.charAt(0).toUpperCase()}
+        <div className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-800 text-indigo-400 shrink-0 border border-zinc-700/60 shadow-xs">
+          <Icon size={18} aria-hidden="true" />
         </div>
         <div className="flex flex-col truncate min-w-0 flex-1">
           <span className="font-bold text-zinc-100 truncate text-base sm:text-lg block group-hover:text-indigo-400 transition-colors">
@@ -79,9 +92,13 @@ function DeckListRow({
           href={studyUrl}
           tabIndex={-1}
           aria-hidden="true"
-          className="px-4 py-1.5 rounded-lg text-xs font-semibold btn-primary select-none"
+          className={`px-4 py-1.5 rounded-lg text-xs font-semibold select-none transition-colors ${
+            isExamTarget
+              ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs font-bold'
+              : 'btn-primary'
+          }`}
         >
-          {t.common.study}
+          {isExamTarget ? t.common.takeExam : t.common.study}
         </Link>
       </div>
     </div>
@@ -101,16 +118,13 @@ export default function DeckList({
   globalIsExamMode: boolean
   onDelete?: (deckId: string) => void
 }) {
-  const t = useT()
-  
   return (
     <div className="flex flex-col gap-3">
       {decks.map((deck) => (
-        <DeckListRow
+        <DeckListItem
           key={deck.id}
           deck={deck}
           lang={lang} 
-          t={t} 
           globalLimit={globalLimit}
           globalIsExamMode={globalIsExamMode}
           onDelete={onDelete}

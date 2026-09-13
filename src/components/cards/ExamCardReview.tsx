@@ -141,7 +141,7 @@ export default function ExamCardReview({
             transition={{ duration: 0.2 }}
             className="w-full flex justify-center mt-2 sm:mt-4 mb-6"
           >
-            {reviewingCard.type === "practice_quiz" && (
+            {(reviewingCard.type === "practice_quiz" || reviewingCard.type === "multiple_choice_quiz") && (
               <PracticeQuizCard
                 content={reviewingCard.content}
                 mode="review"

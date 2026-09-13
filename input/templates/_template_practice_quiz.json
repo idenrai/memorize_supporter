@@ -1,7 +1,7 @@
 {
   "title": "Enter the deck title here",
   "description": "Optional: Brief description of this quiz deck",
-  "type": "practice_quiz",
+  "type": "multiple_choice_quiz",
   "series": "Optional: e.g., 'AWS SAP-C02', 'JLPT N1'",
   "cards": [
     {

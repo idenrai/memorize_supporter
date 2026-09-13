@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Layers, History, Trash2, ArrowRight } from "lucide-react"
 import { useT } from "@/hooks/useT"
+import { isQuizType } from "@/types/card"
 
 interface DeckCardProps {
   deck: string
@@ -31,15 +32,18 @@ export default function DeckCard({
 }: DeckCardProps) {
   const t = useT()
 
+  const isQuiz = isQuizType(type)
+  const isExamTarget = globalIsExamMode && isQuiz
+
   const typeLabel =
-    type === 'practice_quiz'
+    isQuiz
       ? t.quiz.practiceQuiz
       : type === 'vocabulary'
       ? t.quiz.vocabulary
       : t.quiz.flashcard
 
   const studyUrl = `/${lang}/deck/${deck}?limit=${globalLimit}${
-    globalIsExamMode && type === 'practice_quiz' ? '&mode=exam' : ''
+    isExamTarget ? '&mode=exam' : ''
   }`
 
   return (
@@ -105,10 +109,14 @@ export default function DeckCard({
       {/* Bottom Action Footer (Visual indicator, clicks bubbled via card) */}
       <div className="pt-4 mt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs pointer-events-none">
         <span
-          className="inline-flex items-center gap-1.5 font-semibold text-indigo-400 group-hover:text-indigo-300 transition-colors"
+          className={`inline-flex items-center gap-1.5 font-semibold transition-colors ${
+            isExamTarget
+              ? 'text-indigo-400 group-hover:text-indigo-200'
+              : 'text-indigo-400 group-hover:text-indigo-300'
+          }`}
           aria-hidden="true"
         >
-          <span>{t.home.clickToStudy}</span>
+          <span>{isExamTarget ? t.home.clickToStartExam : t.home.clickToStudy}</span>
           <ArrowRight size={13} className="transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
         </span>
       </div>

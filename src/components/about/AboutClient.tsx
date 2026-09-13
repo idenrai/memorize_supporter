@@ -54,11 +54,6 @@ export default function AboutClient({ lang }: AboutClientProps) {
       title: t.about.feat5Title,
       desc: t.about.feat5Desc,
     },
-    {
-      id: 'tactile',
-      title: t.about.feat6Title,
-      desc: t.about.feat6Desc,
-    },
   ]
 
   const keyboardShortcuts = [
@@ -210,44 +205,7 @@ export default function AboutClient({ lang }: AboutClientProps) {
         </div>
       </section>
 
-      {/* 2. Key Features Grid */}
-      <section aria-labelledby="about-features-title" className="space-y-4">
-        <div>
-          <h2
-            id="about-features-title"
-            className="text-lg sm:text-xl font-extrabold tracking-tight text-zinc-100"
-          >
-            {t.about.featuresTitle}
-          </h2>
-          <p className="mt-1 text-xs text-zinc-400">
-            {t.home.subtitle}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featureCards.map((feat, idx) => (
-            <div
-              key={feat.id}
-              className="card-precision p-5 sm:p-6 flex flex-col justify-between hover:border-zinc-700 transition-colors"
-            >
-              <div>
-                <div className="text-2xs font-mono font-semibold text-indigo-400 mb-2.5 tracking-wider">
-                  0{idx + 1}
-                </div>
-
-                <h3 className="text-sm font-bold text-zinc-100 mb-2 tracking-tight">
-                  {feat.title}
-                </h3>
-                <p className="text-xs text-zinc-400 leading-relaxed font-normal">
-                  {feat.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 3. The Two Core Pillars: Cognitive Architecture & Zero-Server Local-First */}
+      {/* 2. The Two Core Pillars: Cognitive Architecture & Zero-Server Local-First */}
       <section aria-label={t.about.corePhilosophiesTitle} className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Pillar 1: Cognitive Science */}
         <div className="card-precision p-6 sm:p-8 flex flex-col justify-between hover:border-zinc-700 transition-colors">
@@ -297,6 +255,43 @@ export default function AboutClient({ lang }: AboutClientProps) {
               {t.about.pillar2Tag3}
             </span>
           </div>
+        </div>
+      </section>
+
+      {/* 3. Core Capabilities */}
+      <section aria-labelledby="about-features-title" className="space-y-4">
+        <div>
+          <h2
+            id="about-features-title"
+            className="text-lg sm:text-xl font-extrabold tracking-tight text-zinc-100"
+          >
+            {t.about.featuresTitle}
+          </h2>
+          <p className="mt-1 text-xs text-zinc-400">
+            {t.home.subtitle}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {featureCards.map((feat, idx) => (
+            <div
+              key={feat.id}
+              className="card-precision p-5 sm:p-6 flex flex-col justify-between hover:border-zinc-700 transition-colors"
+            >
+              <div>
+                <div className="text-2xs font-mono font-semibold text-indigo-400 mb-2.5 tracking-wider">
+                  0{idx + 1}
+                </div>
+
+                <h3 className="text-sm font-bold text-zinc-100 mb-2 tracking-tight">
+                  {feat.title}
+                </h3>
+                <p className="text-xs text-zinc-400 leading-relaxed font-normal">
+                  {feat.desc}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

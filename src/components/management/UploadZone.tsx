@@ -163,74 +163,82 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
         className="hidden"
       />
 
-      {/* Main Drag & Drop Zone */}
+      {/* Precision Import Action Panel */}
       <div
-        role="button"
-        tabIndex={0}
+        role="region"
         aria-label={t.management.uploadDropzoneTitle}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault()
-            fileInputRef.current?.click()
-          }
-        }}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onClick={() => fileInputRef.current?.click()}
-        className={`group relative flex flex-col items-center justify-center text-center cursor-pointer p-6 sm:p-8 rounded-2xl border border-dashed transition-all duration-150 ${
+        className={`card-precision p-5 sm:p-6 transition-all duration-200 ${
           isDragging
-            ? "border-indigo-500 bg-indigo-500/5 ring-1 ring-indigo-500/30"
-            : "border-zinc-800 hover:border-zinc-700 bg-zinc-950/50 hover:bg-zinc-900/60"
-        } focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950`}
+            ? "border-indigo-500 bg-indigo-500/5 ring-1 ring-indigo-500/30 shadow-lg shadow-indigo-500/5"
+            : "hover:border-zinc-700 bg-zinc-900/70"
+        }`}
       >
-        <div className="relative z-10 flex flex-col items-center">
-          <div className="w-10 h-10 bg-zinc-900 text-zinc-400 group-hover:text-indigo-400 rounded-xl flex items-center justify-center mb-3 border border-zinc-800 group-hover:border-zinc-700 transition-colors shadow-xs">
-            {isImporting ? (
-              <div className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <Upload size={18} aria-hidden="true" />
-            )}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-zinc-800/90 border border-zinc-700/70 text-indigo-400 flex items-center justify-center shrink-0 shadow-xs">
+              {isImporting ? (
+                <div className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Upload size={18} aria-hidden="true" />
+              )}
+            </div>
+
+            <div>
+              <h3 className="text-sm sm:text-base font-bold text-zinc-100 tracking-tight">
+                {isImporting
+                  ? (progress && progress.total > 1
+                      ? t.management.uploadingProgress(progress.current, progress.total)
+                      : t.management.uploading)
+                  : t.management.uploadDropzoneTitle}
+              </h3>
+              <p className="text-xs text-zinc-400 mt-0.5 leading-relaxed font-normal">
+                {t.management.uploadDropzoneDesc}
+              </p>
+            </div>
           </div>
 
-          <h3 className="text-sm sm:text-base font-bold text-zinc-100 mb-1">
-            {isImporting
-              ? (progress && progress.total > 1
-                  ? t.management.uploadingProgress(progress.current, progress.total)
-                  : t.management.uploading)
-              : t.management.uploadDropzoneTitle}
-          </h3>
-
-          <p className="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto leading-relaxed mb-4 font-normal">
-            {t.management.uploadDropzoneDesc}
-          </p>
-
-          {/* Progress Bar during import */}
-          {isImporting && progress && (
-            <div
-              role="progressbar"
-              aria-valuenow={Math.round((progress.current / progress.total) * 100)}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={t.management.uploadingProgress(progress.current, progress.total)}
-              className="w-full max-w-xs h-1.5 bg-zinc-800 rounded-full overflow-hidden mb-4"
+          <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="btn-primary text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-2 shadow-xs cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500"
             >
-              <div
-                className="h-full bg-indigo-500 transition-all duration-200"
-                style={{ width: `${(progress.current / progress.total) * 100}%` }}
-              />
-            </div>
-          )}
+              <Upload size={14} aria-hidden="true" />
+              <span>{t.management.browseFiles}</span>
+            </button>
+          </div>
+        </div>
 
-          <div className="flex items-center justify-center flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 text-2xs text-zinc-400 font-mono bg-zinc-900 px-2.5 py-1 rounded-md border border-zinc-800">
-              <span className="text-indigo-400 font-bold">.JSON</span>
-              <span>{t.management.schemaLabel}</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 text-2xs text-zinc-400 font-medium bg-zinc-900 px-2.5 py-1 rounded-md border border-zinc-800">
-              <CheckCircle2 size={12} className="text-emerald-400" aria-hidden="true" />
-              {t.management.privacyBadge}
-            </span>
+        {/* Progress Bar during import */}
+        {isImporting && progress && (
+          <div
+            role="progressbar"
+            aria-valuenow={Math.round((progress.current / progress.total) * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={t.management.uploadingProgress(progress.current, progress.total)}
+            className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden mt-4"
+          >
+            <div
+              className="h-full bg-indigo-500 transition-all duration-200"
+              style={{ width: `${(progress.current / progress.total) * 100}%` }}
+            />
+          </div>
+        )}
+
+        {/* Integrated Metadata Footer */}
+        <div className="mt-4 pt-3.5 border-t border-zinc-800/80 flex items-center justify-between flex-wrap gap-2 text-2xs">
+          <div className="inline-flex items-center gap-1.5 font-mono text-zinc-400 bg-zinc-900/90 px-2 py-0.5 rounded-md border border-zinc-800">
+            <span className="text-indigo-400 font-bold">.JSON</span>
+            <span>{t.management.schemaLabel}</span>
+          </div>
+
+          <div className="inline-flex items-center gap-1.5 text-zinc-400 font-medium">
+            <CheckCircle2 size={12} className="text-emerald-400" aria-hidden="true" />
+            <span>{t.management.privacyBadge}</span>
           </div>
         </div>
       </div>

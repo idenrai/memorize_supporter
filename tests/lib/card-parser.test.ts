@@ -1,9 +1,27 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { getCardTitle, parseCardData, parseCardDataList } from "../../src/lib/card-parser.ts";
-import type { CardData } from "../../src/types/card.ts";
+import { type CardData, isQuizType } from "../../src/types/card.ts";
 
 describe("card-parser utility", () => {
+  describe("isQuizType helper", () => {
+    it("returns true for supported quiz types", () => {
+      assert.strictEqual(isQuizType("multiple_choice_quiz"), true);
+      assert.strictEqual(isQuizType("practice_quiz"), true);
+      assert.strictEqual(isQuizType("MULTIPLE_CHOICE_QUIZ"), true);
+      assert.strictEqual(isQuizType("PRACTICE_QUIZ"), true);
+    });
+
+    it("returns false for non-quiz types or falsy inputs", () => {
+      assert.strictEqual(isQuizType("multiple_choice"), false);
+      assert.strictEqual(isQuizType("quiz"), false);
+      assert.strictEqual(isQuizType("flashcard"), false);
+      assert.strictEqual(isQuizType("vocabulary"), false);
+      assert.strictEqual(isQuizType(null), false);
+      assert.strictEqual(isQuizType(undefined), false);
+      assert.strictEqual(isQuizType(""), false);
+    });
+  });
   describe("getCardTitle", () => {
     it("extracts question for practice_quiz card", () => {
       const card: CardData = {
@@ -16,6 +34,19 @@ describe("card-parser utility", () => {
         },
       };
       assert.strictEqual(getCardTitle(card), "What is TypeScript?");
+    });
+
+    it("extracts question for multiple_choice_quiz card", () => {
+      const card: CardData = {
+        id: "1-mc",
+        type: "multiple_choice_quiz",
+        content: {
+          question: "What is React?",
+          options: ["A UI library", "A database"],
+          answers: [0],
+        },
+      };
+      assert.strictEqual(getCardTitle(card), "What is React?");
     });
 
     it("extracts word for vocabulary card", () => {
@@ -65,6 +96,26 @@ describe("card-parser utility", () => {
       if (result && result.type === "flashcard") {
         assert.strictEqual(result.content.front, "Q");
       }
+    });
+
+    it("parses valid JSON practice_quiz and multiple_choice_quiz from DB", () => {
+      const rawPractice = {
+        id: "q1",
+        type: "practice_quiz",
+        content: JSON.stringify({ question: "PQ?", options: ["A", "B"], answers: [0] }),
+      };
+      const resultPractice = parseCardData(rawPractice);
+      assert.notStrictEqual(resultPractice, null);
+      assert.strictEqual(resultPractice?.type, "practice_quiz");
+
+      const rawMultipleChoice = {
+        id: "q2",
+        type: "multiple_choice_quiz",
+        content: JSON.stringify({ question: "MCQ?", options: ["A", "B"], answers: [1] }),
+      };
+      const resultMC = parseCardData(rawMultipleChoice);
+      assert.notStrictEqual(resultMC, null);
+      assert.strictEqual(resultMC?.type, "multiple_choice_quiz");
     });
 
     it("skips invalid card in parseCardDataList", () => {

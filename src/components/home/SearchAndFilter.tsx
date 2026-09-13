@@ -58,17 +58,17 @@ export default function SearchAndFilter({
         <div className="flex flex-wrap items-center justify-between md:justify-end gap-2 shrink-0">
           {/* Card Limit Select */}
           <div className="flex items-center gap-1.5 bg-zinc-900/80 rounded-xl px-3 py-1 border border-zinc-800 text-xs text-zinc-400">
-            <span className="font-medium hidden sm:inline">{t.home.studyLimit}</span>
+            <span className="font-medium hidden sm:inline">{globalIsExamMode ? t.home.examLimit : t.home.studyLimit}</span>
             <CustomSelect
               value={globalLimit}
               onChange={setGlobalLimit}
-              ariaLabel={t.home.studyLimit}
+              ariaLabel={globalIsExamMode ? t.home.examLimit : t.home.studyLimit}
               options={[
                 { label: "10", value: 10 },
                 { label: "20", value: 20 },
                 { label: "50", value: 50 },
                 { label: "100", value: 100 },
-                { label: t.home.allCards, value: 0 }
+                { label: globalIsExamMode ? t.home.allQuestions : t.home.allCards, value: 0 }
               ]}
             />
           </div>
