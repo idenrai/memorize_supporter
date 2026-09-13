@@ -5,15 +5,9 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
-  Brain,
   CheckCircle2,
-  Database,
   Keyboard,
-  Layers,
   RotateCcw,
-  ShieldCheck,
-  Sparkles,
-  Trophy,
   Cpu,
 } from 'lucide-react'
 import type { Lang } from '@/i18n/types'
@@ -39,40 +33,34 @@ export default function AboutClient({ lang }: AboutClientProps) {
 
   const featureCards = [
     {
-      badge: t.about.feat1Badge,
+      id: 'multimodal',
       title: t.about.feat1Title,
       desc: t.about.feat1Desc,
-      icon: Layers,
     },
     {
-      badge: t.about.feat2Badge,
+      id: 'exam',
       title: t.about.feat2Title,
       desc: t.about.feat2Desc,
-      icon: Trophy,
     },
     {
-      badge: t.about.feat3Badge,
+      id: 'retry',
       title: t.about.feat3Title,
       desc: t.about.feat3Desc,
-      icon: RotateCcw,
     },
     {
-      badge: t.about.feat4Badge,
+      id: 'prep',
       title: t.about.feat4Title,
       desc: t.about.feat4Desc,
-      icon: Sparkles,
     },
     {
-      badge: t.about.feat5Badge,
+      id: 'backup',
       title: t.about.feat5Title,
       desc: t.about.feat5Desc,
-      icon: Database,
     },
     {
-      badge: t.about.feat6Badge,
+      id: 'tactile',
       title: t.about.feat6Title,
       desc: t.about.feat6Desc,
-      icon: Keyboard,
     },
   ]
 
@@ -114,11 +102,6 @@ export default function AboutClient({ lang }: AboutClientProps) {
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
           {/* Left Column: Storytelling & Hero CTA */}
           <div className="lg:col-span-7">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1 text-2xs font-semibold tracking-wide text-indigo-400">
-              <Sparkles size={13} className="text-indigo-400" aria-hidden="true" />
-              <span>{t.about.heroBadge}</span>
-            </div>
-
             <div className="mb-4 flex items-center gap-4">
               <BrandLogo size="lg" animated className="shrink-0 rounded-xl border border-zinc-800 bg-zinc-900 p-1.5 shadow-xs" />
               <div>
@@ -245,33 +228,25 @@ export default function AboutClient({ lang }: AboutClientProps) {
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featureCards.map((feat) => {
-            const IconComp = feat.icon
-            return (
-              <div
-                key={feat.badge}
-                className="card-precision p-5 sm:p-6 flex flex-col justify-between hover:border-zinc-700 transition-colors"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="rounded-md bg-zinc-900 px-2 py-0.5 text-3xs font-semibold text-zinc-400 border border-zinc-800">
-                      {feat.badge}
-                    </span>
-                    <div className="size-7 rounded-lg flex items-center justify-center bg-zinc-900 border border-zinc-800 text-indigo-400">
-                      <IconComp size={14} aria-hidden="true" />
-                    </div>
-                  </div>
-
-                  <h3 className="text-sm font-bold text-zinc-100 mb-1.5">
-                    {feat.title}
-                  </h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed font-normal">
-                    {feat.desc}
-                  </p>
+          {featureCards.map((feat, idx) => (
+            <div
+              key={feat.id}
+              className="card-precision p-5 sm:p-6 flex flex-col justify-between hover:border-zinc-700 transition-colors"
+            >
+              <div>
+                <div className="text-2xs font-mono font-semibold text-indigo-400 mb-2.5 tracking-wider">
+                  0{idx + 1}
                 </div>
+
+                <h3 className="text-sm font-bold text-zinc-100 mb-2 tracking-tight">
+                  {feat.title}
+                </h3>
+                <p className="text-xs text-zinc-400 leading-relaxed font-normal">
+                  {feat.desc}
+                </p>
               </div>
-            )
-          })}
+            </div>
+          ))}
         </div>
       </section>
 
@@ -280,11 +255,6 @@ export default function AboutClient({ lang }: AboutClientProps) {
         {/* Pillar 1: Cognitive Science */}
         <div className="card-precision p-6 sm:p-8 flex flex-col justify-between hover:border-zinc-700 transition-colors">
           <div>
-            <div className="mb-4 inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-3 py-1 text-2xs font-semibold text-indigo-400 border border-zinc-800">
-              <Brain size={13} className="text-indigo-400" aria-hidden="true" />
-              <span>{t.about.pillar1Badge}</span>
-            </div>
-
             <h3 className="text-base sm:text-lg font-bold text-zinc-100 mb-2">
               {t.about.cognitiveTitle}
             </h3>
@@ -310,11 +280,6 @@ export default function AboutClient({ lang }: AboutClientProps) {
         {/* Pillar 2: Local-First Privacy */}
         <div className="card-precision p-6 sm:p-8 flex flex-col justify-between hover:border-zinc-700 transition-colors">
           <div>
-            <div className="mb-4 inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-3 py-1 text-2xs font-semibold text-emerald-400 border border-zinc-800">
-              <ShieldCheck size={13} className="text-emerald-400" aria-hidden="true" />
-              <span>{t.about.pillar2Badge}</span>
-            </div>
-
             <h3 className="text-base sm:text-lg font-bold text-zinc-100 mb-2">
               {t.about.privacyTitle}
             </h3>
