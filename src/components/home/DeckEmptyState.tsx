@@ -1,14 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import {
-  Sparkles,
-  ArrowRight,
-  FileText,
-  Brain,
-  Database,
-  Library
-} from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import type { Lang } from "@/i18n/types"
 
@@ -26,93 +19,82 @@ export default function DeckEmptyState({
   const t = useT()
 
   return (
-    <div className="w-full flex flex-col items-center">
-      <div className="relative text-center p-8 sm:p-12 w-full card-precision overflow-hidden">
-        <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
-          {/* App Badge */}
-          <div className="w-14 h-14 bg-zinc-800 border border-zinc-700/80 text-indigo-400 rounded-2xl flex items-center justify-center mb-5 shadow-xs">
-            <Library size={26} aria-hidden="true" />
+    <div className="w-full">
+      <div className="card-precision p-6 sm:p-8 md:p-10 w-full">
+        <div className="max-w-3xl mx-auto">
+          {/* Header */}
+          <div className="text-center sm:text-left mb-8 border-b border-zinc-800/80 pb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-zinc-100 tracking-tight mb-2 break-keep">
+              {t.home.welcomeTitle}
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-2xl break-keep font-normal">
+              {t.home.welcomeDesc}
+            </p>
           </div>
 
-          {/* Title & Desc */}
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-zinc-100 mb-2 tracking-tight break-keep">
-            {t.home.welcomeTitle}
-          </h3>
-          <p className="text-sm text-zinc-400 mb-8 max-w-xl leading-relaxed break-keep font-normal">
-            {t.home.welcomeDesc}
-          </p>
-
-          {/* 3-Step Visual Process Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 w-full mb-8 text-left">
-            {/* Step 1 */}
-            <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-4 transition-colors">
-              <div className="text-2xs font-mono font-bold text-zinc-500 mb-1.5">01</div>
-              <div className="flex items-center gap-2 font-semibold text-zinc-200 text-sm mb-1">
-                <FileText size={15} className="text-indigo-400 shrink-0" aria-hidden="true" />
-                <span>{t.home.step1Title}</span>
+          {/* Quick Start 2-Column Action Tiles */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 w-full">
+            {/* Tile 1: Quick Sample Decks */}
+            <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-5 sm:p-6 flex flex-col justify-between transition-colors">
+              <div>
+                <span className="inline-block text-2xs font-mono font-semibold text-zinc-400 uppercase tracking-wider mb-2">
+                  Quick Start
+                </span>
+                <h3 className="text-base font-bold text-zinc-100 mb-1.5 tracking-tight">
+                  {t.home.quickStartSampleTitle}
+                </h3>
+                <p className="text-xs text-zinc-400 leading-relaxed break-keep font-normal mb-5">
+                  {t.home.quickStartSampleDesc}
+                </p>
               </div>
-              <p className="text-xs text-zinc-400 leading-relaxed break-keep font-normal">
-                {t.home.step1Desc}
-              </p>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={onTasteSamples}
+                  disabled={isLoadingSamples}
+                  className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold btn-primary flex items-center justify-center gap-2"
+                >
+                  {isLoadingSamples && (
+                    <div className="w-3.5 h-3.5 border-2 border-zinc-100 border-t-transparent rounded-full animate-spin" />
+                  )}
+                  <span>
+                    {isLoadingSamples ? t.home.loadingSamples : t.home.trySampleDecks}
+                  </span>
+                </button>
+              </div>
             </div>
 
-            {/* Step 2 */}
-            <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-4 transition-colors">
-              <div className="text-2xs font-mono font-bold text-zinc-500 mb-1.5">02</div>
-              <div className="flex items-center gap-2 font-semibold text-zinc-200 text-sm mb-1">
-                <Sparkles size={15} className="text-indigo-400 shrink-0" aria-hidden="true" />
-                <span>{t.home.step2Title}</span>
+            {/* Tile 2: Create Custom Decks */}
+            <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-5 sm:p-6 flex flex-col justify-between transition-colors">
+              <div>
+                <span className="inline-block text-2xs font-mono font-semibold text-zinc-400 uppercase tracking-wider mb-2">
+                  Custom Deck
+                </span>
+                <h3 className="text-base font-bold text-zinc-100 mb-1.5 tracking-tight">
+                  {t.home.quickStartCustomTitle}
+                </h3>
+                <p className="text-xs text-zinc-400 leading-relaxed break-keep font-normal mb-5">
+                  {t.home.quickStartCustomDesc}
+                </p>
               </div>
-              <p className="text-xs text-zinc-400 leading-relaxed break-keep font-normal">
-                {t.home.step2Desc}
-              </p>
-            </div>
 
-            {/* Step 3 */}
-            <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-4 transition-colors">
-              <div className="text-2xs font-mono font-bold text-zinc-500 mb-1.5">03</div>
-              <div className="flex items-center gap-2 font-semibold text-zinc-200 text-sm mb-1">
-                <Brain size={15} className="text-indigo-400 shrink-0" aria-hidden="true" />
-                <span>{t.home.step3Title}</span>
+              <div className="flex flex-col gap-2.5">
+                <Link
+                  href={`/${lang}/data-preparation`}
+                  className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium btn-secondary flex items-center justify-center gap-1.5"
+                >
+                  <span>{t.home.goToDataPrep}</span>
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+                <Link
+                  href={`/${lang}/data-management`}
+                  className="text-2xs sm:text-xs text-zinc-500 hover:text-zinc-300 transition-colors text-center py-1"
+                >
+                  {t.home.alreadyHaveJson}
+                </Link>
               </div>
-              <p className="text-xs text-zinc-400 leading-relaxed break-keep font-normal">
-                {t.home.step3Desc}
-              </p>
             </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
-            <Link
-              href={`/${lang}/data-preparation`}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold btn-primary gap-2"
-            >
-              <span>{t.home.goToDataPrep}</span>
-              <ArrowRight size={14} aria-hidden="true" />
-            </Link>
-
-            <button
-              type="button"
-              onClick={onTasteSamples}
-              disabled={isLoadingSamples}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium btn-secondary gap-2"
-            >
-              <Sparkles size={14} className="text-indigo-400" aria-hidden="true" />
-              <span>
-                {isLoadingSamples ? t.home.loadingSamples : t.home.trySampleDecks}
-              </span>
-            </button>
-          </div>
-
-          {/* Secondary Navigation */}
-          <div className="mt-6">
-            <Link
-              href={`/${lang}/data-management`}
-              className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors inline-flex items-center gap-1.5"
-            >
-              <Database size={13} aria-hidden="true" />
-              <span>{t.home.alreadyHaveJson}</span>
-            </Link>
           </div>
         </div>
       </div>

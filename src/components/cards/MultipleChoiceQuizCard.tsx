@@ -322,21 +322,18 @@ export default function MultipleChoiceQuizCard({
                 let badgeText: string | null = null
                 let badgeStyle = ""
 
-                if (isAnswer && isUserSelected) {
-                  cardStyle = "border-emerald-500/80 bg-emerald-950/30 text-emerald-100 shadow-sm shadow-emerald-950/20"
-                  iconContainer = "border-emerald-500 bg-emerald-500 text-white"
-                  badgeText = `${t.quiz.correctBadge} (${t.quiz.yourChoiceBadge})`
-                  badgeStyle = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
-                } else if (isAnswer && !isUserSelected) {
-                  cardStyle = "border-emerald-600/70 bg-emerald-950/20 text-emerald-200"
-                  iconContainer = "border-emerald-500 text-emerald-400 bg-emerald-500/10"
+                if (isAnswer) {
+                  cardStyle = isUserSelected
+                    ? "border-emerald-500/80 bg-emerald-950/30 text-emerald-100 shadow-sm shadow-emerald-950/20"
+                    : "border-emerald-600/70 bg-emerald-950/20 text-emerald-200"
+                  iconContainer = isUserSelected
+                    ? "border-emerald-500 bg-emerald-500 text-white shadow-xs"
+                    : "border-emerald-500/80 text-emerald-400 bg-emerald-950/40 font-bold"
                   badgeText = t.quiz.correctBadge
                   badgeStyle = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
-                } else if (!isAnswer && isUserSelected) {
+                } else if (isUserSelected) {
                   cardStyle = "border-rose-500/80 bg-rose-950/30 text-rose-100 shadow-sm shadow-rose-950/20"
-                  iconContainer = "border-rose-500 bg-rose-500 text-white"
-                  badgeText = t.quiz.yourChoiceIncorrectBadge
-                  badgeStyle = "bg-rose-500/20 text-rose-300 border-rose-500/30"
+                  iconContainer = "border-rose-500 bg-rose-500 text-white shadow-xs"
                 }
 
                 return (
@@ -345,12 +342,17 @@ export default function MultipleChoiceQuizCard({
                     className={`p-4 rounded-xl border transition-all flex items-center justify-between gap-3 text-sm sm:text-base font-medium ${cardStyle}`}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className={`w-6 h-6 flex items-center justify-center shrink-0 border ${isSingleChoice ? 'rounded-full' : 'rounded'} ${iconContainer}`}>
-                        {isAnswer && <CheckCircle2 size={15} aria-hidden="true" />}
-                        {!isAnswer && isUserSelected && <XCircle size={15} aria-hidden="true" />}
-                        {!isAnswer && !isUserSelected && <span className="text-xs">{i + 1}</span>}
+                      <div className={`w-6 h-6 flex items-center justify-center shrink-0 border text-xs font-semibold ${isSingleChoice ? 'rounded-full' : 'rounded-md'} ${iconContainer}`}>
+                        {isUserSelected ? (
+                          <CheckCircle2 size={14} aria-hidden="true" />
+                        ) : (
+                          <span>{i + 1}</span>
+                        )}
                       </div>
-                      <span className="whitespace-pre-wrap leading-relaxed">{formatText(opt)}</span>
+                      <span className="whitespace-pre-wrap leading-relaxed">
+                        {formatText(opt)}
+                        {isUserSelected && <span className="sr-only"> ({t.quiz.yourChoiceBadge})</span>}
+                      </span>
                     </div>
                     {badgeText && (
                       <span className={`text-xs px-2.5 py-1 rounded-full font-bold border shrink-0 tracking-wider whitespace-nowrap ${badgeStyle}`}>

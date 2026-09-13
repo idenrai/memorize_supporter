@@ -75,6 +75,7 @@ export function openDB(): Promise<IDBDatabase> {
 export type LocalDbEventType =
   | "deck_created"
   | "deck_deleted"
+  | "deck_updated"
   | "exam_saved"
   | "exam_deleted"
   | "progress_updated"

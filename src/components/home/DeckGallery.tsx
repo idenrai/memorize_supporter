@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo, useDeferredValue, useCallback, useEffect } from "react"
-import { Search } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import type { Lang } from "@/i18n/types"
 import {
@@ -247,9 +246,20 @@ export default function DeckGallery({ lang }: DeckGalleryProps) {
 
       <div className={`w-full transition-opacity duration-200 ${isStale ? "opacity-50" : "opacity-100"}`}>
         {filteredDecks.length === 0 ? (
-          <div className="text-center p-10 card-precision mt-2 w-full">
-            <Search size={28} className="text-zinc-600 mx-auto mb-3" aria-hidden="true" />
-            <h3 className="text-base sm:text-lg font-semibold text-zinc-300 mb-1">{t.home.noSearchResults}</h3>
+          <div className="text-center py-12 px-6 card-precision mt-2 w-full flex flex-col items-center justify-center">
+            <p className="text-sm sm:text-base font-semibold text-zinc-300 mb-3">{t.home.noSearchResults}</p>
+            {(searchQuery || selectedSeries !== "all") && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery("")
+                  setSelectedSeries("all")
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-medium btn-secondary"
+              >
+                {t.home.clearSearch}
+              </button>
+            )}
           </div>
         ) : (
           <div className="flex flex-col gap-10 w-full">
