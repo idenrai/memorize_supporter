@@ -1,6 +1,6 @@
 import DataPreparationClient from '@/components/preparation/DataPreparationClient'
 import templateFlashcards from '../../../../input/templates/_template_flashcards.json'
-import templatePracticeQuiz from '../../../../input/templates/_template_practice_quiz.json'
+import templateMultipleChoiceQuiz from '../../../../input/templates/_template_multiple_choice_quiz.json'
 import templateVocabulary from '../../../../input/templates/_template_vocabulary.json'
 import { getT } from "@/i18n"
 import type { Lang } from "@/i18n/types"
@@ -22,10 +22,10 @@ export default async function DataPreparationPage({ params }: { params: Promise<
       content: JSON.stringify(templateFlashcards, null, 2)
     },
     {
-      id: 'practice_quiz',
+      id: 'multiple_choice_quiz',
       name: t.quiz.practiceQuiz,
       description: t.prep.templateQuizDesc,
-      content: JSON.stringify(templatePracticeQuiz, null, 2)
+      content: JSON.stringify(templateMultipleChoiceQuiz, null, 2)
     },
     {
       id: 'vocabulary',

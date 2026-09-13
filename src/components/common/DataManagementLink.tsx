@@ -21,7 +21,7 @@ export default function DataManagementLink({
   return (
     <Link
       href={`/${lang}/data-management`}
-      className={`inline-flex items-center gap-1.5 px-3 py-2 sm:py-1.5 min-h-[36px] sm:min-h-0 text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 ${className}`}
+      className={`inline-flex items-center gap-1.5 px-3 py-2 sm:py-1.5 min-h-9 sm:min-h-0 text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 ${className}`}
       title={t.common.dataManagement}
     >
       <Database size={13} className="text-indigo-400" aria-hidden="true" />

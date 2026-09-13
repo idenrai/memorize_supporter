@@ -1,5 +1,6 @@
 import type { Translations } from "./types";
 
+/** Japanese UI dictionary */
 export const ja: Translations = {
   common: {
     about: "紹介",
@@ -213,7 +214,7 @@ ${explanation || 'なし'}
     incorrect: "不正解",
     next: "次へ",
     noCards: "このデッキにはカードがありません。",
-    practiceQuiz: "練習問題",
+    practiceQuiz: "選択式クイズ",
     question: "問題",
     quizCompleted: "学習完了！",
     retryIncorrect: (count) => `間違えた ${count} 問をもう一度学習する`,

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useRef } from "react"
-import { PracticeQuizContent } from "@/types/card"
+import { MultipleChoiceQuizContent } from "@/types/card"
 import { CheckCircle2, XCircle, Bot, ChevronLeft, ChevronRight } from "lucide-react"
 import { motion, AnimatePresence, useIsPresent, useReducedMotion } from "framer-motion"
 import { useT } from "@/hooks/useT"
@@ -9,7 +9,7 @@ import { formatText } from "@/lib/format"
 import { toast } from "sonner"
 
 interface Props {
-  content: PracticeQuizContent
+  content: MultipleChoiceQuizContent
   onNext?: (isCorrect: boolean, selectedIndices?: number[]) => void
   onClose?: () => void
   mode?: 'practice' | 'exam' | 'review'
@@ -20,7 +20,7 @@ interface Props {
   hasNextReview?: boolean
 }
 
-export default function PracticeQuizCard({ 
+export default function MultipleChoiceQuizCard({ 
   content, 
   onNext, 
   onClose, 

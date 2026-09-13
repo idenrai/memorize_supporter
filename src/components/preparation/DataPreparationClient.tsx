@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Copy, Check, Terminal, FileCode, Layers, CheckSquare, Languages } from 'lucide-react'
 import type { TemplateData } from '@/types/preparation'
+import { isQuizType } from '@/types/card'
 import { useT } from '@/hooks/useT'
 import { toast } from 'sonner'
 
@@ -40,7 +41,7 @@ export default function DataPreparationClient({ templates }: { templates: Templa
 
   const getTemplateIcon = (id: string) => {
     if (id === 'flashcards') return Layers
-    if (id === 'practice_quiz' || id === 'multiple_choice_quiz') return CheckSquare
+    if (isQuizType(id)) return CheckSquare
     return Languages
   }
 
@@ -191,7 +192,7 @@ export default function DataPreparationClient({ templates }: { templates: Templa
             />
           </div>
 
-          {(selectedTemplate.id === 'practice_quiz' || selectedTemplate.id === 'multiple_choice_quiz') && (
+          {isQuizType(selectedTemplate.id) && (
             <p className="mt-3 text-xs text-zinc-400 font-normal text-center leading-relaxed">
               {t.prep.compatNote}
             </p>

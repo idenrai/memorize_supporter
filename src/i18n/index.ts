@@ -1,13 +1,13 @@
-export type { Translations, Lang } from "./types";
-export { LANG_NAMES } from "./types";
-export { ko } from "./ko";
-export { en } from "./en";
-export { ja } from "./ja";
+export type { Translations, Lang } from "./types.ts";
+export { LANG_NAMES } from "./types.ts";
+export { ko } from "./ko.ts";
+export { en } from "./en.ts";
+export { ja } from "./ja.ts";
 
-import { ko } from "./ko";
-import { en } from "./en";
-import { ja } from "./ja";
-import type { Lang, Translations } from "./types";
+import { ko } from "./ko.ts";
+import { en } from "./en.ts";
+import { ja } from "./ja.ts";
+import type { Lang, Translations } from "./types.ts";
 
 export const TRANSLATIONS: Record<Lang, Translations> = { ko, en, ja };
 

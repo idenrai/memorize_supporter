@@ -2,10 +2,10 @@
 
 import { useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import PracticeQuizCard from "./PracticeQuizCard"
+import MultipleChoiceQuizCard from "./MultipleChoiceQuizCard"
 import QuizHeader from "./QuizHeader"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import type { CardData } from "@/types/card"
+import { type CardData, isQuizCard } from "@/types/card"
 import { useT } from "@/hooks/useT"
 
 export interface SessionResult {
@@ -141,8 +141,8 @@ export default function ExamCardReview({
             transition={{ duration: 0.2 }}
             className="w-full flex justify-center mt-2 sm:mt-4 mb-6"
           >
-            {(reviewingCard.type === "practice_quiz" || reviewingCard.type === "multiple_choice_quiz") && (
-              <PracticeQuizCard
+            {isQuizCard(reviewingCard) && (
+              <MultipleChoiceQuizCard
                 content={reviewingCard.content}
                 mode="review"
                 userSelectedIndices={

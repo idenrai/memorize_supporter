@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Layers, History, Trash2, CheckSquare, Languages } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import { isQuizType } from "@/types/card"
+import { getDeckTypeLabel } from "@/lib/deck-utils"
 import type { Deck } from "@/types/deck"
 import type { Lang } from "@/i18n/types"
 
@@ -27,12 +28,7 @@ function DeckListItem({
   const isQuiz = isQuizType(deck.type)
   const isExamTarget = globalIsExamMode && isQuiz
 
-  const typeLabel =
-    isQuiz
-      ? t.quiz.practiceQuiz
-      : deck.type === 'vocabulary'
-      ? t.quiz.vocabulary
-      : t.quiz.flashcard
+  const typeLabel = getDeckTypeLabel(deck.type, t)
 
   const Icon =
     isQuiz

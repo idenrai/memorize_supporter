@@ -20,13 +20,16 @@ import {
 import { useT } from '@/hooks/useT'
 import { toast } from 'sonner'
 import type { Deck } from '@/types/deck'
+import type { Translations } from '@/i18n/types'
+import { getDeckTypeLabel, getDeckTypeBadgeClass } from '@/lib/deck-utils'
 import ConfirmModal from '@/components/ui/ConfirmModal'
 
 type SortKey = keyof Deck | 'cards'
 
-function getDeckSortValue(deck: Deck, key: SortKey): string | number {
+function getDeckSortValue(deck: Deck, key: SortKey, t: Translations): string | number {
   if (key === 'cards') return deck._count?.cards ?? 0
   if (key === 'createdAt') return new Date(deck.createdAt).getTime()
+  if (key === 'type') return getDeckTypeLabel(deck.type, t)
   const val = deck[key]
   if (typeof val === 'string') return val
   if (typeof val === 'number') return val
@@ -146,8 +149,8 @@ export default function DeckTable() {
     const sortableItems = [...allDecks]
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
-        const aVal = getDeckSortValue(a, sortConfig.key)
-        const bVal = getDeckSortValue(b, sortConfig.key)
+        const aVal = getDeckSortValue(a, sortConfig.key, t)
+        const bVal = getDeckSortValue(b, sortConfig.key, t)
 
         if (typeof aVal === 'string' && typeof bVal === 'string') {
           const comp = aVal.localeCompare(bVal)
@@ -160,7 +163,7 @@ export default function DeckTable() {
       })
     }
     return sortableItems
-  }, [allDecks, sortConfig])
+  }, [allDecks, sortConfig, t])
 
   useEffect(() => {
     checkScroll()
@@ -234,7 +237,7 @@ export default function DeckTable() {
           onScroll={checkScroll}
           className="overflow-x-auto custom-scrollbar"
         >
-          <table className="min-w-[540px] w-full divide-y divide-zinc-800">
+          <table className="min-w-135 w-full divide-y divide-zinc-800">
             <thead className="bg-zinc-900/80">
               <tr>
                 <th 
@@ -294,9 +297,9 @@ export default function DeckTable() {
                   <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-xs text-zinc-300 max-w-30 sm:max-w-50 truncate" title={deck.series || ''}>
                     {deck.series || <span className="text-zinc-600 italic">-</span>}
                   </td>
-                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-xs text-zinc-400 capitalize">
-                    <span className="px-2 py-0.5 rounded bg-zinc-800/60 border border-zinc-800 text-zinc-300 text-2xs font-medium">
-                      {deck.type}
+                  <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-xs">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-2xs font-medium border ${getDeckTypeBadgeClass(deck.type)}`}>
+                      {getDeckTypeLabel(deck.type, t)}
                     </span>
                   </td>
                   <td className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-xs font-medium text-zinc-300 tabular-nums">

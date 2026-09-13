@@ -4,12 +4,12 @@ import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Flashcard from "./Flashcard"
 import VocabularyCard from "./VocabularyCard"
-import PracticeQuizCard from "./PracticeQuizCard"
+import MultipleChoiceQuizCard from "./MultipleChoiceQuizCard"
 import ExamResultView from "./ExamResultView"
 import QuizHeader from "./QuizHeader"
 import { ArrowLeft, Trophy, Target } from "lucide-react"
 import Link from "next/link"
-import { CardData, FlashcardContent } from "@/types/card"
+import { CardData, FlashcardContent, isQuizCard } from "@/types/card"
 import type { Lang } from "@/i18n/types"
 import { updateLocalProgress, saveLocalExamResult } from "@/lib/client-db"
 import { useT } from "@/hooks/useT"
@@ -244,8 +244,8 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
                 onNext={handleNext}
               />
             )}
-            {(currentCard.type === 'practice_quiz' || currentCard.type === 'multiple_choice_quiz') && (
-              <PracticeQuizCard 
+            {isQuizCard(currentCard) && (
+              <MultipleChoiceQuizCard 
                 content={currentCard.content}
                 onNext={handleNext}
                 mode={mode}
