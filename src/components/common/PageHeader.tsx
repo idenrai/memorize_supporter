@@ -1,14 +1,6 @@
 import React from 'react'
-import type { LucideIcon } from 'lucide-react'
 
 interface PageHeaderProps {
-  badge?: {
-    icon: LucideIcon
-    label: string
-    colorClass?: string
-    bgClass?: string
-    borderClass?: string
-  }
   title: string
   description: string
   action?: React.ReactNode
@@ -17,7 +9,6 @@ interface PageHeaderProps {
 }
 
 export default function PageHeader({
-  badge,
   title,
   description,
   action,
@@ -32,16 +23,6 @@ export default function PageHeader({
         isCenter ? 'text-center items-center' : 'text-left items-start'
       } ${className}`}
     >
-      {badge && (
-        <div
-          className={`mb-3 inline-flex items-center gap-2 rounded-lg px-2.5 py-1 text-2xs font-semibold tracking-wide w-fit border border-zinc-800 bg-zinc-900/80 text-zinc-300 ${
-            badge.colorClass || 'text-zinc-300'
-          }`}
-        >
-          <badge.icon size={13} className={badge.colorClass || 'text-indigo-400'} aria-hidden="true" />
-          <span>{badge.label}</span>
-        </div>
-      )}
 
       <div
         className={`w-full flex flex-col ${

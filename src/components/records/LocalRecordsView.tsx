@@ -90,7 +90,7 @@ export default function LocalRecordsView({
     if (hideEmptyState) return null
 
     return (
-      <div className="text-center p-8 sm:p-12 w-full card-precision flex flex-col items-center justify-center">
+      <div className="text-center p-8 sm:p-12 w-full card-precision flex flex-col items-center justify-center min-h-80 sm:min-h-96">
         <div className="w-14 h-14 bg-zinc-800 border border-zinc-700/80 text-indigo-400 rounded-2xl flex items-center justify-center mb-5 shadow-xs">
           <Trophy size={26} aria-hidden="true" />
         </div>

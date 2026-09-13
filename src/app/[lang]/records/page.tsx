@@ -20,13 +20,6 @@ export default async function RecordsPage({
   return (
     <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-12 pb-16">
       <PageHeader
-        badge={{
-          icon: Target,
-          label: t.common.examRecords,
-          colorClass: "text-amber-400",
-          bgClass: "bg-amber-500/10",
-          borderClass: "border-amber-500/30",
-        }}
         title={t.records.title}
         description={t.records.desc}
         action={
