@@ -17,8 +17,8 @@
   - `ExamCardReview` (`src/components/cards/ExamCardReview.tsx`): 시험 모드 완료 후 개별 문항의 정답/오답 상세 리뷰 및 모달 오버레이를 전담하는 컴포넌트
   - `UploadZone`: 서버 전송 없이 브라우저 IndexedD   - `LocalRecordsView`: 로컬 기기에 저장된 시험 기록을 조회하고, 커스텀 확인 모달 기반 개별 기록 삭제 및 종합 JSON 백업 내보내기를 지원하는 통합 기록 뷰어 (고집중 Precision Canvas 단일 레이어 보더 및 시맨틱 뱃지 적용)
    - `PageHeader` (`src/components/common/PageHeader.tsx`): 시험 기록, 데이터 관리, 데이터 준비 등 서브 페이지의 불필요한 장식용 태그 뱃지를 배제하고 대시보드와 일관된 볼드 H1 타이틀, 보조 설명 및 선택적 액션 슬롯을 일원화한 미니멀 공통 헤더 컴포넌트
-   - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 단일 JSON 객체 스키마 규격 및 체계적인 [출력 규칙]을 갖춘 템플릿을 생성/검증/다운로드하는 관리 도구 (프롬프트/JSON 탭 분기 및 맞춤 복사 기능 지원)
-   - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): 인지 과학 및 Local-First 철학, 인터랙티브 3D 플립 카드 데모, 불필요한 아이콘 박스와 중복 뱃지를 걷어낸 미니멀 6대 기능 카드(안정적 ID 기반), 키보드 단축키 및 엔지니어링 기술 사양 테이블(100% i18n 지원)을 제공하는 브랜드 소개 뷰어
+   - `DataManagement` & `DataPreparation`: 웹 브라우저에서 직접 JSON 덱을 업로드/수정/삭제하고 단일 JSON 객체 스키마 규격 및 체계적인 [출력 규칙]을 갖춘 학습 덱 템플릿을 생성/검증/다운로드하는 관리 도구 (프롬프트/JSON 탭 분기, `aria-pressed` WAI-ARIA 토글, `md:grid-cols-3` 반응형 레이아웃 및 맞춤 복사 기능 지원)
+   - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): 인지 과학 및 Local-First 철학, 인터랙티브 3D 플립 카드 데모, 불필요한 아이콘 박스와 중복 뱃지를 걷어낸 미니멀 6대 기능 카드(안정적 ID 기반), 키보드 단축키 및 엔지니어링 기술 사양 테이블(React 19 + Zod 상태 검증, 100% i18n 지원)을 제공하는 브랜드 소개 뷰어
    - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층
    - `CardParser` (`src/lib/card-parser.ts`): 원시 JSON 및 카드 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
 
@@ -202,8 +202,8 @@ This document defines the system architecture of the `memorize_supporter` projec
   - `LocalRecordsView`: Unified exam records interface for on-device quiz history, upgraded with tactile double-layer deck card styling, ambient glow, and custom accessible modal confirmation on record deletion.
   - `ConfirmModal`: Premium accessible confirmation modal replacing native browser confirm dialogs for destructive actions (deck/record deletion), equipped with WAI-ARIA Focus Trap, Return Focus, Escape dismissal, mobile safe scroll (`max-h-[85vh]`), and pill-shaped action buttons.
   - `PageHeader` (`src/components/common/PageHeader.tsx`): Minimalist sub-page header component aligning sub-pages (records, data-management, data-preparation) with the dashboard layout by eliminating decorative eyebrow badge noise and standardizing bold H1 headings, descriptions, and optional action slots.
-  - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, real-time schema validation with single JSON object schema enforcement, unified [Output Rules], and mobile dynamic horizontal scroll fade indicators.
-  - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): Brand and product introduction interface presenting cognitive science and Local-First philosophies, an interactive 3D flip card demo, 6 refined feature cards stripped of redundant badges/icon boxes, keyboard shortcuts guidance, and an engineering technical specifications table (100% i18n support).
+  - `DataManagement` & `DataPreparation`: Web-based interactive interfaces for JSON deck uploads, metadata edits, real-time schema validation with single JSON object schema enforcement, unified [Output Rules], `aria-pressed` WAI-ARIA toggle state, and `md:grid-cols-3` responsive layout.
+  - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): Brand and product introduction interface presenting cognitive science and Local-First philosophies, an interactive 3D flip card demo, 6 refined feature cards stripped of redundant badges/icon boxes, keyboard shortcuts guidance, and an engineering technical specifications table (React 19 + Zod state validation, 100% i18n support).
   - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private user study materials, forgetting curves, and quiz scores.
   - `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
 
