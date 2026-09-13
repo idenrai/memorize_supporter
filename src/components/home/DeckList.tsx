@@ -27,6 +27,7 @@ function DeckListItem({
 
   const isQuiz = isQuizType(deck.type)
   const isExamTarget = globalIsExamMode && isQuiz
+  const isExamDisabled = globalIsExamMode && !isQuiz
 
   const typeLabel = getDeckTypeLabel(deck.type, t)
 
@@ -42,25 +43,49 @@ function DeckListItem({
   }`
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 card-interactive gap-4">
-      <Link
-        href={studyUrl}
-        className="flex items-center gap-4 flex-1 overflow-hidden min-w-0 group rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500"
-      >
-        <div className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-800 text-indigo-400 shrink-0 border border-zinc-700/60 shadow-xs">
-          <Icon size={18} aria-hidden="true" />
+    <div
+      className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-4 transition-all duration-200 ${
+        isExamDisabled
+          ? 'rounded-2xl border border-zinc-800/60 bg-zinc-900/40 opacity-40 grayscale-40 cursor-not-allowed select-none'
+          : 'card-interactive'
+      }`}
+    >
+      {isExamDisabled ? (
+        <div className="flex items-center gap-4 flex-1 overflow-hidden min-w-0 select-none" aria-disabled="true">
+          <div className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-800 text-zinc-500 shrink-0 border border-zinc-700/40 shadow-xs">
+            <Icon size={18} aria-hidden="true" />
+          </div>
+          <div className="flex flex-col truncate min-w-0 flex-1">
+            <span className="font-bold text-zinc-400 truncate text-base sm:text-lg block">
+              {deck.title}
+            </span>
+            <span className="text-xs sm:text-sm text-zinc-500 truncate flex items-center gap-2 mt-0.5">
+              <span className="shrink-0">{typeLabel}</span>
+              <span className="w-1 h-1 bg-zinc-700 rounded-full shrink-0" />
+              <span className="shrink-0 tabular-nums">{deck._count.cards} {t.home.cards}</span>
+            </span>
+          </div>
         </div>
-        <div className="flex flex-col truncate min-w-0 flex-1">
-          <span className="font-bold text-zinc-100 truncate text-base sm:text-lg block group-hover:text-indigo-400 transition-colors">
-            {deck.title}
-          </span>
-          <span className="text-xs sm:text-sm text-zinc-400 truncate flex items-center gap-2 mt-0.5">
-            <span className="shrink-0">{typeLabel}</span>
-            <span className="w-1 h-1 bg-zinc-700 rounded-full shrink-0" />
-            <span className="shrink-0 tabular-nums">{deck._count.cards} {t.home.cards}</span>
-          </span>
-        </div>
-      </Link>
+      ) : (
+        <Link
+          href={studyUrl}
+          className="flex items-center gap-4 flex-1 overflow-hidden min-w-0 group rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500"
+        >
+          <div className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-800 text-indigo-400 shrink-0 border border-zinc-700/60 shadow-xs">
+            <Icon size={18} aria-hidden="true" />
+          </div>
+          <div className="flex flex-col truncate min-w-0 flex-1">
+            <span className="font-bold text-zinc-100 truncate text-base sm:text-lg block group-hover:text-indigo-400 transition-colors">
+              {deck.title}
+            </span>
+            <span className="text-xs sm:text-sm text-zinc-400 truncate flex items-center gap-2 mt-0.5">
+              <span className="shrink-0">{typeLabel}</span>
+              <span className="w-1 h-1 bg-zinc-700 rounded-full shrink-0" />
+              <span className="shrink-0 tabular-nums">{deck._count.cards} {t.home.cards}</span>
+            </span>
+          </div>
+        </Link>
+      )}
       
       <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
         {deck.isLocal && onDelete && (
@@ -84,18 +109,24 @@ function DeckListItem({
           <History size={16} aria-hidden="true" />
         </Link>
 
-        <Link 
-          href={studyUrl}
-          tabIndex={-1}
-          aria-hidden="true"
-          className={`px-4 py-1.5 rounded-lg text-xs font-semibold select-none transition-colors ${
-            isExamTarget
-              ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs font-bold'
-              : 'btn-primary'
-          }`}
-        >
-          {isExamTarget ? t.common.takeExam : t.common.study}
-        </Link>
+        {isExamDisabled ? (
+          <span className="px-3 py-1.5 rounded-lg text-xs font-medium select-none bg-zinc-800/80 text-zinc-500 border border-zinc-700/40">
+            {t.home.examNotSupported}
+          </span>
+        ) : (
+          <Link 
+            href={studyUrl}
+            tabIndex={-1}
+            aria-hidden="true"
+            className={`px-4 py-1.5 rounded-lg text-xs font-semibold select-none transition-colors ${
+              isExamTarget
+                ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs font-bold'
+                : 'btn-primary'
+            }`}
+          >
+            {isExamTarget ? t.common.takeExam : t.common.study}
+          </Link>
+        )}
       </div>
     </div>
   )

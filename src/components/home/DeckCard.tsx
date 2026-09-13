@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Layers, History, Trash2, ArrowRight } from "lucide-react"
+import { Layers, History, Trash2, ArrowRight, Ban } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import { isQuizType } from "@/types/card"
 import { getDeckTypeLabel, getDeckTypeBadgeClass } from "@/lib/deck-utils"
@@ -35,6 +35,7 @@ export default function DeckCard({
 
   const isQuiz = isQuizType(type)
   const isExamTarget = globalIsExamMode && isQuiz
+  const isExamDisabled = globalIsExamMode && !isQuiz
 
   const typeLabel = getDeckTypeLabel(type, t)
 
@@ -43,7 +44,13 @@ export default function DeckCard({
   }`
 
   return (
-    <div className="group relative flex flex-col justify-between card-interactive p-5 sm:p-6 h-full">
+    <div
+      className={`group relative flex flex-col justify-between p-5 sm:p-6 h-full transition-all duration-200 ${
+        isExamDisabled
+          ? 'rounded-2xl border border-zinc-800/60 bg-zinc-900/40 opacity-40 grayscale-40 cursor-not-allowed select-none'
+          : 'card-interactive'
+      }`}
+    >
       {/* Top Meta Bar */}
       <div className="flex items-center justify-between gap-2 mb-3">
         <div className="flex items-center gap-2">
@@ -87,34 +94,52 @@ export default function DeckCard({
         </div>
       </div>
 
-      {/* Main Content (Clickable Area via stretched Link) */}
+      {/* Main Content (Clickable Area via stretched Link, or disabled div) */}
       <div className="flex-1 my-1">
-        <Link
-          href={studyUrl}
-          className="block rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 after:absolute after:inset-0 after:rounded-2xl"
-        >
-          <h3 className="text-lg sm:text-xl font-bold text-zinc-100 group-hover:text-indigo-400 transition-colors line-clamp-2 leading-snug mb-2">
-            {deckName}
-          </h3>
-          <p className="text-xs sm:text-sm text-zinc-400 line-clamp-2 leading-relaxed font-normal">
-            {description || t.home.defaultDesc(count)}
-          </p>
-        </Link>
+        {isExamDisabled ? (
+          <div className="block rounded-lg select-none" aria-disabled="true">
+            <h3 className="text-lg sm:text-xl font-bold text-zinc-400 line-clamp-2 leading-snug mb-2">
+              {deckName}
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-500 line-clamp-2 leading-relaxed font-normal">
+              {description || t.home.defaultDesc(count)}
+            </p>
+          </div>
+        ) : (
+          <Link
+            href={studyUrl}
+            className="block rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 after:absolute after:inset-0 after:rounded-2xl"
+          >
+            <h3 className="text-lg sm:text-xl font-bold text-zinc-100 group-hover:text-indigo-400 transition-colors line-clamp-2 leading-snug mb-2">
+              {deckName}
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-400 line-clamp-2 leading-relaxed font-normal">
+              {description || t.home.defaultDesc(count)}
+            </p>
+          </Link>
+        )}
       </div>
 
       {/* Bottom Action Footer (Visual indicator, clicks bubbled via card) */}
       <div className="pt-4 mt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs pointer-events-none">
-        <span
-          className={`inline-flex items-center gap-1.5 font-semibold transition-colors ${
-            isExamTarget
-              ? 'text-indigo-400 group-hover:text-indigo-200'
-              : 'text-indigo-400 group-hover:text-indigo-300'
-          }`}
-          aria-hidden="true"
-        >
-          <span>{isExamTarget ? t.home.clickToStartExam : t.home.clickToStudy}</span>
-          <ArrowRight size={13} className="transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
-        </span>
+        {isExamDisabled ? (
+          <span className="inline-flex items-center gap-1.5 font-medium text-zinc-500" aria-hidden="true">
+            <Ban size={13} className="text-zinc-500" aria-hidden="true" />
+            <span>{t.home.examNotSupported}</span>
+          </span>
+        ) : (
+          <span
+            className={`inline-flex items-center gap-1.5 font-semibold transition-colors ${
+              isExamTarget
+                ? 'text-indigo-400 group-hover:text-indigo-200'
+                : 'text-indigo-400 group-hover:text-indigo-300'
+            }`}
+            aria-hidden="true"
+          >
+            <span>{isExamTarget ? t.home.clickToStartExam : t.home.clickToStudy}</span>
+            <ArrowRight size={13} className="transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
+          </span>
+        )}
       </div>
     </div>
   )

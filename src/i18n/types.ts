@@ -73,6 +73,8 @@ export interface Translations {
     sampleDecksLoadFailed: string;
     clickToStudy: string;
     clickToStartExam: string;
+    examNotSupported: string;
+    examNotSupportedDesc: string;
   };
   prep: {
     aiPrompt: string;

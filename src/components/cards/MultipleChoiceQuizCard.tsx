@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { MultipleChoiceQuizContent } from "@/types/card"
 import { CheckCircle2, XCircle, Bot, ChevronLeft, ChevronRight } from "lucide-react"
 import { motion, AnimatePresence, useIsPresent, useReducedMotion } from "framer-motion"
@@ -45,7 +45,7 @@ export default function MultipleChoiceQuizCard({
     selectedIndices.length === content.answers.length &&
     selectedIndices.every(i => content.answers.includes(i))
 
-  const toggleSelection = (index: number) => {
+  const toggleSelection = useCallback((index: number) => {
     if (isFlipped) return // Cannot change after submit
 
     if (isSingleChoice) {
@@ -62,7 +62,7 @@ export default function MultipleChoiceQuizCard({
       }
       setSelectedIndices(prev => [...prev, index])
     }
-  }
+  }, [isFlipped, isSingleChoice, selectedIndices, content.answers.length, t.quiz])
 
   const handleSubmit = useCallback(() => {
     if (selectedIndices.length === 0 || isFlipped) return
@@ -94,53 +94,121 @@ export default function MultipleChoiceQuizCard({
 
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    const target = e.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-      return
+  useEffect(() => {
+    if (isPresent) {
+      containerRef.current?.focus()
     }
+  }, [isPresent])
 
-    if (mode === 'review') {
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        onClose?.()
-      } else if (e.key === 'ArrowLeft') {
-        if (hasPrevReview) {
-          e.preventDefault()
-          onPrevReview?.()
-        }
-      } else if (e.key === 'ArrowRight' || e.key === 'Enter' || e.code === 'Space') {
-        if (hasNextReview) {
-          e.preventDefault()
-          onNextReview?.()
-        } else {
-          e.preventDefault()
-          onClose?.()
-        }
-      }
-      return
+  const handlersRef = useRef({
+    mode,
+    isFlipped,
+    optionsLength: content.options.length,
+    toggleSelection,
+    handleSubmit,
+    handleNext,
+    hasPrevReview,
+    hasNextReview,
+    onClose,
+    onPrevReview,
+    onNextReview,
+  })
+
+  useEffect(() => {
+    handlersRef.current = {
+      mode,
+      isFlipped,
+      optionsLength: content.options.length,
+      toggleSelection,
+      handleSubmit,
+      handleNext,
+      hasPrevReview,
+      hasNextReview,
+      onClose,
+      onPrevReview,
+      onNextReview,
     }
+  })
 
+  useEffect(() => {
     if (!isPresent) return
 
-    if (!isFlipped) {
-      if (e.key === 'Enter' || e.code === 'Space') {
-        e.preventDefault()
-        handleSubmit()
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return
       }
-    } else {
-      if (e.key === 'Enter' || e.code === 'Space' || e.code === 'ArrowRight') {
-        e.preventDefault()
-        handleNext()
+
+      const h = handlersRef.current
+
+      if (h.mode === 'review') {
+        if (e.key === 'Escape') {
+          e.preventDefault()
+          h.onClose?.()
+        } else if (e.key === 'ArrowLeft') {
+          if (h.hasPrevReview) {
+            e.preventDefault()
+            h.onPrevReview?.()
+          }
+        } else if (e.key === 'ArrowRight' || e.key === 'Enter' || e.code === 'Space') {
+          if (h.hasNextReview) {
+            e.preventDefault()
+            h.onNextReview?.()
+          } else {
+            e.preventDefault()
+            h.onClose?.()
+          }
+        }
+        return
+      }
+
+      if (!h.isFlipped) {
+        // Number keys 1-9 for choosing options
+        let keyNum: number | null = null
+        if (/^[1-9]$/.test(e.key)) {
+          keyNum = parseInt(e.key, 10)
+        } else if (/^Digit([1-9])$/.test(e.code)) {
+          keyNum = parseInt(e.code.replace('Digit', ''), 10)
+        } else if (/^Numpad([1-9])$/.test(e.code)) {
+          keyNum = parseInt(e.code.replace('Numpad', ''), 10)
+        }
+
+        if (keyNum !== null) {
+          const optionIndex = keyNum - 1
+          if (optionIndex < h.optionsLength) {
+            e.preventDefault()
+            h.toggleSelection(optionIndex)
+            return
+          }
+        }
+
+        if (e.key === 'Enter' || e.code === 'Space') {
+          e.preventDefault()
+          h.handleSubmit()
+        }
+      } else {
+        if (e.key === 'Enter' || e.code === 'Space' || e.key === 'ArrowRight' || e.code === 'ArrowRight') {
+          e.preventDefault()
+          h.handleNext()
+        }
       }
     }
-  }
+
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeyDown)
+    }
+  }, [isPresent])
 
   return (
     <div 
       ref={containerRef}
       tabIndex={0}
-      onKeyDown={handleKeyDown}
       className="w-full max-w-4xl select-none font-sans antialiased focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500/50 rounded-2xl"
     >
       <AnimatePresence initial={false} mode="wait">
@@ -174,20 +242,26 @@ export default function MultipleChoiceQuizCard({
                   type="button"
                   aria-pressed={selectedIndices.includes(i)}
                   onClick={() => toggleSelection(i)}
-                  className={`text-left px-5 py-3.5 rounded-xl border transition-colors duration-150 flex items-center gap-3 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 text-sm sm:text-base ${
+                  className={`text-left px-5 py-3.5 rounded-xl border transition-colors duration-150 flex items-center gap-3.5 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 text-sm sm:text-base ${
                     selectedIndices.includes(i) 
                       ? 'border-indigo-500/80 bg-indigo-500/10 text-zinc-100 shadow-xs' 
                       : 'border-zinc-800 hover:border-zinc-700 text-zinc-300 bg-zinc-950/40 hover:bg-zinc-800/50'
                   }`}
                 >
-                  <div className={`w-5 h-5 flex items-center justify-center shrink-0 border transition-colors ${
+                  <div className={`w-6 h-6 flex items-center justify-center shrink-0 border transition-colors text-xs font-semibold ${
                     isSingleChoice ? 'rounded-full' : 'rounded-md'
                   } ${
-                    selectedIndices.includes(i) ? 'border-indigo-500 bg-indigo-600 text-white' : 'border-zinc-600'
+                    selectedIndices.includes(i) 
+                      ? 'border-indigo-500 bg-indigo-600 text-white shadow-xs' 
+                      : 'border-zinc-700 bg-zinc-800/60 text-zinc-400'
                   }`}>
-                    {selectedIndices.includes(i) && <CheckCircle2 size={13} aria-hidden="true" />}
+                    {selectedIndices.includes(i) ? (
+                      <CheckCircle2 size={14} aria-hidden="true" />
+                    ) : (
+                      <span>{i + 1}</span>
+                    )}
                   </div>
-                  <span className="whitespace-pre-wrap font-medium">{formatText(opt)}</span>
+                  <span className="whitespace-pre-wrap font-medium flex-1 leading-relaxed">{formatText(opt)}</span>
                 </button>
               ))}
             </div>
@@ -197,7 +271,8 @@ export default function MultipleChoiceQuizCard({
                 type="button"
                 onClick={handleSubmit}
                 disabled={selectedIndices.length === 0}
-                className="px-6 py-2 rounded-xl text-sm font-semibold btn-primary disabled:opacity-40 disabled:pointer-events-none"
+                title={`${mode === 'exam' ? t.quiz.next : t.quiz.submit} (Enter)`}
+                className="px-6 py-2.5 rounded-xl text-sm font-semibold btn-primary disabled:opacity-40 disabled:pointer-events-none"
               >
                 {mode === 'exam' ? t.quiz.next : t.quiz.submit}
               </button>
@@ -314,6 +389,7 @@ export default function MultipleChoiceQuizCard({
                       e.stopPropagation()
                       handleNext()
                     }}
+                    title={`${t.quiz.next} (Enter / →)`}
                     className="px-6 py-2.5 btn-primary rounded-xl text-xs sm:text-sm font-semibold w-full sm:w-auto"
                   >
                     {t.quiz.next}

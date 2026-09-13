@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { getLocalCards, getLocalProgressMap } from "@/lib/client-db"
 import { parseCardDataList } from "@/lib/card-parser"
-import type { CardData } from "@/types/card"
+import { type CardData, isQuizCard } from "@/types/card"
 import DeckPlayer from "./DeckPlayer"
 import Link from "next/link"
 import { ArrowLeft, AlertCircle } from "lucide-react"
@@ -159,11 +159,13 @@ export default function DeckClientLoader({ deckId, limit, isExamMode, lang }: De
     )
   }
 
+  const canRunExam = Boolean(isExamMode && cards.some(c => isQuizCard(c)))
+
   return (
     <DeckPlayer
       deckId={deckId}
       cards={cards}
-      mode={isExamMode ? "exam" : "practice"}
+      mode={canRunExam ? "exam" : "practice"}
     />
   )
 }

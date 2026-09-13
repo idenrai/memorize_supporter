@@ -64,6 +64,8 @@ export const en: Translations = {
     sampleDecksLoadFailed: "Failed to load sample decks.",
     clickToStudy: "Click to start studying",
     clickToStartExam: "Click to start exam",
+    examNotSupported: "Exam Not Supported (Quiz Only)",
+    examNotSupportedDesc: "Exam mode is only available for multiple-choice quiz decks.",
   },
   prep: {
     aiPrompt: "AI Generation Prompt",

@@ -64,6 +64,8 @@ export const ko: Translations = {
     sampleDecksLoadFailed: "샘플 덱을 불러오지 못했습니다.",
     clickToStudy: "클릭하여 학습 시작",
     clickToStartExam: "클릭하여 시험 시작",
+    examNotSupported: "시험 미지원 (객관식 전용)",
+    examNotSupportedDesc: "시험 모드는 객관식 퀴즈 덱만 지원됩니다.",
   },
   prep: {
     aiPrompt: "생성용 AI 프롬프트",
