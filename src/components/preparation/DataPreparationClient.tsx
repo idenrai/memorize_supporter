@@ -77,6 +77,7 @@ export default function DataPreparationClient({ templates }: { templates: Templa
               <button
                 key={template.id}
                 type="button"
+                aria-pressed={isSelected}
                 onClick={() => setSelectedTemplate(template)}
                 className={`p-4 sm:p-5 rounded-xl text-left transition-all duration-150 border cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 flex flex-col justify-between ${
                   isSelected
