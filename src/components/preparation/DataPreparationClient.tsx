@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, Download, Layers, CheckSquare, BookOpen, Terminal, FileCode } from 'lucide-react'
+import { Copy, Check, Download, Terminal, FileCode } from 'lucide-react'
 import type { TemplateData } from '@/types/preparation'
 import { useT } from '@/hooks/useT'
 import { toast } from 'sonner'
@@ -55,11 +55,6 @@ export default function DataPreparationClient({ templates }: { templates: Templa
     }
   }
 
-  const getTemplateIcon = (id: string) => {
-    if (id === 'flashcards') return Layers
-    if (id === 'practice_quiz') return CheckSquare
-    return BookOpen
-  }
 
   const getTemplateFields = (id: string) => {
     if (id === 'flashcards') return t.prep.fieldsFlashcard
@@ -77,50 +72,37 @@ export default function DataPreparationClient({ templates }: { templates: Templa
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
           {templates.map(template => {
             const isSelected = selectedTemplate?.id === template.id
-            const IconComp = getTemplateIcon(template.id)
             const fieldsPreview = getTemplateFields(template.id)
-
             return (
               <button
                 key={template.id}
                 type="button"
                 onClick={() => setSelectedTemplate(template)}
-                className={`p-4 sm:p-5 rounded-xl text-left transition-all duration-150 border cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                className={`p-4 sm:p-5 rounded-xl text-left transition-all duration-150 border cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 flex flex-col justify-between ${
                   isSelected
                     ? 'border-indigo-500/80 bg-zinc-900 shadow-xs ring-1 ring-indigo-500/30'
                     : 'border-zinc-800 bg-zinc-950/50 hover:border-zinc-700 hover:bg-zinc-900/60'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center border ${
-                      isSelected
-                        ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400'
-                        : 'bg-zinc-850 border-zinc-700/60 text-zinc-400'
-                    }`}>
-                      <IconComp size={14} aria-hidden="true" />
-                    </div>
-                    <span className="text-xs font-semibold text-zinc-200">
-                      {template.name}
-                    </span>
-                  </div>
-                  <span
-                    className={`text-3xs font-mono px-2 py-0.5 rounded border ${
-                      isSelected
-                        ? 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30'
-                        : 'bg-zinc-850 text-zinc-500 border-zinc-800'
-                    }`}
-                  >
-                    {template.id}
-                  </span>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-semibold text-zinc-100 mb-1.5 whitespace-nowrap tracking-tight">
+                    {template.name}
+                  </h3>
+
+                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed font-normal mb-3 min-h-10">
+                    {template.description}
+                  </p>
                 </div>
 
-                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed font-normal mb-3">
-                  {template.description}
-                </p>
-
-                <div className="pt-2 border-t border-zinc-800/60 flex items-center text-3xs text-zinc-500 font-mono truncate">
-                  <span className="truncate">{fieldsPreview}</span>
+                <div className="pt-2.5 border-t border-zinc-800/60 flex flex-wrap items-center gap-1 font-mono">
+                  {fieldsPreview.split(' · ').map((field) => (
+                    <span
+                      key={field}
+                      className="px-1.5 py-0.5 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-400 text-3xs"
+                    >
+                      {field}
+                    </span>
+                  ))}
                 </div>
               </button>
             )

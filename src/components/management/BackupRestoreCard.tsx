@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useTransition } from "react"
-import { Download, Upload, HardDrive, Database } from "lucide-react"
+import { Download, Upload, HardDrive } from "lucide-react"
 import { useT } from "@/hooks/useT"
 import {
   exportLocalDataJson,
@@ -128,15 +128,10 @@ export default function BackupRestoreCard({ onRestoreSuccess }: BackupRestoreCar
       <div className="flex flex-col gap-6">
         {/* Header with Title & Storage Badge */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-indigo-400 flex items-center justify-center shadow-xs">
-              <Database size={20} aria-hidden="true" />
-            </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold text-zinc-100 tracking-tight break-keep">
-                {t.management.backupSectionTitle}
-              </h2>
-            </div>
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-zinc-100 tracking-tight break-keep">
+              {t.management.backupSectionTitle}
+            </h2>
           </div>
 
           {/* Storage usage indicator */}

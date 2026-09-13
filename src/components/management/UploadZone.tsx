@@ -185,11 +185,11 @@ export default function UploadZone({ onUploadSuccess }: UploadZoneProps) {
         } focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950`}
       >
         <div className="relative z-10 flex flex-col items-center">
-          <div className="w-12 h-12 bg-zinc-900 text-indigo-400 rounded-xl flex items-center justify-center mb-3 border border-zinc-800 group-hover:scale-105 group-hover:border-zinc-700 transition-all duration-150 shadow-xs">
+          <div className="w-10 h-10 bg-zinc-900 text-zinc-400 group-hover:text-indigo-400 rounded-xl flex items-center justify-center mb-3 border border-zinc-800 group-hover:border-zinc-700 transition-colors shadow-xs">
             {isImporting ? (
-              <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
             ) : (
-              <Upload size={22} aria-hidden="true" />
+              <Upload size={18} aria-hidden="true" />
             )}
           </div>
 

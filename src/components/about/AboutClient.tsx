@@ -5,10 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
-  CheckCircle2,
-  Keyboard,
   RotateCcw,
-  Cpu,
 } from 'lucide-react'
 import type { Lang } from '@/i18n/types'
 import { useT } from '@/hooks/useT'
@@ -308,21 +305,16 @@ export default function AboutClient({ lang }: AboutClientProps) {
         aria-labelledby="about-shortcuts-title"
         className="card-precision p-6 sm:p-8"
       >
-        <div className="flex items-center gap-3 mb-4">
-          <div className="size-8 rounded-lg bg-zinc-900 border border-zinc-800 text-indigo-400 flex items-center justify-center">
-            <Keyboard size={16} aria-hidden="true" />
-          </div>
-          <div>
-            <h2
-              id="about-shortcuts-title"
-              className="text-base sm:text-lg font-extrabold text-zinc-100"
-            >
-              {t.about.shortcutsTitle}
-            </h2>
-            <p className="text-xs text-zinc-400">
-              {t.about.shortcutsSubtitle}
-            </p>
-          </div>
+        <div className="mb-4">
+          <h2
+            id="about-shortcuts-title"
+            className="text-base sm:text-lg font-extrabold text-zinc-100"
+          >
+            {t.about.shortcutsTitle}
+          </h2>
+          <p className="text-xs text-zinc-400 mt-1">
+            {t.about.shortcutsSubtitle}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 mt-4">
@@ -354,21 +346,16 @@ export default function AboutClient({ lang }: AboutClientProps) {
 
       {/* 5. Technical Specifications Table */}
       <section aria-labelledby="about-tech-heading" className="card-precision p-6 sm:p-8 space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="size-8 rounded-lg bg-zinc-900 border border-zinc-800 text-indigo-400 flex items-center justify-center">
-            <Cpu size={16} aria-hidden="true" />
-          </div>
-          <div>
-            <h2
-              id="about-tech-heading"
-              className="text-base sm:text-lg font-extrabold text-zinc-100"
-            >
-              {t.about.techTitle}
-            </h2>
-            <p className="text-xs text-zinc-400">
-              {t.about.techSubtitle}
-            </p>
-          </div>
+        <div>
+          <h2
+            id="about-tech-heading"
+            className="text-base sm:text-lg font-extrabold text-zinc-100"
+          >
+            {t.about.techTitle}
+          </h2>
+          <p className="text-xs text-zinc-400 mt-1">
+            {t.about.techSubtitle}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
@@ -377,11 +364,10 @@ export default function AboutClient({ lang }: AboutClientProps) {
               key={spec.item}
               className="rounded-xl border border-zinc-800 bg-zinc-950/50 p-3.5 flex flex-col justify-between"
             >
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="mb-1.5">
                 <span className="text-3xs font-mono text-indigo-400 uppercase tracking-wider font-semibold">
                   {spec.category}
                 </span>
-                <CheckCircle2 size={12} className="text-emerald-400" aria-hidden="true" />
               </div>
               <div className="text-xs font-semibold text-zinc-200">
                 {spec.item}

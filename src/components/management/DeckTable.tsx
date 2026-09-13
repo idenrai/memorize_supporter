@@ -6,7 +6,8 @@ import {
   ChevronUp,
   ChevronDown,
   ChevronsUpDown,
-  Sparkles,
+  Plus,
+  Loader2,
   FolderOpen
 } from 'lucide-react'
 import {
@@ -205,10 +206,14 @@ export default function DeckTable() {
             type="button"
             onClick={handleAddSampleDecks}
             disabled={isPending || isLoadingSamples}
-            className="btn-primary h-8 px-3 text-xs font-semibold rounded-lg inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="btn-secondary h-8 px-3 text-xs font-medium rounded-lg inline-flex items-center gap-1.5 disabled:opacity-50"
             title={t.management.addSampleDecks}
           >
-            <Sparkles size={13} aria-hidden="true" />
+            {isLoadingSamples ? (
+              <Loader2 size={13} className="animate-spin text-zinc-400" aria-hidden="true" />
+            ) : (
+              <Plus size={13} className="text-zinc-400" aria-hidden="true" />
+            )}
             <span>{isLoadingSamples ? t.home.loadingSamples : t.management.addSampleDecks}</span>
           </button>
         </div>
