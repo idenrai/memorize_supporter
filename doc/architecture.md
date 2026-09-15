@@ -35,7 +35,7 @@
   - Server Components(데이터 패칭: `app/[lang]/deck/[deckId]/page.tsx`, 정적 메타데이터: `app/[lang]/about/page.tsx`)와 Client Components(인터랙션: `Flashcard.tsx`, `AboutClient.tsx`)를 명확히 분리하여 렌더링 성능을 최적화합니다.
 
 - **카드 출제 및 세션 재생성 전략 (Card Selection & Session Reload Strategy)**:
-  - **시험 모드 (Exam Mode: Random Sampling without Replacement)**: 망각 곡선 우선순위 정렬을 배제하고 전체 퀴즈 카드 풀을 Fisher-Yates 알고리즘으로 사전 셔플한 뒤 요청된 문항 수(`limit`)만큼 슬라이스하는 비복원 무작위 추출을 수행합니다. 이를 통해 61장의 카드 중 20장을 선택할 때 매 회차마다 독립적이고 공정한 무작위 모의고사가 출제됩니다.
+  - **시험 모드 (Exam Mode: Random Sampling without Replacement)**: 연습 모드의 복습 우선순위 정렬을 배제하고, 전체 유효 퀴즈 카드 풀(총 $N$장)에 대해 Fisher-Yates 알고리즘으로 사전 셔플을 수행한 뒤 지정된 문항 수($M$장, `limit`, $M \le N$)만큼 슬라이스하는 균일 비복원 무작위 추출(Shuffle-then-Slice)을 수행합니다. 과거 '슬라이스 후 셔플(Slice-then-Shuffle)'로 인해 상위 인덱스 문제만 고정 추출되던 결정론적 편중과 동점 카드의 안정 정렬 고착화를 원천 차단하고, 매 회차마다 전체 카드 풀에 걸쳐 통계적으로 독립적이고 공정한 모의고사를 출제합니다.
   - **연습 모드 (Practice Mode: SRS with Anti-Starvation)**:
     - **동점 티어 기아 방지 (Anti-Starvation Pre-Shuffle)**: 미학습 카드(카테고리 1) 등 동일 우선순위 카드군 사이에서 덱 인덱스 순서대로만 앞쪽 카드가 고정 선택되는 기아 현상을 막기 위해 1차 사전 셔플을 수행합니다.
     - **1순위 (미출제 문제)**: 학습 기록이 없는 카드를 최우선 출제하여 덱 전체 커버리지를 확보합니다.
@@ -138,9 +138,9 @@ sequenceDiagram
 - **멀티 탭 실시간 동기화 (`BroadcastChannel`)**:
   - 웹 표준 `BroadcastChannel`을 활용하여 한 탭에서 덱 추가/삭제, 모의고사 응시, 백업 복원 발생 시 다른 열려있는 모든 탭의 덱 갤러리 및 기록 뷰가 새로고침 없이 즉각 동기화됩니다.
 
-- **클라이언트 사이드 SRS 및 셔플링 (`src/components/cards/DeckClientLoader.tsx`)**:
+- **클라이언트 사이드 카드 샘플링 및 세션 리로드 (`src/components/cards/DeckClientLoader.tsx`, `src/lib/session-cards.ts`)**:
   - 사용자가 로컬 덱 URL(`/deck/local_...`)로 진입하면 서버 컴포넌트가 `DeckClientLoader`로 위임합니다.
-  - `DeckClientLoader`는 IndexedDB에서 카드와 학습 진도를 불러온 뒤, 서버와 100% 동일한 3단계 SRS 우선순위(미출제 -> 취약 문제 -> 일반 복습)와 Fisher-Yates 셔플 알고리즘을 적용하여 플레이어를 기동합니다.
+  - `DeckClientLoader`는 IndexedDB에서 카드와 학습 진도를 불러온 뒤, `SessionCards` 도메인 모듈에 위임하여 모드별 최적화된 출제 파이프라인(시험: 사전 셔플 기반 균일 비복원 무작위 추출, 연습: 동점 티어 기아 방지 사전 셔플 + 3단계 SRS 복습 우선순위 정렬)을 실행합니다. 또한 세션 완료 후 "새 세션 학습" 시 최신 DB 상태 기반의 동적 세션 리로드(`onNewSession`)를 제공합니다.
 
 - **데이터 라이프사이클 및 백업/복원 관리**:
   - 사용자는 개별 시험 기록을 삭제하거나, 원클릭으로 로컬 덱과 관련된 모든 진도 및 시험 기록을 단일 트랜잭션으로 영구 삭제할 수 있습니다.
@@ -231,7 +231,7 @@ This document defines the system architecture of the `memorize_supporter` projec
   - Optimizes rendering performance by strictly separating Server Components (data fetching: `app/[lang]/deck/[deckId]/page.tsx`, static metadata: `app/[lang]/about/page.tsx`) and Client Components (interactions: `Flashcard.tsx`, `AboutClient.tsx`).
 
 - **Card Selection & Session Reload Strategy**:
-  - **Exam Mode (Random Sampling without Replacement)**: Bypasses Spaced Repetition sorting and shuffles the entire eligible quiz pool using Fisher-Yates before slicing by the requested limit. This guarantees that each exam session draws an independent, fair, and randomized subset of cards without replacement.
+  - **Exam Mode (Random Sampling without Replacement)**: Bypasses Spaced Repetition review priority sorting and pre-shuffles the entire eligible quiz pool (total $N$ cards) using the Fisher-Yates algorithm before slicing by the requested limit ($M$ cards, $M \le N$). This uniform Shuffle-then-Slice approach eliminates the deterministic index bias caused by legacy Slice-then-Shuffle behavior and stable-sort tie-breaking, ensuring an independent, fair, and statistically uniform mock exam subset across sessions.
   - **Practice Mode (SRS with Anti-Starvation Pre-Shuffle)**:
     - **Anti-Starvation Pre-Shuffle**: Pre-shuffles identical-priority card tiers (e.g. unstudied Category 1 cards) before sorting, eliminating index-based starvation where cards late in the array are never presented.
     - **Priority 1 (Unasked)**: Cards with no learning history are presented first to ensure full coverage of the deck.
@@ -334,9 +334,9 @@ sequenceDiagram
 - **Multi-Tab Reactive Synchronization (`BroadcastChannel`)**:
   - Employs standard `BroadcastChannel` to propagate deck creations, deletions, exam completions, and backup restorations across all open browser tabs in real time without manual reloads.
 
-- **Client-Side SRS & Shuffling (`src/components/cards/DeckClientLoader.tsx`)**:
+- **Client-Side Card Sampling & Session Reload (`src/components/cards/DeckClientLoader.tsx`, `src/lib/session-cards.ts`)**:
   - When navigating to a local deck URL (`/deck/local_...`), the server component delegates to `DeckClientLoader`.
-  - `DeckClientLoader` loads cards and progress from IndexedDB and applies the exact same 3-tier SRS priority ordering (Unasked -> Weakest -> Review) and Fisher-Yates shuffle algorithm used by the server.
+  - `DeckClientLoader` loads cards and progress from IndexedDB and delegates to the `SessionCards` domain module to execute mode-tailored pipelines (Exam: pre-shuffle uniform sampling without replacement; Practice: anti-starvation pre-shuffle + 3-tier SRS priority ordering). It also orchestrates dynamic session reload (`onNewSession`) re-querying fresh IndexedDB state upon session restart.
 
 - **Data Lifecycle & Backup/Restore (`exportLocalDataJson`, `importBackupJson`, `deleteLocalDeck`, `deleteLocalExamResult`)**:
   - Users can delete individual local exam records or wipe an entire local deck with all associated progress in a single atomic transaction.
