@@ -26,6 +26,7 @@ interface ExamResultViewProps {
   }
   onRetryIncorrect?: () => void
   onStudyNewSession?: () => void
+  isReloading?: boolean
 }
 
 export default function ExamResultView({
@@ -36,7 +37,8 @@ export default function ExamResultView({
   isHistoricalReview = false,
   originalStats,
   onRetryIncorrect,
-  onStudyNewSession
+  onStudyNewSession,
+  isReloading = false
 }: ExamResultViewProps) {
   const t = useT()
   const [reviewingCard, setReviewingCard] = useState<CardData | null>(null)
@@ -149,7 +151,8 @@ export default function ExamResultView({
           <button 
             type="button"
             onClick={onStudyNewSession}
-            className="px-6 py-2.5 rounded-xl text-sm font-semibold btn-primary text-center"
+            disabled={isReloading}
+            className="px-6 py-2.5 rounded-xl text-sm font-semibold btn-primary text-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {t.quiz.studyNewSession}
           </button>

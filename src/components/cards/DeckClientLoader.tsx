@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { getLocalCards, getLocalProgressMap } from "@/lib/client-db"
-import { parseCardDataList } from "@/lib/card-parser"
+import { useEffect, useState, useCallback } from "react"
+import { getLocalCards, getLocalProgressMap, onLocalDbChange } from "@/lib/client-db"
+import { selectSessionCards } from "@/lib/session-cards"
+import type { RawDbCard } from "@/lib/card-parser"
 import { type CardData, isQuizCard } from "@/types/card"
 import DeckPlayer from "./DeckPlayer"
 import Link from "next/link"
@@ -16,20 +17,22 @@ interface DeckClientLoaderProps {
   lang: string
 }
 
-function shuffle<T>(array: T[]): T[] {
-  const arr = [...array]
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]]
-  }
-  return arr
-}
-
 export default function DeckClientLoader({ deckId, limit, isExamMode, lang }: DeckClientLoaderProps) {
   const t = useT()
   const [loading, setLoading] = useState(true)
   const [cards, setCards] = useState<CardData[]>([])
+  const [rawCardsCache, setRawCardsCache] = useState<RawDbCard[]>([])
   const [notFoundState, setNotFoundState] = useState(false)
+
+  // Listen for local DB changes (from other tabs or modals) to invalidate card cache
+  useEffect(() => {
+    const unsubscribe = onLocalDbChange((event) => {
+      if (event === "deck_updated" || event === "backup_restored" || event === "deck_created") {
+        setRawCardsCache([])
+      }
+    })
+    return unsubscribe
+  }, [])
 
   useEffect(() => {
     let isMounted = true
@@ -62,46 +65,12 @@ export default function DeckClientLoader({ deckId, limit, isExamMode, lang }: De
         const progressMap = await getLocalProgressMap(deckId)
         if (!isMounted) return
 
-        // Sort by priority (same algorithm as server)
-        const mapped = rawCards.map((card) => {
-          let category = 3
-          let failedCount = 0
-          const p = progressMap[card.id]
-
-          if (!p || p.reviewCount === 0) {
-            category = 1
-          } else if (p.successRate !== null && p.successRate < 1) {
-            category = 2
-            const rate = p.successRate || 0
-            failedCount = Math.round(p.reviewCount * (1 - rate))
-          }
-
-          const dateValue = p?.nextReviewAt ? p.nextReviewAt.getTime() : Infinity
-          const reviewCount = p?.reviewCount || 0
-
-          return { card, category, failedCount, reviewCount, dateValue }
+        const validCards = selectSessionCards({
+          cards: rawCards,
+          progressMap,
+          limit,
+          isExamMode,
         })
-
-        mapped.sort((a, b) => {
-          if (a.category !== b.category) {
-            return a.category - b.category
-          }
-          if (a.category === 2) {
-            if (a.failedCount !== b.failedCount) {
-              return b.failedCount - a.failedCount
-            }
-          } else if (a.category === 3) {
-            if (a.reviewCount !== b.reviewCount) {
-              return a.reviewCount - b.reviewCount
-            }
-          }
-          return a.dateValue - b.dateValue
-        })
-
-        const sortedRaw = mapped.map((item) => item.card)
-        const limitedCards = limit ? sortedRaw.slice(0, limit) : sortedRaw
-        const shuffledCards = shuffle(limitedCards)
-        const validCards = parseCardDataList(shuffledCards)
 
         if (validCards.length === 0) {
           validCards.push({
@@ -111,6 +80,7 @@ export default function DeckClientLoader({ deckId, limit, isExamMode, lang }: De
           })
         }
 
+        setRawCardsCache(rawCards)
         setCards(validCards)
         setLoading(false)
       } catch (err) {
@@ -127,7 +97,35 @@ export default function DeckClientLoader({ deckId, limit, isExamMode, lang }: De
     return () => {
       isMounted = false
     }
-  }, [deckId, limit])
+  }, [deckId, limit, isExamMode])
+
+  const handleNewSession = useCallback(async (): Promise<CardData[]> => {
+    // Always check IndexedDB for updated deck cards, falling back to cache if empty
+    let sourceCards = await getLocalCards(deckId)
+    if (!sourceCards || sourceCards.length === 0) {
+      sourceCards = rawCardsCache
+    } else {
+      setRawCardsCache(sourceCards)
+    }
+
+    if (!sourceCards || sourceCards.length === 0) {
+      return []
+    }
+
+    const progressMap = await getLocalProgressMap(deckId)
+    const freshCards = selectSessionCards({
+      cards: sourceCards,
+      progressMap,
+      limit,
+      isExamMode,
+    })
+
+    if (freshCards.length > 0) {
+      setCards(freshCards)
+    }
+
+    return freshCards
+  }, [rawCardsCache, deckId, limit, isExamMode])
 
   if (loading) {
     return (
@@ -166,6 +164,7 @@ export default function DeckClientLoader({ deckId, limit, isExamMode, lang }: De
       deckId={deckId}
       cards={cards}
       mode={canRunExam ? "exam" : "practice"}
+      onNewSession={handleNewSession}
     />
   )
 }

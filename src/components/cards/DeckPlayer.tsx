@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Flashcard from "./Flashcard"
 import VocabularyCard from "./VocabularyCard"
@@ -20,17 +20,26 @@ interface DeckPlayerProps {
   deckId: string
   cards: CardData[]
   mode?: 'practice' | 'exam'
+  onNewSession?: () => Promise<CardData[]> | CardData[]
 }
 
-export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPlayerProps) {
+export default function DeckPlayer({ deckId, cards, mode = 'practice', onNewSession }: DeckPlayerProps) {
   const t = useT()
   const params = useParams()
   const lang = params.lang as string || 'en'
   const [playingCards, setPlayingCards] = useState<CardData[]>(cards)
+  const [isReloading, setIsReloading] = useState(false)
+  const inFlightRef = useRef(false)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [completed, setCompleted] = useState(false)
   const [retryRound, setRetryRound] = useState(0)
   const [sessionResults, setSessionResults] = useState<{cardId: string, isCorrect: boolean, selectedIndices?: number[]}[]>([])
+
+  const [prevCards, setPrevCards] = useState(cards)
+  if (cards !== prevCards) {
+    setPrevCards(cards)
+    setPlayingCards(cards)
+  }
 
   const handleNext = useCallback(async (isCorrect: boolean, selectedIndices?: number[]) => {
     // Prevent double-click overflow
@@ -105,12 +114,39 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
       setCompleted(false)
     }
 
-    const handleStudyNewSession = () => {
-      setPlayingCards(cards)
-      setCurrentIndex(0)
-      setSessionResults([])
-      setRetryRound(0)
-      setCompleted(false)
+    const handleStudyNewSession = async () => {
+      if (inFlightRef.current) return
+      inFlightRef.current = true
+      setIsReloading(true)
+
+      try {
+        if (onNewSession) {
+          const freshCards = await onNewSession()
+          if (freshCards && freshCards.length > 0) {
+            setPlayingCards(freshCards)
+            setCurrentIndex(0)
+            setSessionResults([])
+            setRetryRound(0)
+            setCompleted(false)
+            return
+          }
+        }
+        setPlayingCards(cards)
+        setCurrentIndex(0)
+        setSessionResults([])
+        setRetryRound(0)
+        setCompleted(false)
+      } catch (err) {
+        console.error("Failed to reload fresh session cards:", err)
+        setPlayingCards(cards)
+        setCurrentIndex(0)
+        setSessionResults([])
+        setRetryRound(0)
+        setCompleted(false)
+      } finally {
+        inFlightRef.current = false
+        setIsReloading(false)
+      }
     }
 
     if (mode === 'exam') {
@@ -122,6 +158,7 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
           backLink={`/${lang}`}
           onRetryIncorrect={handleRetryIncorrect}
           onStudyNewSession={handleStudyNewSession}
+          isReloading={isReloading}
         />
       )
     }
@@ -159,7 +196,8 @@ export default function DeckPlayer({ deckId, cards, mode = 'practice' }: DeckPla
           <button 
             type="button"
             onClick={handleStudyNewSession}
-            className="flex-1 px-5 py-3 rounded-xl text-sm font-semibold btn-primary text-center"
+            disabled={isReloading}
+            className="flex-1 px-5 py-3 rounded-xl text-sm font-semibold btn-primary text-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {t.quiz.studyNewSession}
           </button>

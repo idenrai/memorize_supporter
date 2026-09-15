@@ -25,6 +25,7 @@
   - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): 인지 과학 및 Local-First 철학, 인터랙티브 3D 플립 카드 데모, 불필요한 아이콘 박스와 중복 뱃지를 걷어낸 미니멀 6대 기능 카드(안정적 ID 기반), 키보드 단축키 및 엔지니어링 기술 사양 테이블(React 19 + Zod 상태 검증, 100% i18n 지원)을 제공하는 브랜드 소개 뷰어
   - `IndexedDB 클라이언트 저장소` (`src/lib/client-db.ts`): 개인 소장 학습 데이터, 망각 곡선 진도 및 시험 점수를 브라우저에 안전하게 격리 보존하는 로컬 데이터 계층 (덱 메타데이터 인라인 갱신 `updateLocalDeckMetadata` 및 전역/다중 탭 이벤트 전파 지원)
   - `CardParser` (`src/lib/card-parser.ts`): 원시 JSON 및 카드 문자열을 Zod 스키마로 검증하여 `CardData` 판별 유니온으로 승격시키는 단일 진실 공급원(SSoT)
+  - `SessionCards` (`src/lib/session-cards.ts`): 시험 모드 및 연습 모드의 세션 카드 추출과 셔플링을 전담하는 순수 도메인 모듈 (시험 모드의 비복원 무작위 추출, 연습 모드의 동점 티어 기아 방지 사전 셔플, 커스텀 RNG 의존성 주입 지원)
   - `DeckUtils` (`src/lib/deck-utils.ts`): 덱 및 카드의 유형 라벨(`getDeckTypeLabel`)과 시각적 계층 뱃지 클래스(`getDeckTypeBadgeClass`)를 제공하는 단일 진실 공급원(SSoT) 유틸리티 (레거시 `practice_quiz`와 신규 `multiple_choice_quiz` 하위 호환 매핑 및 3개 국어 다국어 동기화 지원)
 
 ### 2. 프론트엔드 (Frontend)
@@ -33,10 +34,16 @@
   - Next.js (App Router) / React 19
   - Server Components(데이터 패칭: `app/[lang]/deck/[deckId]/page.tsx`, 정적 메타데이터: `app/[lang]/about/page.tsx`)와 Client Components(인터랙션: `Flashcard.tsx`, `AboutClient.tsx`)를 명확히 분리하여 렌더링 성능을 최적화합니다.
 
-- **카드 출제 전략 (Card Selection Strategy)**:
-  - **1순위 (미출제 문제)**: 학습 기록이 없는 카드를 최우선 출제하여 덱 전체 커버리지를 확보합니다.
-  - **2순위 (오답 문제)**: 틀린 이력이 있는 카드를 추산된 '틀린 횟수'가 높은 순으로 배치하여 약점을 집중 타격합니다.
-  - **3순위 (일반 문제)**: 완벽히 맞힌 카드는 '풀이 횟수'가 적은 순으로 출제하여 우연히 맞힌 지식을 확실히 굳힌 뒤, 장기 기억화된 카드를 나중에 복습하도록 설계되었습니다.
+- **카드 출제 및 세션 재생성 전략 (Card Selection & Session Reload Strategy)**:
+  - **시험 모드 (Exam Mode: Random Sampling without Replacement)**: 연습 모드의 복습 우선순위 정렬을 배제하고, 전체 유효 퀴즈 카드 풀(총 $N$장)에 대해 Fisher-Yates 알고리즘으로 사전 셔플을 수행한 뒤 지정된 문항 수($M$장, `limit`, $M \le N$)만큼 슬라이스하는 균일 비복원 무작위 추출(Shuffle-then-Slice)을 수행합니다. 과거 '슬라이스 후 셔플(Slice-then-Shuffle)'로 인해 상위 인덱스 문제만 고정 추출되던 결정론적 편중과 동점 카드의 안정 정렬 고착화를 원천 차단하고, 매 회차마다 전체 카드 풀에 걸쳐 통계적으로 독립적이고 공정한 모의고사를 출제합니다.
+  - **연습 모드 (Practice Mode: SRS with Anti-Starvation)**:
+    - **동점 티어 기아 방지 (Anti-Starvation Pre-Shuffle)**: 미학습 카드(카테고리 1) 등 동일 우선순위 카드군 사이에서 덱 인덱스 순서대로만 앞쪽 카드가 고정 선택되는 기아 현상을 막기 위해 1차 사전 셔플을 수행합니다.
+    - **1순위 (미출제 문제)**: 학습 기록이 없는 카드를 최우선 출제하여 덱 전체 커버리지를 확보합니다.
+    - **2순위 (오답 문제)**: 틀린 이력이 있는 카드를 추산된 '틀린 횟수'가 높은 순으로 배치하여 약점을 집중 타격합니다.
+    - **3순위 (일반 문제)**: 완벽히 맞힌 카드는 '풀이 횟수'가 적은 순으로 출제하여 우연히 맞힌 지식을 확실히 굳힌 뒤, 장기 기억화된 카드를 나중에 복습하도록 설계되었습니다.
+    - 추출된 상위 문항들을 최종 셔플하여 능동적 회상(Active Recall)의 학습 순서를 무작위화합니다.
+  - **동적 세션 리로드 (Dynamic Session Reload)**: 세션 완료 후 "새 세션 학습(Study New Session)" 클릭 시, 메모리에 머물던 기존 문제를 재탕하지 않고 `onNewSession` 콜백을 통해 IndexedDB 최신 진도(`progressMap`)와 카드를 재조회하여 실시간 반영된 새로운 카드 세트를 즉시 인메모리 교체합니다. `inFlightRef`와 `isReloading` 가드를 통해 중복 광클을 원천 차단하고 즉각적인 비활성화 시각 피드백을 제공합니다.
+  - **다중 탭 캐시 무효화 (Multi-Tab Invalidation)**: 다른 탭이나 모달에서 덱 카드가 수정(`deck_updated`), 생성(`deck_created`), 복원(`backup_restored`)될 때 `onLocalDbChange` 리스너를 통해 인메모리 카드 캐시를 즉시 무효화하고 IndexedDB에서 최신 카드를 우선 조회합니다.
 
 - **다국어 처리 및 UI 하드코딩 제로 전략 (i18n & Zero Hardcoded UI Text Policy)**:
   - **URL 기반 단일 진실 공급원(SSoT)**: URL 기반 동적 라우팅(`app/[lang]/...`)을 활용합니다. 전역 상태 관리자(Zustand 등)를 배제하여 SSR 렌더링 시점의 쿠키 분석에 의존하지 않고, Hydration 에러를 원천 차단합니다.
@@ -46,6 +53,7 @@
 
 - **상태 관리 전략**:
   - 로컬 상태(`useState`)를 활용하여 현재 데크(Deck)의 학습 진행 상황과 플립 여부를 관리합니다. 복잡한 전역 상태 관리자(Redux 등)는 지양합니다.
+  - **React 19 렌더 단계 Props 동기화**: `cards !== prevCards` 패턴을 적용하여 부모 컴포넌트의 카드 변경 시 계단식 렌더링(Cascading Renders) 없이 안전하게 내부 상태를 동기화합니다.
   - **SPA 세션 재시작**: 학습 완료 후 전체 브라우저 새로고침(`window.location.reload()`)을 배제하고, 인메모리 상태 리셋(`handleStudyNewSession`)을 통해 지연 없는 부드러운 새 세션을 즉시 구동합니다.
 
 - **스타일링, 마이크로 애니메이션 및 접근성 (Precision Canvas)**:
@@ -130,9 +138,9 @@ sequenceDiagram
 - **멀티 탭 실시간 동기화 (`BroadcastChannel`)**:
   - 웹 표준 `BroadcastChannel`을 활용하여 한 탭에서 덱 추가/삭제, 모의고사 응시, 백업 복원 발생 시 다른 열려있는 모든 탭의 덱 갤러리 및 기록 뷰가 새로고침 없이 즉각 동기화됩니다.
 
-- **클라이언트 사이드 SRS 및 셔플링 (`src/components/cards/DeckClientLoader.tsx`)**:
+- **클라이언트 사이드 카드 샘플링 및 세션 리로드 (`src/components/cards/DeckClientLoader.tsx`, `src/lib/session-cards.ts`)**:
   - 사용자가 로컬 덱 URL(`/deck/local_...`)로 진입하면 서버 컴포넌트가 `DeckClientLoader`로 위임합니다.
-  - `DeckClientLoader`는 IndexedDB에서 카드와 학습 진도를 불러온 뒤, 서버와 100% 동일한 3단계 SRS 우선순위(미출제 -> 취약 문제 -> 일반 복습)와 Fisher-Yates 셔플 알고리즘을 적용하여 플레이어를 기동합니다.
+  - `DeckClientLoader`는 IndexedDB에서 카드와 학습 진도를 불러온 뒤, `SessionCards` 도메인 모듈에 위임하여 모드별 최적화된 출제 파이프라인(시험: 사전 셔플 기반 균일 비복원 무작위 추출, 연습: 동점 티어 기아 방지 사전 셔플 + 3단계 SRS 복습 우선순위 정렬)을 실행합니다. 또한 세션 완료 후 "새 세션 학습" 시 최신 DB 상태 기반의 동적 세션 리로드(`onNewSession`)를 제공합니다.
 
 - **데이터 라이프사이클 및 백업/복원 관리**:
   - 사용자는 개별 시험 기록을 삭제하거나, 원클릭으로 로컬 덱과 관련된 모든 진도 및 시험 기록을 단일 트랜잭션으로 영구 삭제할 수 있습니다.
@@ -213,6 +221,7 @@ This document defines the system architecture of the `memorize_supporter` projec
   - `AboutClient` (`src/components/about/AboutClient.tsx`, `app/[lang]/about/page.tsx`): Brand and product introduction interface presenting cognitive science and Local-First philosophies, an interactive 3D flip card demo, 6 refined feature cards stripped of redundant badges/icon boxes, keyboard shortcuts guidance, and an engineering technical specifications table (React 19 + Zod state validation, 100% i18n support).
   - `IndexedDB Client Storage` (`src/lib/client-db.ts`): Browser-native persistence layer providing complete local isolation for private user study materials, forgetting curves, and quiz scores (supporting inline metadata updates via `updateLocalDeckMetadata` and reactive event broadcast).
   - `CardParser` (`src/lib/card-parser.ts`): Single Source of Truth for Zod runtime-to-compile-time domain model promotion.
+  - `SessionCards` (`src/lib/session-cards.ts`): Pure domain utility dedicated to session card selection and shuffling across exam and practice modes (guaranteeing sampling without replacement for exams, anti-starvation pre-shuffling for SRS practice, and dependency injection of custom RNGs).
   - `DeckUtils` (`src/lib/deck-utils.ts`): Single Source of Truth (SSoT) utility providing localized human-readable deck/card type labels (`getDeckTypeLabel`) and visual hierarchy badge classes (`getDeckTypeBadgeClass`), seamlessly mapping legacy `practice_quiz` and `multiple_choice_quiz` across English, Korean, and Japanese.
 
 ### 2. Frontend
@@ -221,10 +230,16 @@ This document defines the system architecture of the `memorize_supporter` projec
   - Next.js (App Router) / React 19
   - Optimizes rendering performance by strictly separating Server Components (data fetching: `app/[lang]/deck/[deckId]/page.tsx`, static metadata: `app/[lang]/about/page.tsx`) and Client Components (interactions: `Flashcard.tsx`, `AboutClient.tsx`).
 
-- **Card Selection Strategy**:
-  - **Priority 1 (Unasked)**: Cards with no learning history are presented first to ensure full coverage of the deck.
-  - **Priority 2 (Incorrect)**: Cards with a history of incorrect answers are prioritized next, sorted descending by their estimated failed count to target weaknesses.
-  - **Priority 3 (General)**: Cards perfectly answered are presented last, sorted ascending by their review count to solidify newer knowledge before re-testing heavily drilled cards.
+- **Card Selection & Session Reload Strategy**:
+  - **Exam Mode (Random Sampling without Replacement)**: Bypasses Spaced Repetition review priority sorting and pre-shuffles the entire eligible quiz pool (total $N$ cards) using the Fisher-Yates algorithm before slicing by the requested limit ($M$ cards, $M \le N$). This uniform Shuffle-then-Slice approach eliminates the deterministic index bias caused by legacy Slice-then-Shuffle behavior and stable-sort tie-breaking, ensuring an independent, fair, and statistically uniform mock exam subset across sessions.
+  - **Practice Mode (SRS with Anti-Starvation Pre-Shuffle)**:
+    - **Anti-Starvation Pre-Shuffle**: Pre-shuffles identical-priority card tiers (e.g. unstudied Category 1 cards) before sorting, eliminating index-based starvation where cards late in the array are never presented.
+    - **Priority 1 (Unasked)**: Cards with no learning history are presented first to ensure full coverage of the deck.
+    - **Priority 2 (Incorrect)**: Cards with a history of incorrect answers are prioritized next, sorted descending by their estimated failed count to target weaknesses.
+    - **Priority 3 (General)**: Cards perfectly answered are presented last, sorted ascending by their review count to solidify newer knowledge before re-testing heavily drilled cards.
+    - Shuffles the selected cards finally to randomize active recall sequence.
+  - **Dynamic Session Reload**: When the user clicks "Study New Session", the app avoids repeating the previous in-memory cards by invoking the `onNewSession` callback to re-query IndexedDB for the latest progress (`progressMap`) and raw cards, immediately replacing cards in memory. Equipped with `inFlightRef` and `isReloading` guards to block rapid spam clicks with instant visual feedback.
+  - **Multi-Tab Cache Invalidation**: Listens to database mutation events via `onLocalDbChange` (`deck_updated`, `deck_created`, `backup_restored`) to invalidate in-memory raw card caches and prioritize querying latest IndexedDB records.
 
 - **i18n Strategy & Zero Hardcoded UI Text Policy**:
   - **URL as Single Source of Truth (SSoT)**: Uses dynamic routing (`app/[lang]/...`) to manage the current language state. This prevents hydration errors caused by resolving language through cookies or local storage during SSR.
@@ -234,6 +249,7 @@ This document defines the system architecture of the `memorize_supporter` projec
 
 - **State Management Strategy**:
   - Manages the learning progress and flip state of the current deck using local state (`useState`). Avoids using complex global state managers (like Redux).
+  - **React 19 Render-Phase Props Synchronization**: Employs the recommended `cards !== prevCards` pattern to synchronize internal player state safely when parent props change without triggering cascading renders.
   - **SPA Session Restart**: Eliminates destructive full-page browser reloads (`window.location.reload()`) upon session completion, instantly launching a fresh session via in-memory state reset (`handleStudyNewSession`).
 
 - **Styling, Micro-animations, and Accessibility (Precision Canvas)**:
@@ -318,9 +334,9 @@ sequenceDiagram
 - **Multi-Tab Reactive Synchronization (`BroadcastChannel`)**:
   - Employs standard `BroadcastChannel` to propagate deck creations, deletions, exam completions, and backup restorations across all open browser tabs in real time without manual reloads.
 
-- **Client-Side SRS & Shuffling (`src/components/cards/DeckClientLoader.tsx`)**:
+- **Client-Side Card Sampling & Session Reload (`src/components/cards/DeckClientLoader.tsx`, `src/lib/session-cards.ts`)**:
   - When navigating to a local deck URL (`/deck/local_...`), the server component delegates to `DeckClientLoader`.
-  - `DeckClientLoader` loads cards and progress from IndexedDB and applies the exact same 3-tier SRS priority ordering (Unasked -> Weakest -> Review) and Fisher-Yates shuffle algorithm used by the server.
+  - `DeckClientLoader` loads cards and progress from IndexedDB and delegates to the `SessionCards` domain module to execute mode-tailored pipelines (Exam: pre-shuffle uniform sampling without replacement; Practice: anti-starvation pre-shuffle + 3-tier SRS priority ordering). It also orchestrates dynamic session reload (`onNewSession`) re-querying fresh IndexedDB state upon session restart.
 
 - **Data Lifecycle & Backup/Restore (`exportLocalDataJson`, `importBackupJson`, `deleteLocalDeck`, `deleteLocalExamResult`)**:
   - Users can delete individual local exam records or wipe an entire local deck with all associated progress in a single atomic transaction.
